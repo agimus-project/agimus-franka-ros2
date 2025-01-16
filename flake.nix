@@ -1,7 +1,13 @@
 {
   description = "The franka_ros2 repository provides a ROS 2 integration of libfranka, allowing efficient control of the Franka Robotics arm within the ROS 2 framework. This project is designed to facilitate robotic research and development by providing a robust interface for controlling the research versions of Franka Robotics robots.";
 
-  inputs.nix-ros-overlay.url = "github:lopsided98/nix-ros-overlay/master";
+  inputs = {
+    nix-ros-overlay.url = "github:lopsided98/nix-ros-overlay/master";
+    franka-description = {
+      url = "github:agimus-project/franka_description/humble_devel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 
   outputs =
     { nix-ros-overlay, self, ... }:
@@ -33,7 +39,7 @@
             integration-launch-testing = pkgs.callPackage ./integration_launch_testing/default.nix;
             joint-trajectory-controller = pkgs.callPackage ./joint_trajectory_controller/default.nix;
             franka-bringup = pkgs.callPackage ./franka_bringup/default.nix {
-              inherit franka-description;
+              inherit franka-description = inputs.franka-description.packages.${system}.franka_description;
               inherit franka-hardware;
               inherit franka-robot-state-broadcaster;
             };
