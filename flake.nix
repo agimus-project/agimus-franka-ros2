@@ -39,7 +39,9 @@
             inherit (self.packages.${system}) franka-hardware;
           };
           
-          # franka-gazebo = pkgs.callPackage ./franka_gazebo/default.nix;
+          franka-ign-ros2-control = pkgs.callPackage ./franka_gazebo/franka_ign_ros2_control/default.nix{
+            
+          };
 
           franka-gripper = pkgs.callPackage ./franka_gripper/default.nix{
             inherit (self.inputs.libfranka.packages.${system}) libfranka;
