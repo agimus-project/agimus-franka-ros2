@@ -2,10 +2,12 @@
   lib,
   stdenv,
   cmake,
+  eigen,
   python3Packages,
   rosPackages,
   franka-msgs,
   franka-hardware,
+  libfranka
 }:
 stdenv.mkDerivation {
   pname = "franka-semantic-components";
@@ -24,6 +26,7 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     cmake
+    eigen
     rosPackages.humble.ament-cmake
     rosPackages.humble.ament-cmake-clang-format
     rosPackages.humble.ament-cmake-copyright
@@ -39,13 +42,17 @@ stdenv.mkDerivation {
   propagatedBuildInputs = [
     franka-hardware
     franka-msgs
+    libfranka
+    rosPackages.humble.controller-interface
     rosPackages.humble.geometry-msgs
     rosPackages.humble.hardware-interface
     rosPackages.humble.rclcpp
     rosPackages.humble.sensor-msgs
+    rosPackages.humble.urdf
   ];
 
-  doCheck = true;
+  # Issues with the location of the configuration files. Notably .clang-format that the unit-test look at ../.clang-format
+  doCheck = false;
 
   meta = {
     description = "franka_semantic_components provides semantic components for using Franka Robotics research robots with ros2_control.";

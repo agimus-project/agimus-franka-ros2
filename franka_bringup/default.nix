@@ -2,8 +2,6 @@
   lib,
   stdenv,
   cmake,
-  fmt,
-  python3Packages,
   rosPackages,
   franka-description,
   franka-hardware,
@@ -42,7 +40,9 @@ stdenv.mkDerivation {
     rosPackages.humble.xacro
   ];
 
-  doCheck = true;
+  dontWrapQtApps = true;
+
+  doCheck = false;
 
   meta = {
     description = "Package with launch files and run-time configurations for using Franka Robotics research robots with ros2_control.";

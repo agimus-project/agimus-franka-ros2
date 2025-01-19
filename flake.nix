@@ -4,7 +4,7 @@
   inputs = {
     nix-ros-overlay.url = "github:lopsided98/nix-ros-overlay/master";
     libfranka = {
-      url = "github:MaximilienNaveau/libfranka/nix";
+      url = "/home/mnaveau/devel/workspace_gepetto_nix/nix/workspace/nix-src/libfranka";
       inputs.nix-ros-overlay.follows = "nix-ros-overlay";
     };
     franka-description = {
@@ -26,38 +26,59 @@
       in
       {
         packages = {
-          default = self.packages.${system}.franka-semantic-components;
+          default = self.packages.${system}.franka-hardware;
 
-          # franka-example-controllers = pkgs.callPackage ./franka_example_controllers/default.nix;
+          franka-example-controllers = pkgs.callPackage ./franka_example_controllers/default.nix{
+            inherit (self.packages.${system}) franka-msgs;
+            inherit (self.packages.${system}) franka-semantic-components;
+          };
 
-          # franka-fr3-moveit-config = pkgs.callPackage ./franka_fr3_moveit_config/default.nix;
+          franka-fr3-moveit-config = pkgs.callPackage ./franka_fr3_moveit_config/default.nix{
+            inherit (self.inputs.franka-description.packages.${system}) franka-description;
+            inherit (self.packages.${system}) franka-gripper;
+            inherit (self.packages.${system}) franka-hardware;
+          };
           
           # franka-gazebo = pkgs.callPackage ./franka_gazebo/default.nix;
 
-          # franka-gripper = pkgs.callPackage ./franka_gripper/default.nix;
+          franka-gripper = pkgs.callPackage ./franka_gripper/default.nix{
+            inherit (self.inputs.libfranka.packages.${system}) libfranka;
+            inherit (self.packages.${system}) franka-msgs;
+          };
 
           franka-hardware = pkgs.callPackage ./franka_hardware/default.nix{
-            inherit (self.packages.franka-msgs.${system}) franka-msgs;
+            inherit (self.inputs.libfranka.packages.${system}) libfranka;
+            inherit (self.packages.${system}) franka-msgs;
           };
 
           franka-msgs = pkgs.callPackage ./franka_msgs/default.nix {};
 
-          # franka-robot-state-broadcaster = pkgs.callPackage ./franka_robot_state_broadcaster/default.nix;
-
-          franka-semantic-components = pkgs.callPackage ./franka_semantic_components/default.nix {
-            inherit (self.packages.franka-msgs.${system}) franka-msgs;
-            inherit (self.packages.franka-hardware.${system}) franka-hardware;
+          franka-robot-state-broadcaster = pkgs.callPackage ./franka_robot_state_broadcaster/default.nix {
+            inherit (self.packages.${system}) franka-msgs;
+            inherit (self.packages.${system}) franka-semantic-components;
           };
 
-          # integration-launch-testing = pkgs.callPackage ./integration_launch_testing/default.nix;
+          franka-semantic-components = pkgs.callPackage ./franka_semantic_components/default.nix {
+            inherit (self.inputs.libfranka.packages.${system}) libfranka;
+            inherit (self.packages.${system}) franka-msgs;
+            inherit (self.packages.${system}) franka-hardware;
+          };
 
-          # joint-trajectory-controller = pkgs.callPackage ./joint_trajectory_controller/default.nix;
+          integration-launch-testing = pkgs.callPackage ./integration_launch_testing/default.nix{
+            inherit (self.packages.${system}) franka-bringup;
+            inherit (self.packages.${system}) franka-gripper;
+            inherit (self.packages.${system}) franka-msgs;
+          };
 
-          # franka-bringup = pkgs.callPackage ./franka_bringup/default.nix {
-          #   inherit (self.inputs.franka-description.packages.${system}) franka-description;            
-          #   inherit (self.packages.franka-hardware.${system}) franka-hardware;
-          #   inherit (self.packages.franka-robot-state-broadcaster.${system}) franka-robot-state-broadcaster;
-          # };
+          joint-trajectory-controller = pkgs.callPackage ./joint_trajectory_controller/default.nix{
+            
+          };
+
+          franka-bringup = pkgs.callPackage ./franka_bringup/default.nix {
+            inherit (self.inputs.franka-description.packages.${system}) franka-description;
+            inherit (self.packages.${system}) franka-hardware;
+            inherit (self.packages.${system}) franka-robot-state-broadcaster;
+          };
         };
       }
     );

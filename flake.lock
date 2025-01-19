@@ -41,22 +41,38 @@
     },
     "libfranka": {
       "inputs": {
+        "libfranka-common": "libfranka-common",
         "nix-ros-overlay": [
           "nix-ros-overlay"
         ]
       },
       "locked": {
-        "lastModified": 1737038315,
-        "narHash": "sha256-N5bVeRZWhRpXvTeuiBovEAhoXmFuqkOSqUi2olsSOaA=",
-        "owner": "MaximilienNaveau",
-        "repo": "libfranka",
-        "rev": "08a595061a86a88c7e4f21412e183d1580695f84",
+        "lastModified": 1737119725,
+        "narHash": "sha256-PCpoFQQ+9kMqPAsp7/JtTsCtPU02fyU28sqjyUaO9sw=",
+        "ref": "refs/heads/nix",
+        "rev": "0ce4a1d0fe712e18e55493e02d976f746498bb49",
+        "revCount": 1500,
+        "type": "git",
+        "url": "file:///home/mnaveau/devel/workspace_gepetto_nix/nix/workspace/nix-src/libfranka"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/mnaveau/devel/workspace_gepetto_nix/nix/workspace/nix-src/libfranka"
+      }
+    },
+    "libfranka-common": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1706898278,
+        "narHash": "sha256-gwsl+WpMq9ZKAb+lI+zxaFz1Om3Bs/7aN+lPV/CYp9M=",
+        "owner": "tingelst",
+        "repo": "libfranka-common",
+        "rev": "cacc912e12c9864ae644331d1a45bec4574bda6f",
         "type": "github"
       },
       "original": {
-        "owner": "MaximilienNaveau",
-        "ref": "nix",
-        "repo": "libfranka",
+        "owner": "tingelst",
+        "repo": "libfranka-common",
         "type": "github"
       }
     },
