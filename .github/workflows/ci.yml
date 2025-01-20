@@ -1,9 +1,9 @@
 name: CI
 on:
   push:
-    branches: [ humble, develop ]
+    branches: [ humble, develop, nix ]
   pull_request:
-    branches: [ humble, develop ]
+    branches: [ humble, develop, nix ]
 jobs:
   CI:
     runs-on: ubuntu-latest
