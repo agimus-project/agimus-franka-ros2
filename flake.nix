@@ -26,7 +26,7 @@
       in
       {
         packages = {
-          default = self.packages.${system}.franka-hardware;
+          default = self.packages.${system}.franka-ros2;
 
           franka-example-controllers = pkgs.callPackage ./franka_example_controllers/default.nix{
             inherit (self.packages.${system}) franka-msgs;
@@ -80,6 +80,38 @@
             inherit (self.inputs.franka-description.packages.${system}) franka-description;
             inherit (self.packages.${system}) franka-hardware;
             inherit (self.packages.${system}) franka-robot-state-broadcaster;
+          };
+
+          # Define the meta-package
+          franka-ros2 = pkgs.stdenv.mkDerivation {
+            pname = "franka-ros2";
+            version = "1.0.0";
+            dontWrapQtApps = true;
+            # Provide an empty directory as a dummy source
+            src = pkgs.runCommand "empty-src" { } ''
+              mkdir -p $out
+            '';
+            # Aggregate dependencies here
+            buildInputs = [
+              self.packages.${system}.franka-example-controllers
+              self.packages.${system}.franka-gripper
+              self.packages.${system}.franka-hardware
+              self.packages.${system}.franka-msgs
+              self.packages.${system}.franka-robot-state-broadcaster
+              self.packages.${system}.franka-semantic-components
+              self.packages.${system}.integration-launch-testing
+              self.packages.${system}.joint-trajectory-controller
+              self.packages.${system}.franka-bringup
+            ];
+            # Disable unnecessary phases
+            dontUnpack = true;
+            dontBuild = true;
+            dontConfigure = true;
+            # Install phase for the meta-package
+            installPhase = ''
+              mkdir -p $out
+              echo "This is a meta-package. Install the following tools:" > $out/README
+            '';
           };
         };
       }
