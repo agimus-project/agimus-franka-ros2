@@ -33,15 +33,15 @@
             inherit (self.packages.${system}) franka-semantic-components;
           };
 
-          franka-fr3-moveit-config = pkgs.callPackage ./franka_fr3_moveit_config/default.nix{
-            inherit (self.inputs.franka-description.packages.${system}) franka-description;
-            inherit (self.packages.${system}) franka-gripper;
-            inherit (self.packages.${system}) franka-hardware;
-          };
+          # franka-fr3-moveit-config = pkgs.callPackage ./franka_fr3_moveit_config/default.nix{
+          #   inherit (self.inputs.franka-description.packages.${system}) franka-description;
+          #   inherit (self.packages.${system}) franka-gripper;
+          #   inherit (self.packages.${system}) franka-hardware;
+          # };
           
-          franka-ign-ros2-control = pkgs.callPackage ./franka_gazebo/franka_ign_ros2_control/default.nix{
-            
-          };
+          # franka-ign-ros2-control = pkgs.callPackage ./franka_gazebo/franka_ign_ros2_control/default.nix{
+          #   inherit (self.packages.${system}) franka-hardware;
+          # };
 
           franka-gripper = pkgs.callPackage ./franka_gripper/default.nix{
             inherit (self.inputs.libfranka.packages.${system}) libfranka;
