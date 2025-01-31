@@ -298,7 +298,7 @@ bool IgnitionSystem::initSim(
             mimic_joint.interfaces_to_mimic.push_back(hardware_interface::HW_IF_VELOCITY);
           }
           bool eff = interface_info.name == "effort";
-          if (vel) {
+          if (eff) {
             mimic_joint.interfaces_to_mimic.push_back(hardware_interface::HW_IF_EFFORT);
           }
           return pos || vel || eff;
@@ -644,10 +644,8 @@ hardware_interface::return_type IgnitionSystem::write(
   std::array<double, 3> gravity_earth{0.0, 0.0, -9.8};  // Earth gravity in m/s^2
 
   // Collect joint positions
-  for (size_t i = 0; i < this->dataPtr->joints_.size(); ++i) {
-    if (i < q.size()) {
-      q[i] = this->dataPtr->joints_[i].joint_position;
-    }
+  for (size_t i = 0; i < std::min(this->dataPtr->joints_.size(), q.size()); ++i) {
+    q[i] = this->dataPtr->joints_[i].joint_position;
   }
 
   // Compute gravity compensation efforts
@@ -685,7 +683,7 @@ hardware_interface::return_type IgnitionSystem::write(
         this->dataPtr->joints_[i].joint_position_cmd) *
         *this->dataPtr->update_rate;
 
-      // Calculate target velcity
+      // Calculate target velocity
       double target_vel = -this->dataPtr->position_proportional_gain_ * error;
 
       auto vel = this->dataPtr->ecm->Component<ignition::gazebo::components::JointVelocityCmd>(
@@ -711,7 +709,11 @@ hardware_interface::return_type IgnitionSystem::write(
           this->dataPtr->joints_[i].sim_joint);
         *jointEffortCmd = ignition::gazebo::components::JointForceCmd(
           {this->dataPtr->joints_[i].joint_effort_cmd});
-        jointEffortCmd->Data()[0] += joint_efforts[i];
+        // Hand fingers are not gravity compensated,
+        // and iterating over q results in undefined behaviour 
+        if (i < q.size()) {
+          jointEffortCmd->Data()[0] += joint_efforts[i];
+        }
       }
     } else if (this->dataPtr->joints_[i].is_actuated) {
       // Fallback case is a velocity command of zero (only for actuated joints)
@@ -751,15 +753,20 @@ hardware_interface::return_type IgnitionSystem::write(
 
         double velocity_sp = (-1.0) * position_error * (*this->dataPtr->update_rate);
 
-        auto vel = this->dataPtr->ecm->Component<ignition::gazebo::components::JointVelocityCmd>(
-          this->dataPtr->joints_[mimic_joint.joint_index].sim_joint);
-
-        if (vel == nullptr) {
+        // Due to Franka Emika changes to this plugin nothing except torque control works
+        // So even though commands are computed as velocity, they have to be applied as torques
+        if (!this->dataPtr->ecm->Component<ignition::gazebo::components::JointForceCmd>(
+            this->dataPtr->joints_[mimic_joint.joint_index].sim_joint))
+        {
           this->dataPtr->ecm->CreateComponent(
             this->dataPtr->joints_[mimic_joint.joint_index].sim_joint,
-            ignition::gazebo::components::JointVelocityCmd({velocity_sp}));
-        } else if (!vel->Data().empty()) {
-          vel->Data()[0] = velocity_sp;
+            ignition::gazebo::components::JointForceCmd({0}));
+        } else {
+          const auto jointEffortCmd =
+            this->dataPtr->ecm->Component<ignition::gazebo::components::JointForceCmd>(
+            this->dataPtr->joints_[mimic_joint.joint_index].sim_joint);
+          *jointEffortCmd = ignition::gazebo::components::JointForceCmd(
+            {velocity_sp});
         }
       }
       if (mimic_interface == "velocity") {
