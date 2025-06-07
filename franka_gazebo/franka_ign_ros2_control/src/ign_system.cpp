@@ -15,6 +15,7 @@
 #include "ign_ros2_control/ign_system.hpp"
 
 #include <ignition/msgs/imu.pb.h>
+#include <ignition/msgs/wrench.pb.h>
 
 #include <limits>
 #include <map>
@@ -25,6 +26,7 @@
 
 #include <ignition/gazebo/components/AngularVelocity.hh>
 #include <ignition/gazebo/components/Imu.hh>
+#include <ignition/gazebo/components/ForceTorque.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
 #include <ignition/gazebo/components/JointPositionReset.hh>
@@ -126,6 +128,35 @@ void ImuData::OnIMU(const ignition::msgs::IMU & _msg)
   this->imu_sensor_data_[8] = _msg.linear_acceleration().y();
   this->imu_sensor_data_[9] = _msg.linear_acceleration().z();
 }
+class ForceTorqueData
+{
+public:
+  /// \brief imu's name.
+  std::string name{};
+
+  /// \brief imu's topic name.
+  std::string topicName{};
+
+  /// \brief handles to the force torque from within Gazebo
+  ignition::gazebo::Entity sim_ft_sensors_ = ignition::gazebo::kNullEntity;
+
+  /// \brief An array per FT
+  std::array<double, 6> ft_sensor_data_;
+
+  /// \brief callback to get the Force Torque topic values
+  void OnForceTorque(const ignition::msgs::Wrench & _msg);
+};
+
+void ForceTorqueData::OnForceTorque(const ignition::msgs::Wrench & _msg)
+{
+  this->ft_sensor_data_[0] = _msg.force().x();
+  this->ft_sensor_data_[1] = _msg.force().y();
+  this->ft_sensor_data_[2] = _msg.force().z();
+  this->ft_sensor_data_[3] = _msg.torque().x();
+  this->ft_sensor_data_[4] = _msg.torque().y();
+  this->ft_sensor_data_[5] = _msg.torque().z();
+}
+
 
 class ign_ros2_control::IgnitionSystemPrivate
 {
@@ -144,6 +175,8 @@ public:
 
   /// \brief vector with the imus .
   std::vector<std::shared_ptr<ImuData>> imus_;
+
+  std::vector<std::shared_ptr<ForceTorqueData>> ft_sensors_;
 
   /// \brief state interfaces that will be exported to the Resource Manager
   std::vector<hardware_interface::StateInterface> state_interfaces_;
@@ -486,6 +519,55 @@ void IgnitionSystem::registerSensors(const hardware_interface::HardwareInfo & ha
       this->dataPtr->imus_.push_back(imuData);
       return true;
     });
+
+  this->dataPtr->ecm->Each<ignition::gazebo::components::ForceTorque, ignition::gazebo::components::Name>(
+    [&](const ignition::gazebo::Entity & _entity,
+    const ignition::gazebo::components::ForceTorque *,
+    const ignition::gazebo::components::Name * _name) -> bool
+    {
+      auto ftData = std::make_shared<ForceTorqueData>();
+      RCLCPP_INFO_STREAM(this->nh_->get_logger(), "Loading sensor: " << _name->Data());
+
+      auto sensorTopicComp = this->dataPtr->ecm->Component<
+        ignition::gazebo::components::SensorTopic>(_entity);
+      if (sensorTopicComp) {
+        RCLCPP_INFO_STREAM(this->nh_->get_logger(), "Topic name: " << sensorTopicComp->Data());
+      }
+
+      RCLCPP_INFO_STREAM(
+        this->nh_->get_logger(), "\tState:");
+      ftData->name = _name->Data();
+      ftData->sim_ft_sensors_ = _entity;
+
+      hardware_interface::ComponentInfo component;
+      for (auto & comp : sensor_components_) {
+        if (comp.name == _name->Data()) {
+          component = comp;
+        }
+      }
+
+      static const std::map<std::string, size_t> interface_name_map = {
+        {"force.x", 0},
+        {"force.y", 1},
+        {"force.z", 2},
+        {"torque.x", 3},
+        {"torque.y", 4},
+        {"torque.z", 5},
+      };
+
+      for (const auto & state_interface : component.state_interfaces) {
+        RCLCPP_INFO_STREAM(this->nh_->get_logger(), "\t\t " << state_interface.name);
+
+        size_t data_index = interface_name_map.at(state_interface.name);
+        this->dataPtr->state_interfaces_.emplace_back(
+          ftData->name,
+          state_interface.name,
+          &ftData->ft_sensor_data_[data_index]);
+      }
+      this->dataPtr->ft_sensors_.push_back(ftData);
+      return true;
+    });
+    
 }
 
 CallbackReturn IgnitionSystem::on_init(const hardware_interface::HardwareInfo & system_info)
@@ -583,6 +665,24 @@ hardware_interface::return_type IgnitionSystem::read(
         this->dataPtr->node.Subscribe(
           this->dataPtr->imus_[i]->topicName, &ImuData::OnIMU,
           this->dataPtr->imus_[i].get());
+      }
+    }
+  }
+
+  for (unsigned int i = 0; i < this->dataPtr->ft_sensors_.size(); ++i) {
+    if (this->dataPtr->ft_sensors_[i]->topicName.empty()) {
+      auto sensorTopicComp =
+        this->dataPtr->ecm->Component<ignition::gazebo::components::SensorTopic>(
+        this->dataPtr->ft_sensors_[i]->sim_ft_sensors_);
+      if (sensorTopicComp) {
+        this->dataPtr->ft_sensors_[i]->topicName = sensorTopicComp->Data();
+        RCLCPP_INFO_STREAM(
+          this->nh_->get_logger(), "ForceTorque " << this->dataPtr->ft_sensors_[i]->name <<
+            " has a topic name: " << sensorTopicComp->Data());
+
+        this->dataPtr->node.Subscribe(
+          this->dataPtr->ft_sensors_[i]->topicName, &ForceTorqueData::OnForceTorque,
+          this->dataPtr->ft_sensors_[i].get());
       }
     }
   }
