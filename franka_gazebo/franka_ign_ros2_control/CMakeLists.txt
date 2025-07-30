@@ -1,14 +1,5 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 project(franka_ign_ros2_control)
-
-# Default to C11
-if(NOT CMAKE_C_STANDARD)
-    set(CMAKE_C_STANDARD 11)
-endif()
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-endif()
 
 # Compiler options
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -30,29 +21,42 @@ find_package(Franka 0.9.3 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_eigen REQUIRED)
 
-if("$ENV{IGNITION_VERSION}" STREQUAL "citadel")
-  find_package(ignition-gazebo3 REQUIRED)
-  set(IGN_GAZEBO_VER ${ignition-gazebo3_VERSION_MAJOR})
-  message(STATUS "Compiling against Ignition Citadel")
+if("$ENV{IGNITION_VERSION}" STREQUAL "garden")
+  find_package(gz-sim7 REQUIRED)
+  set(GZ_SIM_VER ${gz-sim7_VERSION_MAJOR})
+  message(STATUS "Compiling against Gazebo garden")
+  find_package(gz-plugin2 REQUIRED)
+  set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
 
-elseif("$ENV{IGNITION_VERSION}" STREQUAL "edifice")
-  find_package(ignition-gazebo5 REQUIRED)
-  set(IGN_GAZEBO_VER ${ignition-gazebo5_VERSION_MAJOR})
-  message(STATUS "Compiling against Ignition Edifice")
+elseif("$ENV{GAZEBO_VERSION}" STREQUAL "harmonic")
+  find_package(gz-sim8 REQUIRED)
+  set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
+  message(STATUS "Compiling against Gazebo Harmonic")
+  find_package(gz-plugin2 REQUIRED)
+  set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
 
-elseif("$ENV{IGNITION_VERSION}" STREQUAL "fortress")
-  find_package(ignition-gazebo6 REQUIRED)
-  set(IGN_GAZEBO_VER ${ignition-gazebo6_VERSION_MAJOR})
-  message(STATUS "Compiling against Ignition Fortress")
+elseif("$ENV{GAZEBO_VERSION}" STREQUAL "ionic")
+  find_package(gz-sim9 REQUIRED)
+  set(GZ_SIM_VER ${gz-sim9_VERSION_MAJOR})
+  message(STATUS "Compiling against Gazebo Ionic")
+  find_package(gz-plugin3 REQUIRED)
+  set(GZ_PLUGIN_VER ${gz-plugin3_VERSION_MAJOR})
+
+elseif("$ENV{GAZEBO_VERSION}" STREQUAL "jetty")
+  find_package(gz-sim10 REQUIRED)
+  set(GZ_SIM_VER ${gz-sim10_VERSION_MAJOR})
+  message(STATUS "Compiling against Gazebo Jetty")
+  find_package(gz-plugin4 REQUIRED)
+  set(GZ_PLUGIN_VER ${gz-plugin4_VERSION_MAJOR})
 
 else()
-  find_package(ignition-gazebo6 REQUIRED)
-  set(IGN_GAZEBO_VER ${ignition-gazebo6_VERSION_MAJOR})
-  message(STATUS "Compiling against Ignition Fortress")
+  find_package(gz-sim8 REQUIRED)
+  set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
+  message(STATUS "Compiling against Gazebo Harmonic")
+  find_package(gz-plugin2 REQUIRED)
+  set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
 endif()
 
-find_package(ignition-plugin1 REQUIRED)
-set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
 
 include_directories(include)
 
@@ -62,8 +66,8 @@ add_library(${PROJECT_NAME}-system SHARED
 )
 
 target_link_libraries(${PROJECT_NAME}-system
-  ignition-gazebo${IGN_GAZEBO_VER}::core
-  ignition-plugin${IGN_PLUGIN_VER}::register
+        gz-sim${GZ_SIM_VER}::core
+  gz-plugin${GZ_PLUGIN_VER}::register
 )
 ament_target_dependencies(${PROJECT_NAME}-system
   ament_index_cpp
@@ -99,7 +103,7 @@ ament_target_dependencies(ign_hardware_plugins
   tf2_eigen
 )
 target_link_libraries(ign_hardware_plugins
-  ignition-gazebo${IGN_GAZEBO_VER}::core
+        gz-sim${GZ_SIM_VER}::core
 )
 
 ## Install

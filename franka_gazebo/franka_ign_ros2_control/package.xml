@@ -10,12 +10,15 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>ament_index_cpp</depend>
-  <!-- default version to use in official ROS2 packages is Ignition Fortress for ROS2 Rolling -->
-  <depend condition="$IGNITION_VERSION == ''">ignition-gazebo6</depend>
-  <depend condition="$IGNITION_VERSION == citadel">ignition-gazebo3</depend>
-  <depend condition="$IGNITION_VERSION == edifice">ignition-gazebo5</depend>
   <depend condition="$IGNITION_VERSION == fortress">ignition-gazebo6</depend>
-  <depend>ignition-plugin</depend>
+  <depend condition="$GAZEBO_VERSION == harmonic">gz-sim8</depend>
+  <depend condition="$GAZEBO_VERSION == ionic">gz-sim9</depend>
+  <depend condition="$GAZEBO_VERSION == jetty">gz-sim10</depend>
+
+  <depend condition="$IGNITION_VERSION == fortress">ignition-plugin</depend>
+  <depend condition="$GAZEBO_VERSION == harmonic">gz-plugin2</depend>
+  <depend condition="$GAZEBO_VERSION == ionic">gz-plugin3</depend>
+  <depend condition="$GAZEBO_VERSION == jetty">gz-plugin4</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>yaml_cpp_vendor</depend>
