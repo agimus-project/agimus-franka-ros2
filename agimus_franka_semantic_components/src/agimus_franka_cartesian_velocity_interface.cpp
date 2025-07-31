@@ -14,6 +14,7 @@
 
 #include "agimus_franka_semantic_components/agimus_franka_cartesian_velocity_interface.hpp"
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <string>
