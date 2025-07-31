@@ -14,6 +14,7 @@
 
 #include "franka_semantic_components/franka_cartesian_velocity_interface.hpp"
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <string>
