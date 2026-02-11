@@ -34,8 +34,9 @@ add_library(
   src/translation_utils.cpp)
 
 target_link_libraries(${BASE_NAME} agimus_Franka::Franka Eigen3::Eigen)
+target_include_directories(${BASE_NAME} PUBLIC include)
 
-ament_target_dependencies(${BASE_NAME} Franka sensor_msgs
+ament_target_dependencies(${BASE_NAME} agimus_Franka sensor_msgs
                           geometry_msgs ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 install(TARGETS ${BASE_NAME} DESTINATION lib)

@@ -27,6 +27,7 @@ target_include_directories(
         PRIVATE
         include
 )
+target_link_libraries(${BASE_NAME} agimus_Franka::Franka)
 
 ament_target_dependencies(
         ${BASE_NAME}

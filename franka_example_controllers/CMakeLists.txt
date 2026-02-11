@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-set(PROJECT_NAME franka_example_controllers)
+set(BASE_NAME franka_example_controllers)
 project(agimus_${BASE_NAME})
 
 option(CHECK_TIDY "Adds clang-tidy tests" OFF)
@@ -46,8 +46,8 @@ target_include_directories(
 ament_target_dependencies(
         ${BASE_NAME}
         controller_interface
-        franka_msgs
-        franka_semantic_components
+        agimus_franka_msgs
+        agimus_franka_semantic_components
         hardware_interface
         moveit_core
         moveit_msgs

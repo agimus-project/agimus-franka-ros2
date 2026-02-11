@@ -440,7 +440,7 @@ void IgnitionROS2ControlPlugin::Configure(
   try {
     this->dataPtr->robot_hw_sim_loader_.reset(
       new pluginlib::ClassLoader<ign_ros2_control::IgnitionSystemInterface>(
-        "franka_ign_ros2_control", "ign_ros2_control::IgnitionSystemInterface"));
+        "agimus_franka_ign_ros2_control", "ign_ros2_control::IgnitionSystemInterface"));
   } catch (pluginlib::LibraryLoadException & ex) {
     RCLCPP_ERROR(
       this->dataPtr->node_->get_logger(),

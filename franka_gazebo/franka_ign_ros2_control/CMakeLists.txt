@@ -78,8 +78,8 @@ ament_target_dependencies(ign_hardware_plugins
   rclcpp_lifecycle
   hardware_interface
   rclcpp
-  franka_hardware
-  Franka
+  agimus_franka_hardware
+  agimus_Franka
   urdf
   kdl_parser
   tf2_geometry_msgs
@@ -116,7 +116,7 @@ install(TARGETS ${BASE_NAME}-system
   DESTINATION lib
 )
 
-pluginlib_export_plugin_description_file(franka_ign_ros2_control ign_hardware_plugins.xml)
+pluginlib_export_plugin_description_file(${PROJECT_NAME} ign_hardware_plugins.xml)
 
 # Setup the project
 ament_package()
