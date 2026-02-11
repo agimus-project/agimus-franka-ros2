@@ -94,10 +94,10 @@ controller_interface::CallbackReturn FrankaRobotStateBroadcaster::on_configure(
   desired_joint_states_publisher_ = get_node()->create_publisher<sensor_msgs::msg::JointState>(
       kDesiredJointStates, rclcpp::SystemDefaultsQoS());
   try {
-    franka_state_publisher = get_node()->create_publisher<franka_msgs::msg::FrankaRobotState>(
+    franka_state_publisher = get_node()->create_publisher<agimus_franka_msgs::msg::FrankaRobotState>(
         "~/" + state_interface_name, rclcpp::SystemDefaultsQoS());
     realtime_franka_state_publisher =
-        std::make_shared<realtime_tools::RealtimePublisher<franka_msgs::msg::FrankaRobotState>>(
+        std::make_shared<realtime_tools::RealtimePublisher<agimus_franka_msgs::msg::FrankaRobotState>>(
             franka_state_publisher);
     franka_robot_state_->initialize_robot_state_msg(realtime_franka_state_publisher->msg_);
   } catch (const std::exception& e) {

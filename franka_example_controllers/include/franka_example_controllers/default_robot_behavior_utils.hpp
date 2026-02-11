@@ -14,13 +14,13 @@
 
 #pragma once
 
-#include <franka_msgs/srv/set_full_collision_behavior.hpp>
+#include <agimus_franka_msgs/srv/set_full_collision_behavior.hpp>
 
 namespace DefaultRobotBehavior {
 
-inline franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr
+inline agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr
 getDefaultCollisionBehaviorRequest() {
-  auto request = std::make_shared<franka_msgs::srv::SetFullCollisionBehavior::Request>();
+  auto request = std::make_shared<agimus_franka_msgs::srv::SetFullCollisionBehavior::Request>();
 
   request->lower_torque_thresholds_nominal = {
       25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.0};  // NOLINT(cppcoreguidelines-avoid-magic-numbers)

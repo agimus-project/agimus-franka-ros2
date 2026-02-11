@@ -26,13 +26,13 @@
 
 #include "franka/exception.h"
 
-#include <franka_msgs/srv/set_cartesian_stiffness.hpp>
-#include <franka_msgs/srv/set_force_torque_collision_behavior.hpp>
-#include <franka_msgs/srv/set_full_collision_behavior.hpp>
-#include <franka_msgs/srv/set_joint_stiffness.hpp>
-#include <franka_msgs/srv/set_load.hpp>
-#include <franka_msgs/srv/set_stiffness_frame.hpp>
-#include <franka_msgs/srv/set_tcp_frame.hpp>
+#include <agimus_franka_msgs/srv/set_cartesian_stiffness.hpp>
+#include <agimus_franka_msgs/srv/set_force_torque_collision_behavior.hpp>
+#include <agimus_franka_msgs/srv/set_full_collision_behavior.hpp>
+#include <agimus_franka_msgs/srv/set_joint_stiffness.hpp>
+#include <agimus_franka_msgs/srv/set_load.hpp>
+#include <agimus_franka_msgs/srv/set_stiffness_frame.hpp>
+#include <agimus_franka_msgs/srv/set_tcp_frame.hpp>
 
 #include "test_utils.hpp"
 
@@ -524,10 +524,10 @@ TEST_F(
   auto expect_call_set_joint_stiffness = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setJointStiffness(testing::_)).Times(1);
   };
-  franka_msgs::srv::SetJointStiffness::Response response;
-  get_param_service_response<franka_msgs::srv::SetJointStiffness,
-                             franka_msgs::srv::SetJointStiffness::Request,
-                             franka_msgs::srv::SetJointStiffness::Response>(
+  agimus_franka_msgs::srv::SetJointStiffness::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetJointStiffness,
+                             agimus_franka_msgs::srv::SetJointStiffness::Request,
+                             agimus_franka_msgs::srv::SetJointStiffness::Response>(
       expect_call_set_joint_stiffness, "service_server/set_joint_stiffness", response);
 
   ASSERT_TRUE(response.success);
@@ -539,10 +539,10 @@ TEST_F(
   auto expect_call_set_cartesian_stiffness = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setCartesianStiffness(testing::_)).Times(1);
   };
-  franka_msgs::srv::SetCartesianStiffness::Response response;
-  get_param_service_response<franka_msgs::srv::SetCartesianStiffness,
-                             franka_msgs::srv::SetCartesianStiffness::Request,
-                             franka_msgs::srv::SetCartesianStiffness::Response>(
+  agimus_franka_msgs::srv::SetCartesianStiffness::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetCartesianStiffness,
+                             agimus_franka_msgs::srv::SetCartesianStiffness::Request,
+                             agimus_franka_msgs::srv::SetCartesianStiffness::Response>(
       expect_call_set_cartesian_stiffness, "service_server/set_cartesian_stiffness", response);
 
   ASSERT_TRUE(response.success);
@@ -554,9 +554,9 @@ TEST_F(
   auto expect_call_set_load = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setLoad(testing::_)).Times(1);
   };
-  franka_msgs::srv::SetLoad::Response response;
-  get_param_service_response<franka_msgs::srv::SetLoad, franka_msgs::srv::SetLoad::Request,
-                             franka_msgs::srv::SetLoad::Response>(
+  agimus_franka_msgs::srv::SetLoad::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetLoad, agimus_franka_msgs::srv::SetLoad::Request,
+                             agimus_franka_msgs::srv::SetLoad::Response>(
       expect_call_set_load, "service_server/set_load", response);
 
   ASSERT_TRUE(response.success);
@@ -568,9 +568,9 @@ TEST_F(
   auto expect_call_set_tcp_frame = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setTCPFrame(testing::_)).Times(1);
   };
-  franka_msgs::srv::SetTCPFrame::Response response;
-  get_param_service_response<franka_msgs::srv::SetTCPFrame, franka_msgs::srv::SetTCPFrame::Request,
-                             franka_msgs::srv::SetTCPFrame::Response>(
+  agimus_franka_msgs::srv::SetTCPFrame::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetTCPFrame, agimus_franka_msgs::srv::SetTCPFrame::Request,
+                             agimus_franka_msgs::srv::SetTCPFrame::Response>(
       expect_call_set_tcp_frame, "service_server/set_tcp_frame", response);
 
   ASSERT_TRUE(response.success);
@@ -582,10 +582,10 @@ TEST_F(
   auto expect_call_set_stiffness_frame = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setStiffnessFrame(testing::_)).Times(1);
   };
-  franka_msgs::srv::SetStiffnessFrame::Response response;
-  get_param_service_response<franka_msgs::srv::SetStiffnessFrame,
-                             franka_msgs::srv::SetStiffnessFrame::Request,
-                             franka_msgs::srv::SetStiffnessFrame::Response>(
+  agimus_franka_msgs::srv::SetStiffnessFrame::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetStiffnessFrame,
+                             agimus_franka_msgs::srv::SetStiffnessFrame::Request,
+                             agimus_franka_msgs::srv::SetStiffnessFrame::Response>(
       expect_call_set_stiffness_frame, "service_server/set_stiffness_frame", response);
 
   ASSERT_TRUE(response.success);
@@ -598,10 +598,10 @@ TEST_F(
       [&](std::shared_ptr<MockRobot> mock_robot) {
         EXPECT_CALL(*mock_robot, setForceTorqueCollisionBehavior(testing::_)).Times(1);
       };
-  franka_msgs::srv::SetForceTorqueCollisionBehavior::Response response;
-  get_param_service_response<franka_msgs::srv::SetForceTorqueCollisionBehavior,
-                             franka_msgs::srv::SetForceTorqueCollisionBehavior::Request,
-                             franka_msgs::srv::SetForceTorqueCollisionBehavior::Response>(
+  agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior,
+                             agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request,
+                             agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Response>(
       expect_call_set_force_torque_collision_behavior,
       "service_server/set_force_torque_collision_behavior", response);
 
@@ -614,10 +614,10 @@ TEST_F(
   auto expect_call_set_full_collision_behavior = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setFullCollisionBehavior(testing::_)).Times(1);
   };
-  franka_msgs::srv::SetFullCollisionBehavior::Response response;
-  get_param_service_response<franka_msgs::srv::SetFullCollisionBehavior,
-                             franka_msgs::srv::SetFullCollisionBehavior::Request,
-                             franka_msgs::srv::SetFullCollisionBehavior::Response>(
+  agimus_franka_msgs::srv::SetFullCollisionBehavior::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetFullCollisionBehavior,
+                             agimus_franka_msgs::srv::SetFullCollisionBehavior::Request,
+                             agimus_franka_msgs::srv::SetFullCollisionBehavior::Response>(
       expect_call_set_full_collision_behavior, "service_server/set_full_collision_behavior",
       response);
 
@@ -630,10 +630,10 @@ TEST_F(FrankaHardwareInterfaceTest, set_joint_stiffness_throws_error) {
         .Times(1)
         .WillRepeatedly(testing::Throw((franka::NetworkException(""))));
   };
-  franka_msgs::srv::SetJointStiffness::Response response;
-  get_param_service_response<franka_msgs::srv::SetJointStiffness,
-                             franka_msgs::srv::SetJointStiffness::Request,
-                             franka_msgs::srv::SetJointStiffness::Response>(
+  agimus_franka_msgs::srv::SetJointStiffness::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetJointStiffness,
+                             agimus_franka_msgs::srv::SetJointStiffness::Request,
+                             agimus_franka_msgs::srv::SetJointStiffness::Response>(
       set_joint_stiffness_mock_throw, "service_server/set_joint_stiffness", response);
 
   ASSERT_FALSE(response.success);
@@ -646,10 +646,10 @@ TEST_F(FrankaHardwareInterfaceTest, set_cartesian_stiffness_throws_error) {
         .Times(1)
         .WillRepeatedly(testing::Throw((franka::NetworkException(""))));
   };
-  franka_msgs::srv::SetCartesianStiffness::Response response;
-  get_param_service_response<franka_msgs::srv::SetCartesianStiffness,
-                             franka_msgs::srv::SetCartesianStiffness::Request,
-                             franka_msgs::srv::SetCartesianStiffness::Response>(
+  agimus_franka_msgs::srv::SetCartesianStiffness::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetCartesianStiffness,
+                             agimus_franka_msgs::srv::SetCartesianStiffness::Request,
+                             agimus_franka_msgs::srv::SetCartesianStiffness::Response>(
       set_cartesian_stiffness_mock_throw, "service_server/set_cartesian_stiffness", response);
   ASSERT_FALSE(response.success);
   ASSERT_EQ(response.error, "network exception error");
@@ -661,9 +661,9 @@ TEST_F(FrankaHardwareInterfaceTest, set_load_throws_error) {
         .Times(1)
         .WillRepeatedly(testing::Throw((franka::NetworkException(""))));
   };
-  franka_msgs::srv::SetLoad::Response response;
-  get_param_service_response<franka_msgs::srv::SetLoad, franka_msgs::srv::SetLoad::Request,
-                             franka_msgs::srv::SetLoad::Response>(
+  agimus_franka_msgs::srv::SetLoad::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetLoad, agimus_franka_msgs::srv::SetLoad::Request,
+                             agimus_franka_msgs::srv::SetLoad::Response>(
       set_load_mock_throw, "service_server/set_load", response);
 
   ASSERT_FALSE(response.success);
@@ -676,9 +676,9 @@ TEST_F(FrankaHardwareInterfaceTest, set_EE_frame_throws_error) {
         .Times(1)
         .WillRepeatedly(testing::Throw((franka::NetworkException(""))));
   };
-  franka_msgs::srv::SetTCPFrame::Response response;
-  get_param_service_response<franka_msgs::srv::SetTCPFrame, franka_msgs::srv::SetTCPFrame::Request,
-                             franka_msgs::srv::SetTCPFrame::Response>(
+  agimus_franka_msgs::srv::SetTCPFrame::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetTCPFrame, agimus_franka_msgs::srv::SetTCPFrame::Request,
+                             agimus_franka_msgs::srv::SetTCPFrame::Response>(
       set_tcp_frame_mock_throw, "service_server/set_tcp_frame", response);
   ASSERT_FALSE(response.success);
   ASSERT_EQ(response.error, "network exception error");
@@ -690,10 +690,10 @@ TEST_F(FrankaHardwareInterfaceTest, set_K_frame_throws_error) {
         .Times(1)
         .WillRepeatedly(testing::Throw((franka::NetworkException(""))));
   };
-  franka_msgs::srv::SetStiffnessFrame::Response response;
-  get_param_service_response<franka_msgs::srv::SetStiffnessFrame,
-                             franka_msgs::srv::SetStiffnessFrame::Request,
-                             franka_msgs::srv::SetStiffnessFrame::Response>(
+  agimus_franka_msgs::srv::SetStiffnessFrame::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetStiffnessFrame,
+                             agimus_franka_msgs::srv::SetStiffnessFrame::Request,
+                             agimus_franka_msgs::srv::SetStiffnessFrame::Response>(
       set_stiffness_frame_mock_throw, "service_server/set_stiffness_frame", response);
   ASSERT_FALSE(response.success);
   ASSERT_EQ(response.error, "network exception error");
@@ -706,10 +706,10 @@ TEST_F(FrankaHardwareInterfaceTest, set_force_torque_collision_behavior_throws_e
         .WillRepeatedly(testing::Throw((franka::NetworkException(""))));
   };
 
-  franka_msgs::srv::SetForceTorqueCollisionBehavior::Response response;
-  get_param_service_response<franka_msgs::srv::SetForceTorqueCollisionBehavior,
-                             franka_msgs::srv::SetForceTorqueCollisionBehavior::Request,
-                             franka_msgs::srv::SetForceTorqueCollisionBehavior::Response>(
+  agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior,
+                             agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request,
+                             agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Response>(
       set_force_torque_collision_behavior_mock_throw,
       "service_server/set_force_torque_collision_behavior", response);
   ASSERT_FALSE(response.success);
@@ -722,10 +722,10 @@ TEST_F(FrankaHardwareInterfaceTest, set_full_collision_behavior_throws_error) {
         .Times(1)
         .WillRepeatedly(testing::Throw((franka::NetworkException(""))));
   };
-  franka_msgs::srv::SetFullCollisionBehavior::Response response;
-  get_param_service_response<franka_msgs::srv::SetFullCollisionBehavior,
-                             franka_msgs::srv::SetFullCollisionBehavior::Request,
-                             franka_msgs::srv::SetFullCollisionBehavior::Response>(
+  agimus_franka_msgs::srv::SetFullCollisionBehavior::Response response;
+  get_param_service_response<agimus_franka_msgs::srv::SetFullCollisionBehavior,
+                             agimus_franka_msgs::srv::SetFullCollisionBehavior::Request,
+                             agimus_franka_msgs::srv::SetFullCollisionBehavior::Response>(
       set_full_collision_behavior_mock_throw, "service_server/set_full_collision_behavior",
       response);
   ASSERT_FALSE(response.success);

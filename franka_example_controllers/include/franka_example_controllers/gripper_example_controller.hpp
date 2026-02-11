@@ -23,8 +23,8 @@
 #include <std_srvs/srv/trigger.hpp>
 
 #include "franka_example_controllers/robot_utils.hpp"
-#include "franka_msgs/action/grasp.hpp"
-#include "franka_msgs/action/move.hpp"
+#include "agimus_franka_msgs/action/grasp.hpp"
+#include "agimus_franka_msgs/action/move.hpp"
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
@@ -92,8 +92,8 @@ class GripperExampleController : public controller_interface::ControllerInterfac
   // Populates the callbacks for the Grasp Goal
   void assignGraspGoalOptionsCallbacks();
 
-  std::shared_ptr<rclcpp_action::Client<franka_msgs::action::Grasp>> gripper_grasp_action_client_;
-  std::shared_ptr<rclcpp_action::Client<franka_msgs::action::Move>> gripper_move_action_client_;
+  std::shared_ptr<rclcpp_action::Client<agimus_franka_msgs::action::Grasp>> gripper_grasp_action_client_;
+  std::shared_ptr<rclcpp_action::Client<agimus_franka_msgs::action::Move>> gripper_move_action_client_;
   std::shared_ptr<rclcpp::Client<std_srvs::srv::Trigger>> gripper_stop_client_;
 
   /**
@@ -102,8 +102,8 @@ class GripperExampleController : public controller_interface::ControllerInterfac
    * GripperExampleController instance, so the SendGoalOptions objects
    * are stored as members of the class.
    */
-  rclcpp_action::Client<franka_msgs::action::Move>::SendGoalOptions move_goal_options_;
-  rclcpp_action::Client<franka_msgs::action::Grasp>::SendGoalOptions grasp_goal_options_;
+  rclcpp_action::Client<agimus_franka_msgs::action::Move>::SendGoalOptions move_goal_options_;
+  rclcpp_action::Client<agimus_franka_msgs::action::Grasp>::SendGoalOptions grasp_goal_options_;
 
   std::string arm_id_;
 };

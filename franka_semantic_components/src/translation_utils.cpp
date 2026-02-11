@@ -19,8 +19,8 @@
 
 namespace franka_semantic_components::translation {
 
-franka_msgs::msg::Errors errorsToMessage(const franka::Errors& error) {
-  franka_msgs::msg::Errors message;
+agimus_franka_msgs::msg::Errors errorsToMessage(const franka::Errors& error) {
+  agimus_franka_msgs::msg::Errors message;
   message.joint_position_limits_violation =
       static_cast<decltype(message.joint_position_limits_violation)>(
           error.joint_position_limits_violation);
@@ -237,14 +237,14 @@ auto toInertia(double mass,
  * @param cartesian_contact The Cartesian contact flags
  * @param joint_collision The joint collision flags
  * @param joint_contact The joint contact flags
- * @return franka_msgs::msg::CollisionIndicators The translated CollisionIndicator message
+ * @return agimus_franka_msgs::msg::CollisionIndicators The translated CollisionIndicator message
  */
 auto toCollisionIndicators(const std::array<double, 6>& cartesian_collision,
                            const std::array<double, 6>& cartesian_contact,
                            const std::array<double, 7>& joint_collision,
                            const std::array<double, 7>& joint_contact)
-    -> franka_msgs::msg::CollisionIndicators {
-  franka_msgs::msg::CollisionIndicators collision_indicators;
+    -> agimus_franka_msgs::msg::CollisionIndicators {
+  agimus_franka_msgs::msg::CollisionIndicators collision_indicators;
   collision_indicators.is_cartesian_linear_collision =
       geometry_msgs::build<geometry_msgs::msg::Vector3>()
           .x(cartesian_collision[0])
@@ -281,14 +281,14 @@ auto toCollisionIndicators(const std::array<double, 6>& cartesian_collision,
  * @param elbow_c The commanded elbow position
  * @param delbow_c The commanded elbow velocity
  * @param ddelbow_c The commanded elbow acceleration
- * @return franka_msgs::msg::Elbow The translated elbow message
+ * @return agimus_franka_msgs::msg::Elbow The translated elbow message
  */
 auto toElbow(const std::array<double, 2>& elbow,
              const std::array<double, 2>& elbow_d,
              const std::array<double, 2>& elbow_c,
              const std::array<double, 2>& delbow_c,
-             const std::array<double, 2>& ddelbow_c) -> franka_msgs::msg::Elbow {
-  franka_msgs::msg::Elbow elbow_message;
+             const std::array<double, 2>& ddelbow_c) -> agimus_franka_msgs::msg::Elbow {
+  agimus_franka_msgs::msg::Elbow elbow_message;
 
   for (size_t i = 0; i < elbow.size(); i++) {
     elbow_message.position.at(i) = elbow.at(i);
@@ -306,7 +306,7 @@ auto toJointStateVector(const std::array<double, 7>& data_vector) -> std::vector
 }
 
 auto updateTimeStamps(const builtin_interfaces::msg::Time& time_stamps,
-                      franka_msgs::msg::FrankaRobotState& robot_state) -> void {
+                      agimus_franka_msgs::msg::FrankaRobotState& robot_state) -> void {
   // The joint states
   robot_state.measured_joint_state.header.stamp = time_stamps;
   robot_state.desired_joint_state.header.stamp = time_stamps;

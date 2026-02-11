@@ -76,7 +76,7 @@ class FrankaRobotStateTest : public ::testing::Test {
   std::array<double, 16> end_effector_pose = {1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,   0.0,
                                               0.0, 0.0, 1.0, 0.0, 2.2, 3.8, 93.23, 1.0};
   franka::RobotMode robot_mode = franka::RobotMode::kUserStopped;
-  franka_msgs::msg::FrankaRobotState franka_robot_state_msg;
+  agimus_franka_msgs::msg::FrankaRobotState franka_robot_state_msg;
 
   std::unique_ptr<FrankaRobotStateTestFriend> franka_state_friend;
 

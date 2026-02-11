@@ -91,7 +91,7 @@ CallbackReturn CartesianPoseExampleController::on_init() {
 
 CallbackReturn CartesianPoseExampleController::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  auto client = get_node()->create_client<franka_msgs::srv::SetFullCollisionBehavior>(
+  auto client = get_node()->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
       "service_server/set_full_collision_behavior");
   auto request = DefaultRobotBehavior::getDefaultCollisionBehaviorRequest();
 

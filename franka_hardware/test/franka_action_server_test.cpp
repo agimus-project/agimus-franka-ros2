@@ -74,7 +74,7 @@ TEST_P(FrankaActionServerTests,
        whenErrorRecoveryActionTriggered_thenErrorRecoveryServiceCallExecuted) {
   auto param = GetParam();
 
-  get_action_service_response<franka_msgs::action::ErrorRecovery>(
+  get_action_service_response<agimus_franka_msgs::action::ErrorRecovery>(
       param.first, "action_server/error_recovery", param.second);
 }
 

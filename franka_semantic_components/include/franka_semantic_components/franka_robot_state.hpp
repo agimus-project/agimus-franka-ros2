@@ -21,12 +21,12 @@
 #include "urdf/model.h"
 
 #include "franka/robot_state.h"
-#include "franka_msgs/msg/franka_robot_state.hpp"
+#include "agimus_franka_msgs/msg/franka_robot_state.hpp"
 #include "semantic_components/semantic_component_interface.hpp"
 
 namespace franka_semantic_components {
 class FrankaRobotState
-    : public semantic_components::SemanticComponentInterface<franka_msgs::msg::FrankaRobotState> {
+    : public semantic_components::SemanticComponentInterface<agimus_franka_msgs::msg::FrankaRobotState> {
  public:
   explicit FrankaRobotState(const std::string& name, const std::string& robot_description);
 
@@ -35,13 +35,13 @@ class FrankaRobotState
   /**
    * @param[in/out] message Initializes this message to contain the respective frame_id information
    */
-  virtual auto initialize_robot_state_msg(franka_msgs::msg::FrankaRobotState& message) -> void;
+  virtual auto initialize_robot_state_msg(agimus_franka_msgs::msg::FrankaRobotState& message) -> void;
 
   /**
    * Constructs and return a FrankaRobotState message from the current values.
    * \return FrankaRobotState message from values;
    */
-  virtual auto get_values_as_message(franka_msgs::msg::FrankaRobotState& message) -> bool;
+  virtual auto get_values_as_message(agimus_franka_msgs::msg::FrankaRobotState& message) -> bool;
 
  protected:
   /**

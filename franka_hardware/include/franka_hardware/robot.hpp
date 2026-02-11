@@ -31,13 +31,13 @@
 #include <franka/robot.h>
 #include <franka_hardware/model.hpp>
 
-#include <franka_msgs/srv/set_cartesian_stiffness.hpp>
-#include <franka_msgs/srv/set_force_torque_collision_behavior.hpp>
-#include <franka_msgs/srv/set_full_collision_behavior.hpp>
-#include <franka_msgs/srv/set_joint_stiffness.hpp>
-#include <franka_msgs/srv/set_load.hpp>
-#include <franka_msgs/srv/set_stiffness_frame.hpp>
-#include <franka_msgs/srv/set_tcp_frame.hpp>
+#include <agimus_franka_msgs/srv/set_cartesian_stiffness.hpp>
+#include <agimus_franka_msgs/srv/set_force_torque_collision_behavior.hpp>
+#include <agimus_franka_msgs/srv/set_full_collision_behavior.hpp>
+#include <agimus_franka_msgs/srv/set_joint_stiffness.hpp>
+#include <agimus_franka_msgs/srv/set_load.hpp>
+#include <agimus_franka_msgs/srv/set_stiffness_frame.hpp>
+#include <agimus_franka_msgs/srv/set_tcp_frame.hpp>
 
 #include <rclcpp/logger.hpp>
 
@@ -142,14 +142,14 @@ class Robot {
    *
    * User-provided torques are not affected by this setting.
    *
-   * @param[in] franka_msgs::srv::SetJointStiffness::Request::SharedPtr requests with JointStiffness
+   * @param[in] agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr requests with JointStiffness
    * values
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
   virtual void setJointStiffness(
-      const franka_msgs::srv::SetJointStiffness::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr& req);
 
   /**
    * Sets the Cartesian stiffness (for x, y, z, roll, pitch, yaw) in the internal
@@ -160,12 +160,12 @@ class Robot {
    *
    * Inputs received by the torque controller are not affected by this setting.
    *
-   * @param[in] franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr request
+   * @param[in] agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr request
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
   virtual void setCartesianStiffness(
-      const franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& req);
 
   /**
    * Sets dynamic parameters of a payload.
@@ -174,38 +174,38 @@ class Robot {
    * This is not for setting end effector parameters, which have to be set in the administrator's
    * interface.
    *
-   * @param[in] franka_msgs::srv::SetLoad::Request::SharedPtr request
+   * @param[in] agimus_franka_msgs::srv::SetLoad::Request::SharedPtr request
    *
    * @throw CommandException if the Control reports an error.
    * @throw
    */
-  virtual void setLoad(const franka_msgs::srv::SetLoad::Request::SharedPtr& req);
+  virtual void setLoad(const agimus_franka_msgs::srv::SetLoad::Request::SharedPtr& req);
 
   /**
    * Sets the transformation \f$^{NE}T_{EE}\f$ from nominal end effector to end effector frame.
    *
    * The transformation matrix is represented as a vectorized 4x4 matrix in column-major format.
    *
-   * @param[in] franka_msgs::srv::SetTCPFrame::Request::SharedPtr req
+   * @param[in] agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr req
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
-  virtual void setTCPFrame(const franka_msgs::srv::SetTCPFrame::Request::SharedPtr& req);
+  virtual void setTCPFrame(const agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr& req);
 
   /**
    * Sets the transformation \f$^{EE}T_K\f$ from end effector frame to stiffness frame.
    *
    * The transformation matrix is represented as a vectorized 4x4 matrix in column-major format.
    *
-   * @param[in] franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr req.
+   * @param[in] agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr req.
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    *
    */
   virtual void setStiffnessFrame(
-      const franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& req);
 
   /**
    * Changes the collision behavior.
@@ -217,13 +217,13 @@ class Robot {
    * Forces or torques above the upper threshold are registered as collision and cause the robot to
    * stop moving.
    *
-   * @param[in] franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr req
+   * @param[in] agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr req
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
   virtual void setForceTorqueCollisionBehavior(
-      const franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& req);
 
   /**
    * Changes the collision behavior.
@@ -235,13 +235,13 @@ class Robot {
    * Forces or torques above the upper threshold are registered as collision and cause the robot to
    * stop moving.
    *
-   * @param[in] franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr request msg
+   * @param[in] agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr request msg
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
   virtual void setFullCollisionBehavior(
-      const franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& req);
 
   /**
    * Starts an automatic recovery process.

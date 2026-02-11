@@ -27,7 +27,7 @@ class MockFrankaRobotState : public franka_semantic_components::FrankaRobotState
   MockFrankaRobotState(const std::string& name, const std::string& robot_description)
       : FrankaRobotState(name, robot_description){};
 
-  MOCK_METHOD(void, initialize_robot_state_msg, (franka_msgs::msg::FrankaRobotState&), (override));
+  MOCK_METHOD(void, initialize_robot_state_msg, (agimus_franka_msgs::msg::FrankaRobotState&), (override));
 };
 
 using namespace franka_robot_state_broadcaster;
