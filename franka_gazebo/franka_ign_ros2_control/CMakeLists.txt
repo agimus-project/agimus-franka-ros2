@@ -1,19 +1,6 @@
-cmake_minimum_required(VERSION 3.5)
-project(franka_ign_ros2_control)
-
-# Default to C11
-if(NOT CMAKE_C_STANDARD)
-    set(CMAKE_C_STANDARD 11)
-endif()
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-endif()
-
-# Compiler options
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+cmake_minimum_required(VERSION 3.22)
+set(BASE_NAME franka_ign_ros2_control)
+project(agimus_${BASE_NAME})
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
@@ -23,10 +10,10 @@ find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
-find_package(franka_hardware REQUIRED)
+find_package(agimus_franka_hardware REQUIRED)
 find_package(urdf REQUIRED)
 find_package(kdl_parser REQUIRED)
-find_package(Franka 0.9.3 REQUIRED)
+find_package(agimus_Franka 0.9.3 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_eigen REQUIRED)
 
@@ -56,16 +43,16 @@ set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
 
 include_directories(include)
 
-add_library(${PROJECT_NAME}-system SHARED
+add_library(${BASE_NAME}-system SHARED
   src/ign_ros2_control_plugin.cpp
   src/model_kdl.cpp
 )
 
-target_link_libraries(${PROJECT_NAME}-system
+target_link_libraries(${BASE_NAME}-system
   ignition-gazebo${IGN_GAZEBO_VER}::core
   ignition-plugin${IGN_PLUGIN_VER}::register
 )
-ament_target_dependencies(${PROJECT_NAME}-system
+ament_target_dependencies(${BASE_NAME}-system
   ament_index_cpp
   controller_manager
   hardware_interface
@@ -73,8 +60,8 @@ ament_target_dependencies(${PROJECT_NAME}-system
   rclcpp
   yaml_cpp_vendor
   rclcpp_lifecycle
-  franka_hardware
-  Franka
+  agimus_franka_hardware
+  agimus_Franka
   urdf
   kdl_parser
   tf2_geometry_msgs
@@ -122,10 +109,10 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME}-system ign_hardware_plugins)
+ament_export_libraries(${BASE_NAME}-system ign_hardware_plugins)
 
 # Install directories
-install(TARGETS ${PROJECT_NAME}-system
+install(TARGETS ${BASE_NAME}-system
   DESTINATION lib
 )
 

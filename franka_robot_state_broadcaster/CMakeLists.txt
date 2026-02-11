@@ -1,14 +1,6 @@
-cmake_minimum_required(VERSION 3.5)
-project(franka_robot_state_broadcaster)
-
-if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+cmake_minimum_required(VERSION 3.22)
+set(BASE_NAME franka_robot_state_broadcaster)
+project(agimus_${BASE_NAME})
 
 option(CHECK_TIDY "Adds clang-tidy tests" OFF)
 
@@ -17,8 +9,8 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
     control_msgs
     controller_interface
     controller_manager
-    franka_msgs
-    franka_semantic_components
+    agimus_franka_msgs
+    agimus_franka_semantic_components
     generate_parameter_library
     pluginlib
     rclcpp_lifecycle
@@ -35,11 +27,11 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
-add_library(franka_robot_state_broadcaster
+add_library(${BASE_NAME}
         SHARED
-        src/franka_robot_state_broadcaster.cpp)
+        src/${BASE_NAME}.cpp)
 target_include_directories(
-  franka_robot_state_broadcaster
+  ${BASE_NAME}
         PRIVATE
         include
 )
@@ -47,17 +39,17 @@ target_include_directories(
 
 generate_parameter_library(franka_robot_state_broadcaster_parameters src/franka_robot_state_broadcaster_parameters.yaml)
 
-target_link_libraries(franka_robot_state_broadcaster
+target_link_libraries(${BASE_NAME}
                       PUBLIC franka_robot_state_broadcaster_parameters)
-ament_target_dependencies(franka_robot_state_broadcaster PUBLIC
+ament_target_dependencies(${BASE_NAME} PUBLIC
                           ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 
-pluginlib_export_plugin_description_file(controller_interface franka_robot_state_broadcaster.xml)
+pluginlib_export_plugin_description_file(controller_interface ${BASE_NAME}.xml)
 
 
 install(
-        TARGETS franka_robot_state_broadcaster
+        TARGETS ${BASE_NAME}
         DESTINATION lib
 )
 install(
@@ -96,12 +88,12 @@ if(BUILD_TESTING)
         test/test_franka_robot_state_broadcaster.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/franka_robot_state_broadcaster_parameters.yaml)
     target_include_directories(${PROJECT_NAME}_test PRIVATE include)
-    target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+    target_link_libraries(${PROJECT_NAME}_test ${BASE_NAME})
     ament_target_dependencies(${PROJECT_NAME}_test controller_manager hardware_interface)
 
     ament_add_gmock(test_load_franka_robot_state_broadcaster test/test_load_franka_robot_state_broadcaster.cpp)
     target_include_directories(test_load_franka_robot_state_broadcaster PRIVATE include)
-    target_link_libraries(test_load_franka_robot_state_broadcaster ${PROJECT_NAME})
+    target_link_libraries(test_load_franka_robot_state_broadcaster ${BASE_NAME})
     ament_target_dependencies(
       test_load_franka_robot_state_broadcaster controller_manager hardware_interface
       ros2_control_test_assets)
@@ -111,7 +103,7 @@ ament_export_include_directories(
         include
 )
 ament_export_libraries(
-        franka_robot_state_broadcaster
+        ${BASE_NAME}
 )
 ament_export_dependencies(
         hardware_interface

@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.5)
-project(franka_fr3_moveit_config)
+cmake_minimum_required(VERSION 3.22)
+set(BASE_NAME franka_fr3_moveit_config)
+project(agimus_${BASE_NAME})
 
 find_package(ament_cmake REQUIRED)
 
 install(
   DIRECTORY config launch srdf rviz
-  DESTINATION share/${PROJECT_NAME}
+  DESTINATION share/${BASE_NAME}
 )
 
 if(BUILD_TESTING)

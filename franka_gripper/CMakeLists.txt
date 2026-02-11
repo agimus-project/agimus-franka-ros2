@@ -1,17 +1,10 @@
-cmake_minimum_required(VERSION 3.5)
-project(franka_gripper)
-
-if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+cmake_minimum_required(VERSION 3.22)
+set(BASE_NAME franka_gripper)
+project(agimus_${BASE_NAME})
 
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
-find_package(franka_msgs REQUIRED)
+find_package(agimus_franka_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
@@ -19,21 +12,21 @@ find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(control_msgs REQUIRED)
 
-find_package(Franka 0.9.3 REQUIRED)
+find_package(agimus_Franka 0.9.3 REQUIRED)
 
 add_library(gripper_server SHARED
         src/gripper_action_server.cpp)
-target_link_libraries(gripper_server Franka::Franka)
+target_link_libraries(gripper_server agimus_Franka::Franka)
 target_include_directories(gripper_server PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
 
 ament_target_dependencies(gripper_server
-        franka_msgs
+        agimus_franka_msgs
         rclcpp
         rclcpp_action
         rclcpp_components
-        Franka
+        agimus_Franka
         sensor_msgs
         std_srvs
         control_msgs)
@@ -46,13 +39,13 @@ install(TARGETS
 
 install(DIRECTORY
         launch config
-        DESTINATION share/${PROJECT_NAME}/)
+        DESTINATION share/${BASE_NAME}/)
 
-ament_python_install_package(${PROJECT_NAME})
+ament_python_install_package(${BASE_NAME})
 
 install(PROGRAMS
         scripts/fake_gripper_state_publisher.py
-        DESTINATION lib/${PROJECT_NAME})
+        DESTINATION lib/${BASE_NAME})
 
 if(BUILD_TESTING)
     find_package(ament_cmake_clang_format REQUIRED)

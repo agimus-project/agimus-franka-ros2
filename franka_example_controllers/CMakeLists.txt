@@ -1,15 +1,6 @@
-cmake_minimum_required(VERSION 3.5)
-project(franka_example_controllers)
-
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+cmake_minimum_required(VERSION 3.22)
+set(PROJECT_NAME franka_example_controllers)
+project(agimus_${BASE_NAME})
 
 option(CHECK_TIDY "Adds clang-tidy tests" OFF)
 
@@ -17,8 +8,8 @@ option(CHECK_TIDY "Adds clang-tidy tests" OFF)
 find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(controller_interface REQUIRED)
-find_package(franka_msgs REQUIRED)
-find_package(franka_semantic_components REQUIRED)
+find_package(agimus_franka_msgs REQUIRED)
+find_package(agimus_franka_semantic_components REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(moveit_core REQUIRED)
 find_package(moveit_msgs REQUIRED)
@@ -30,7 +21,7 @@ find_package(std_srvs REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 add_library(
-        ${PROJECT_NAME}
+        ${BASE_NAME}
         SHARED
         src/cartesian_elbow_example_controller.cpp
         src/cartesian_orientation_example_controller.cpp
@@ -47,13 +38,13 @@ add_library(
         src/motion_generator.cpp
         src/move_to_start_example_controller.cpp)
 target_include_directories(
-        ${PROJECT_NAME}
+        ${BASE_NAME}
         PUBLIC
         include
         ${EIGEN3_INCLUDE_DIRS}
 )
 ament_target_dependencies(
-        ${PROJECT_NAME}
+        ${BASE_NAME}
         controller_interface
         franka_msgs
         franka_semantic_components
@@ -68,11 +59,11 @@ ament_target_dependencies(
 )
 
 pluginlib_export_plugin_description_file(
-        controller_interface franka_example_controllers.xml)
+  controller_interface ${BASE_NAME}.xml)
 
 install(
         TARGETS
-        ${PROJECT_NAME}
+        ${BASE_NAME}
         RUNTIME DESTINATION bin
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
@@ -123,11 +114,11 @@ if(BUILD_TESTING)
 
     ament_add_gmock(${PROJECT_NAME}_gravity_test test/test_gravity_compensation_example.cpp)
     target_include_directories(${PROJECT_NAME}_gravity_test PRIVATE include)
-    target_link_libraries(${PROJECT_NAME}_gravity_test ${PROJECT_NAME})
+    target_link_libraries(${PROJECT_NAME}_gravity_test ${BASE_NAME})
 
     ament_add_gmock(${PROJECT_NAME}_move_to_start_test test/test_move_to_start_example_controller.cpp)
     target_include_directories(${PROJECT_NAME}_move_to_start_test PRIVATE include)
-    target_link_libraries(${PROJECT_NAME}_move_to_start_test ${PROJECT_NAME})
+    target_link_libraries(${PROJECT_NAME}_move_to_start_test ${BASE_NAME})
 
     if(CHECK_TIDY)
         find_package(ament_cmake_clang_tidy REQUIRED)
@@ -140,7 +131,7 @@ ament_export_include_directories(
         include
 )
 ament_export_libraries(
-        ${PROJECT_NAME}
+        ${BASE_NAME}
 )
 ament_export_dependencies(
         controller_interface

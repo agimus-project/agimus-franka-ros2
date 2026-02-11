@@ -1,22 +1,13 @@
-cmake_minimum_required(VERSION 3.5)
-project(integration_launch_testing)
-
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+cmake_minimum_required(VERSION 3.22)
+set(BASE_NAME integration_launch_testing)
+project(agimus_${BASE_NAME})
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
 install(
   DIRECTORY test
-  DESTINATION share/${PROJECT_NAME}
+  DESTINATION share/${BASE_NAME}
 )
 
 if(BUILD_TESTING)
@@ -35,6 +26,6 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_libraries(
-        ${PROJECT_NAME}
+  ${BASE_NAME}
 )
 ament_package()

@@ -25,9 +25,9 @@
 #include <franka/gripper.h>
 #include <franka/gripper_state.h>
 #include <control_msgs/action/gripper_command.hpp>
-#include <franka_msgs/action/grasp.hpp>
-#include <franka_msgs/action/homing.hpp>
-#include <franka_msgs/action/move.hpp>
+#include <agimus_franka_msgs/action/grasp.hpp>
+#include <agimus_franka_msgs/action/homing.hpp>
+#include <agimus_franka_msgs/action/move.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -48,13 +48,13 @@ bool resultIsReady(std::future<T>& t, std::chrono::nanoseconds future_wait_timeo
 /// ROS node that offers multiple actions to use the gripper.
 class GripperActionServer : public rclcpp::Node {
  public:
-  using Homing = franka_msgs::action::Homing;
+  using Homing = agimus_franka_msgs::action::Homing;
   using GoalHandleHoming = rclcpp_action::ServerGoalHandle<Homing>;
 
-  using Move = franka_msgs::action::Move;
+  using Move = agimus_franka_msgs::action::Move;
   using GoalHandleMove = rclcpp_action::ServerGoalHandle<Move>;
 
-  using Grasp = franka_msgs::action::Grasp;
+  using Grasp = agimus_franka_msgs::action::Grasp;
   using GoalHandleGrasp = rclcpp_action::ServerGoalHandle<Grasp>;
 
   using GripperCommand = control_msgs::action::GripperCommand;

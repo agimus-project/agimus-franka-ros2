@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>franka_ros2</name>
+  <name>agimus_franka_ros2</name>
   <version>1.0.0</version>
-  <description>Meta package of franka_ros2</description>
-  <maintainer email="support@franka.de">Franka Robotics GmbH</maintainer>
-  <license>Apache 2.0</license>
+  <description>fork of franka_ros2 for franka robots not maintained anymore by franka</description>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>franka_bringup</depend>
-  <depend>franka_description</depend>
-  <depend>franka_example_controllers</depend>
-  <depend>franka_fr3_moveit_config</depend>
-  <depend>franka_gazebo_bringup</depend>
-  <depend>franka_ign_ros2_control</depend>
-  <depend>franka_gripper</depend>
-  <depend>franka_hardware</depend>
-  <depend>franka_msgs</depend>
-  <depend>libfranka</depend>
-  
+  <depend>agimus_franka_bringup</depend>
+  <depend>agimus_franka_description</depend>
+  <depend>agimus_franka_example_controllers</depend>
+  <depend>agimus_franka_fr3_moveit_config</depend>
+  <depend>agimus_franka_gazebo_bringup</depend>
+  <depend>agimus_franka_ign_ros2_control</depend>
+  <depend>agimus_franka_gripper</depend>
+  <depend>agimus_franka_hardware</depend>
+  <depend>agimus_franka_msgs</depend>
+  <depend>agimus_libfranka</depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

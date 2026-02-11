@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>franka_fr3_moveit_config</name>
+  <name>agimus_franka_fr3_moveit_config</name>
   <version>1.0.0</version>
-  <description>Contains Moveit2 configuration files for Franka Robotics research robots</description>
-  <maintainer email="support@franka.de">Franka Robotics GmbH</maintainer>
-  <license>Apache 2.0</license>
+  <description>fork of franka_fr3_moveit_config for franka robots not maintained anymore by franka</description>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <exec_depend>franka_description</exec_depend>
-  <exec_depend>franka_hardware</exec_depend>
-  <exec_depend>franka_gripper</exec_depend>
+  <exec_depend>agimus_franka_description</exec_depend>
+  <exec_depend>agimus_franka_hardware</exec_depend>
+  <exec_depend>agimus_franka_gripper</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>

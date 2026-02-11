@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>franka_robot_state_broadcaster</name>
+  <name>agimus_franka_robot_state_broadcaster</name>
   <version>1.0.0</version>
-  <description>Broadcaster to publish robot states</description>
-  <maintainer email="support@franka.de">Franka Robotics GmbH</maintainer>
-  <license>Apache 2.0</license>
+  <description>fork of franka_robot_state_broadcaster for franka robots not maintained anymore by franka</description>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -12,8 +12,8 @@
   <depend>builtin_interfaces</depend>
   <depend>control_msgs</depend>
   <depend>controller_interface</depend>
-  <depend>franka_msgs</depend>
-  <depend>franka_semantic_components</depend>
+  <depend>agimus_franka_msgs</depend>
+  <depend>agimus_franka_semantic_components</depend>
   <depend>generate_parameter_library</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp_lifecycle</depend>

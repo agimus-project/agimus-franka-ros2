@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>franka_gripper</name>
+  <name>agimus_franka_gripper</name>
   <version>1.0.0</version>
-  <description>This package implements the franka gripper of type Franka Hand for the use in ROS2</description>
-  <maintainer email="support@franka.de">Franka Robotics GmbH</maintainer>
-  <license>Apache 2.0</license>
+  <description>fork of franka_gripper for franka robots not maintained anymore by franka</description>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
-  <depend>libfranka</depend>
-  <depend>franka_msgs</depend>
+  <depend>agimus_libfranka</depend>
+  <depend>agimus_franka_msgs</depend>
   <depend>rclpy</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
