@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.22)
 
-project(franka_gazebo_bringup)
+set(BASE_NAME franka_gazebo_bringup)
+project(agimus_${BASE_NAME})
 
 find_package(ament_cmake REQUIRED)
 
@@ -8,7 +9,7 @@ find_package(ament_cmake REQUIRED)
 install(
   DIRECTORY
     launch config
-  DESTINATION share/${PROJECT_NAME}
+  DESTINATION share/${BASE_NAME}
 )
 
 if(BUILD_TESTING)

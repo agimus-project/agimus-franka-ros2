@@ -1,9 +1,6 @@
-cmake_minimum_required(VERSION 3.8)
-project(franka_ros2)
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+cmake_minimum_required(VERSION 3.22)
+set(BASE_NAME franka_ros2)
+project(agimus_${BASE_NAME})
 
 # find dependencies
 find_package(ament_cmake REQUIRED)

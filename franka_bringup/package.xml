@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>franka_bringup</name>
+  <name>agimus_franka_bringup</name>
   <version>1.0.0</version>
-  <description>Package with launch files and run-time configurations for using Franka Robotics research robots with ros2_control</description>
-  <maintainer email="support@franka.de">Franka Robotics GmbH</maintainer>
-  <license>Apache 2.0</license>
+  <description>fork of franka_bringup for franka robots not maintained anymore by franka</description>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <exec_depend>franka_description</exec_depend>
-  <exec_depend>franka_hardware</exec_depend>
-  <exec_depend>franka_robot_state_broadcaster</exec_depend>
+  <exec_depend>agimus_franka_description</exec_depend>
+  <exec_depend>agimus_franka_hardware</exec_depend>
+  <exec_depend>agimus_franka_robot_state_broadcaster</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>controller_manager</exec_depend>

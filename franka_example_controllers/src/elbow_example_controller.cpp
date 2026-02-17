@@ -86,7 +86,7 @@ CallbackReturn ElbowExampleController::on_configure(
       std::make_unique<franka_semantic_components::FrankaCartesianVelocityInterface>(
           franka_semantic_components::FrankaCartesianVelocityInterface(k_elbow_activated_));
 
-  auto client = get_node()->create_client<franka_msgs::srv::SetFullCollisionBehavior>(
+  auto client = get_node()->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
       "service_server/set_full_collision_behavior");
   auto request = DefaultRobotBehavior::getDefaultCollisionBehaviorRequest();
 

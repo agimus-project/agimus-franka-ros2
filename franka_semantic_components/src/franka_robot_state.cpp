@@ -127,7 +127,7 @@ auto FrankaRobotState::set_joints_from_urdf() -> void {
   }
 }
 
-auto FrankaRobotState::initialize_robot_state_msg(franka_msgs::msg::FrankaRobotState& message)
+auto FrankaRobotState::initialize_robot_state_msg(agimus_franka_msgs::msg::FrankaRobotState& message)
     -> void {
   // The joint state - joint 1 is the first joint while joint 7 is the last revolute joint
   message.measured_joint_state.name =
@@ -169,7 +169,7 @@ auto FrankaRobotState::initialize_robot_state_msg(franka_msgs::msg::FrankaRobotS
   message.inertia_total.header.frame_id = link_names[kEndEffectorLinkIndex];
 }
 
-auto FrankaRobotState::get_values_as_message(franka_msgs::msg::FrankaRobotState& message) -> bool {
+auto FrankaRobotState::get_values_as_message(agimus_franka_msgs::msg::FrankaRobotState& message) -> bool {
   const std::string full_interface_name = robot_name_ + "/" + state_interface_name_;
 
   auto franka_state_interface =
@@ -252,31 +252,31 @@ auto FrankaRobotState::get_values_as_message(franka_msgs::msg::FrankaRobotState&
 
   switch (robot_state_ptr->robot_mode) {
     case franka::RobotMode::kOther:
-      message.robot_mode = franka_msgs::msg::FrankaRobotState::ROBOT_MODE_OTHER;
+      message.robot_mode = agimus_franka_msgs::msg::FrankaRobotState::ROBOT_MODE_OTHER;
       break;
 
     case franka::RobotMode::kIdle:
-      message.robot_mode = franka_msgs::msg::FrankaRobotState::ROBOT_MODE_IDLE;
+      message.robot_mode = agimus_franka_msgs::msg::FrankaRobotState::ROBOT_MODE_IDLE;
       break;
 
     case franka::RobotMode::kMove:
-      message.robot_mode = franka_msgs::msg::FrankaRobotState::ROBOT_MODE_MOVE;
+      message.robot_mode = agimus_franka_msgs::msg::FrankaRobotState::ROBOT_MODE_MOVE;
       break;
 
     case franka::RobotMode::kGuiding:
-      message.robot_mode = franka_msgs::msg::FrankaRobotState::ROBOT_MODE_GUIDING;
+      message.robot_mode = agimus_franka_msgs::msg::FrankaRobotState::ROBOT_MODE_GUIDING;
       break;
 
     case franka::RobotMode::kReflex:
-      message.robot_mode = franka_msgs::msg::FrankaRobotState::ROBOT_MODE_REFLEX;
+      message.robot_mode = agimus_franka_msgs::msg::FrankaRobotState::ROBOT_MODE_REFLEX;
       break;
 
     case franka::RobotMode::kUserStopped:
-      message.robot_mode = franka_msgs::msg::FrankaRobotState::ROBOT_MODE_USER_STOPPED;
+      message.robot_mode = agimus_franka_msgs::msg::FrankaRobotState::ROBOT_MODE_USER_STOPPED;
       break;
 
     case franka::RobotMode::kAutomaticErrorRecovery:
-      message.robot_mode = franka_msgs::msg::FrankaRobotState::ROBOT_MODE_AUTOMATIC_ERROR_RECOVERY;
+      message.robot_mode = agimus_franka_msgs::msg::FrankaRobotState::ROBOT_MODE_AUTOMATIC_ERROR_RECOVERY;
       break;
   }
   return true;

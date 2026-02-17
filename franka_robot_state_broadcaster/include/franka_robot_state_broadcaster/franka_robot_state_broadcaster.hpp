@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "controller_interface/controller_interface.hpp"
-#include "franka_msgs/msg/franka_robot_state.hpp"
+#include "agimus_franka_msgs/msg/franka_robot_state.hpp"
 #include "franka_robot_state_broadcaster_parameters.hpp"
 #include "franka_semantic_components/franka_robot_state.hpp"
 #include "rclcpp_lifecycle/lifecycle_publisher.hpp"
@@ -60,8 +60,8 @@ class FrankaRobotStateBroadcaster : public controller_interface::ControllerInter
   Params params;
 
   std::string state_interface_name{"robot_state"};
-  std::shared_ptr<rclcpp::Publisher<franka_msgs::msg::FrankaRobotState>> franka_state_publisher;
-  std::shared_ptr<realtime_tools::RealtimePublisher<franka_msgs::msg::FrankaRobotState>>
+  std::shared_ptr<rclcpp::Publisher<agimus_franka_msgs::msg::FrankaRobotState>> franka_state_publisher;
+  std::shared_ptr<realtime_tools::RealtimePublisher<agimus_franka_msgs::msg::FrankaRobotState>>
       realtime_franka_state_publisher;
   std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::PoseStamped>>
       current_pose_stamped_publisher_;
@@ -88,7 +88,7 @@ class FrankaRobotStateBroadcaster : public controller_interface::ControllerInter
   const std::string kExternalJointTorques = "~/external_joint_torques";
   const std::string kDesiredJointStates = "~/desired_joint_states";
 
-  franka_msgs::msg::FrankaRobotState franka_robot_state_msg_;
+  agimus_franka_msgs::msg::FrankaRobotState franka_robot_state_msg_;
   std::unique_ptr<franka_semantic_components::FrankaRobotState> franka_robot_state_;
 };
 

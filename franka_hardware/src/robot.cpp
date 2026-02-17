@@ -302,7 +302,7 @@ void Robot::initializeCartesianPoseInterface() {
   cartesian_pose_interface_active_ = true;
 }
 
-void Robot::setJointStiffness(const franka_msgs::srv::SetJointStiffness::Request::SharedPtr& req) {
+void Robot::setJointStiffness(const agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr& req) {
   std::lock_guard<std::mutex> lock(write_mutex_);
   std::array<double, 7> joint_stiffness{};
   std::copy(req->joint_stiffness.cbegin(), req->joint_stiffness.cend(), joint_stiffness.begin());
@@ -310,7 +310,7 @@ void Robot::setJointStiffness(const franka_msgs::srv::SetJointStiffness::Request
 }
 
 void Robot::setCartesianStiffness(
-    const franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& req) {
+    const agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& req) {
   std::lock_guard<std::mutex> lock(write_mutex_);
   std::array<double, 6> cartesian_stiffness{};
   std::copy(req->cartesian_stiffness.cbegin(), req->cartesian_stiffness.cend(),
@@ -318,7 +318,7 @@ void Robot::setCartesianStiffness(
   robot_->setCartesianImpedance(cartesian_stiffness);
 }
 
-void Robot::setLoad(const franka_msgs::srv::SetLoad::Request::SharedPtr& req) {
+void Robot::setLoad(const agimus_franka_msgs::srv::SetLoad::Request::SharedPtr& req) {
   std::lock_guard<std::mutex> lock(write_mutex_);
   double mass(req->mass);
   std::array<double, 3> center_of_mass{};  // NOLINT [readability-identifier-naming]
@@ -329,7 +329,7 @@ void Robot::setLoad(const franka_msgs::srv::SetLoad::Request::SharedPtr& req) {
   robot_->setLoad(mass, center_of_mass, load_inertia);
 }
 
-void Robot::setTCPFrame(const franka_msgs::srv::SetTCPFrame::Request::SharedPtr& req) {
+void Robot::setTCPFrame(const agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr& req) {
   std::lock_guard<std::mutex> lock(write_mutex_);
 
   std::array<double, 16> transformation{};  // NOLINT [readability-identifier-naming]
@@ -337,7 +337,7 @@ void Robot::setTCPFrame(const franka_msgs::srv::SetTCPFrame::Request::SharedPtr&
   robot_->setEE(transformation);
 }
 
-void Robot::setStiffnessFrame(const franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& req) {
+void Robot::setStiffnessFrame(const agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& req) {
   std::lock_guard<std::mutex> lock(write_mutex_);
 
   std::array<double, 16> transformation{};
@@ -346,7 +346,7 @@ void Robot::setStiffnessFrame(const franka_msgs::srv::SetStiffnessFrame::Request
 }
 
 void Robot::setForceTorqueCollisionBehavior(
-    const franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& req) {
+    const agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& req) {
   std::lock_guard<std::mutex> lock(write_mutex_);
 
   std::array<double, 7> lower_torque_thresholds_nominal{};
@@ -367,7 +367,7 @@ void Robot::setForceTorqueCollisionBehavior(
 }
 
 void Robot::setFullCollisionBehavior(
-    const franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& req) {
+    const agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& req) {
   std::lock_guard<std::mutex> lock(write_mutex_);
 
   std::array<double, 7> lower_torque_thresholds_acceleration{};

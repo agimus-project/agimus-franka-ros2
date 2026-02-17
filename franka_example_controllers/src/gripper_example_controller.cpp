@@ -53,10 +53,10 @@ CallbackReturn GripperExampleController::on_init() {
 CallbackReturn GripperExampleController::on_configure(const rclcpp_lifecycle::State&) {
   arm_id_ = get_node()->get_parameter("arm_id").as_string();
 
-  gripper_grasp_action_client_ = rclcpp_action::create_client<franka_msgs::action::Grasp>(
+  gripper_grasp_action_client_ = rclcpp_action::create_client<agimus_franka_msgs::action::Grasp>(
       get_node(), fmt::format("/{}_gripper/grasp", arm_id_));
 
-  gripper_move_action_client_ = rclcpp_action::create_client<franka_msgs::action::Move>(
+  gripper_move_action_client_ = rclcpp_action::create_client<agimus_franka_msgs::action::Move>(
       get_node(), fmt::format("/{}_gripper/move", arm_id_));
 
   gripper_stop_client_ =
@@ -109,7 +109,7 @@ controller_interface::return_type GripperExampleController::update(const rclcpp:
 
 void GripperExampleController::assignMoveGoalOptionsCallbacks() {
   move_goal_options_.goal_response_callback =
-      [this](const std::shared_ptr<rclcpp_action::ClientGoalHandle<franka_msgs::action::Move>>&
+      [this](const std::shared_ptr<rclcpp_action::ClientGoalHandle<agimus_franka_msgs::action::Move>>&
                  goal_handle) {
         if (!goal_handle) {
           RCLCPP_ERROR(get_node()->get_logger(),
@@ -120,15 +120,15 @@ void GripperExampleController::assignMoveGoalOptionsCallbacks() {
       };
 
   move_goal_options_.feedback_callback =
-      [this](const std::shared_ptr<rclcpp_action::ClientGoalHandle<franka_msgs::action::Move>>&,
-             const std::shared_ptr<const franka_msgs::action::Move_Feedback>& feedback) {
+      [this](const std::shared_ptr<rclcpp_action::ClientGoalHandle<agimus_franka_msgs::action::Move>>&,
+             const std::shared_ptr<const agimus_franka_msgs::action::Move_Feedback>& feedback) {
         RCLCPP_INFO(get_node()->get_logger(), "Move Goal current_width [%f].",
                     feedback->current_width);
       };
 
   move_goal_options_.result_callback =
       [this](
-          const rclcpp_action::ClientGoalHandle<franka_msgs::action::Move>::WrappedResult& result) {
+          const rclcpp_action::ClientGoalHandle<agimus_franka_msgs::action::Move>::WrappedResult& result) {
         RCLCPP_INFO(get_node()->get_logger(), "Move Goal result %s.",
                     (rclcpp_action::ResultCode::SUCCEEDED == result.code ? YELLOW "SUCCESS" RESET
                                                                          : RED "FAIL" RESET));
@@ -140,7 +140,7 @@ void GripperExampleController::assignMoveGoalOptionsCallbacks() {
 
 void GripperExampleController::assignGraspGoalOptionsCallbacks() {
   grasp_goal_options_.goal_response_callback =
-      [this](const std::shared_ptr<rclcpp_action::ClientGoalHandle<franka_msgs::action::Grasp>>&
+      [this](const std::shared_ptr<rclcpp_action::ClientGoalHandle<agimus_franka_msgs::action::Grasp>>&
                  goal_handle) {
         if (!goal_handle) {
           RCLCPP_ERROR(get_node()->get_logger(), RED "Grasp Goal NOT accepted." RESET);
@@ -150,14 +150,14 @@ void GripperExampleController::assignGraspGoalOptionsCallbacks() {
       };
 
   grasp_goal_options_.feedback_callback =
-      [this](const std::shared_ptr<rclcpp_action::ClientGoalHandle<franka_msgs::action::Grasp>>&,
-             const std::shared_ptr<const franka_msgs::action::Grasp_Feedback>& feedback) {
+      [this](const std::shared_ptr<rclcpp_action::ClientGoalHandle<agimus_franka_msgs::action::Grasp>>&,
+             const std::shared_ptr<const agimus_franka_msgs::action::Grasp_Feedback>& feedback) {
         RCLCPP_INFO(get_node()->get_logger(), "Grasp Goal current_width: %f",
                     feedback->current_width);
       };
 
   grasp_goal_options_.result_callback =
-      [this](const rclcpp_action::ClientGoalHandle<franka_msgs::action::Grasp>::WrappedResult&
+      [this](const rclcpp_action::ClientGoalHandle<agimus_franka_msgs::action::Grasp>::WrappedResult&
                  result) {
         RCLCPP_INFO(get_node()->get_logger(), "Grasp Goal result %s.",
                     (rclcpp_action::ResultCode::SUCCEEDED == result.code ? GREEN "SUCCESS" RESET
@@ -186,11 +186,11 @@ bool GripperExampleController::openGripper() {
   RCLCPP_INFO(get_node()->get_logger(), "Opening the gripper - Submitting a Move Goal");
 
   // define open gripper goal
-  franka_msgs::action::Move::Goal move_goal;
+  agimus_franka_msgs::action::Move::Goal move_goal;
   move_goal.width = 0.08;
   move_goal.speed = 0.2;
 
-  std::shared_future<std::shared_ptr<rclcpp_action::ClientGoalHandle<franka_msgs::action::Move>>>
+  std::shared_future<std::shared_ptr<rclcpp_action::ClientGoalHandle<agimus_franka_msgs::action::Move>>>
       move_goal_handle =
           gripper_move_action_client_->async_send_goal(move_goal, move_goal_options_);
   bool ret = move_goal_handle.valid();
@@ -209,14 +209,14 @@ void GripperExampleController::graspGripper() {
   // 15 mm anticipated width (diameter of cylinder)
   // bic pen: 0.008 < 0.015 - 0.005  is a fail
   // mini flashlight 0.30 > 0.015 + 0.010 is a fail
-  franka_msgs::action::Grasp::Goal grasp_goal;
+  agimus_franka_msgs::action::Grasp::Goal grasp_goal;
   grasp_goal.width = 0.015;
   grasp_goal.speed = 0.05;
   grasp_goal.force = 100.0;
   grasp_goal.epsilon.inner = 0.005;  // 10mm or less == fail !
   grasp_goal.epsilon.outer = 0.010;  // 25mm or more == fail !
 
-  std::shared_future<std::shared_ptr<rclcpp_action::ClientGoalHandle<franka_msgs::action::Grasp>>>
+  std::shared_future<std::shared_ptr<rclcpp_action::ClientGoalHandle<agimus_franka_msgs::action::Grasp>>>
       grasp_goal_handle =
           gripper_grasp_action_client_->async_send_goal(grasp_goal, grasp_goal_options_);
 

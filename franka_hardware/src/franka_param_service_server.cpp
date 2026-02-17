@@ -19,53 +19,53 @@ namespace franka_hardware {
 FrankaParamServiceServer::FrankaParamServiceServer(const rclcpp::NodeOptions& options,
                                                    std::shared_ptr<Robot> robot)
     : rclcpp::Node("service_server", options), robot_(std::move(robot)) {
-  set_joint_stiffness_service_ = create_service<franka_msgs::srv::SetJointStiffness>(
+  set_joint_stiffness_service_ = create_service<agimus_franka_msgs::srv::SetJointStiffness>(
       "~/set_joint_stiffness",
-      [this](const std::shared_ptr<franka_msgs::srv::SetJointStiffness::Request>& request,
-             const std::shared_ptr<franka_msgs::srv::SetJointStiffness::Response>& response) {
+      [this](const std::shared_ptr<agimus_franka_msgs::srv::SetJointStiffness::Request>& request,
+             const std::shared_ptr<agimus_franka_msgs::srv::SetJointStiffness::Response>& response) {
         setJointStiffnessCallback(request, response);
       });
 
-  set_cartesian_stiffness_service_ = create_service<franka_msgs::srv::SetCartesianStiffness>(
+  set_cartesian_stiffness_service_ = create_service<agimus_franka_msgs::srv::SetCartesianStiffness>(
       "~/set_cartesian_stiffness",
-      [this](const std::shared_ptr<franka_msgs::srv::SetCartesianStiffness::Request>& request,
-             const std::shared_ptr<franka_msgs::srv::SetCartesianStiffness::Response>& response) {
+      [this](const std::shared_ptr<agimus_franka_msgs::srv::SetCartesianStiffness::Request>& request,
+             const std::shared_ptr<agimus_franka_msgs::srv::SetCartesianStiffness::Response>& response) {
         setCartesianStiffnessCallback(request, response);
       });
 
-  set_tcp_frame_service_ = create_service<franka_msgs::srv::SetTCPFrame>(
+  set_tcp_frame_service_ = create_service<agimus_franka_msgs::srv::SetTCPFrame>(
       "~/set_tcp_frame",
-      [this](const std::shared_ptr<franka_msgs::srv::SetTCPFrame::Request>& request,
-             const std::shared_ptr<franka_msgs::srv::SetTCPFrame::Response>& response) {
+      [this](const std::shared_ptr<agimus_franka_msgs::srv::SetTCPFrame::Request>& request,
+             const std::shared_ptr<agimus_franka_msgs::srv::SetTCPFrame::Response>& response) {
         setTCPFrameCallback(request, response);
       });
 
-  set_stiffness_frame_service_ = create_service<franka_msgs::srv::SetStiffnessFrame>(
+  set_stiffness_frame_service_ = create_service<agimus_franka_msgs::srv::SetStiffnessFrame>(
       "~/set_stiffness_frame",
-      [this](const std::shared_ptr<franka_msgs::srv::SetStiffnessFrame::Request>& request,
-             const std::shared_ptr<franka_msgs::srv::SetStiffnessFrame::Response>& response) {
+      [this](const std::shared_ptr<agimus_franka_msgs::srv::SetStiffnessFrame::Request>& request,
+             const std::shared_ptr<agimus_franka_msgs::srv::SetStiffnessFrame::Response>& response) {
         setStiffnessFrameCallback(request, response);
       });
 
   set_force_torque_collision_behavior_service_ =
-      create_service<franka_msgs::srv::SetForceTorqueCollisionBehavior>(
+      create_service<agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior>(
           "~/set_force_torque_collision_behavior",
-          [this](const std::shared_ptr<franka_msgs::srv::SetForceTorqueCollisionBehavior::Request>&
+          [this](const std::shared_ptr<agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request>&
                      request,
-                 const std::shared_ptr<franka_msgs::srv::SetForceTorqueCollisionBehavior::Response>&
+                 const std::shared_ptr<agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Response>&
                      response) { setForceTorqueCollisionBehaviorCallback(request, response); });
 
-  set_full_collision_behavior_service_ = create_service<franka_msgs::srv::SetFullCollisionBehavior>(
+  set_full_collision_behavior_service_ = create_service<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
       "~/set_full_collision_behavior",
       [this](
-          const std::shared_ptr<franka_msgs::srv::SetFullCollisionBehavior::Request>& request,
-          const std::shared_ptr<franka_msgs::srv::SetFullCollisionBehavior::Response>& response) {
+          const std::shared_ptr<agimus_franka_msgs::srv::SetFullCollisionBehavior::Request>& request,
+          const std::shared_ptr<agimus_franka_msgs::srv::SetFullCollisionBehavior::Response>& response) {
         setFullCollisionBehaviorCallback(request, response);
       });
 
-  set_load_service_ = create_service<franka_msgs::srv::SetLoad>(
-      "~/set_load", [this](const std::shared_ptr<franka_msgs::srv::SetLoad::Request>& request,
-                           const std::shared_ptr<franka_msgs::srv::SetLoad::Response>& response) {
+  set_load_service_ = create_service<agimus_franka_msgs::srv::SetLoad>(
+      "~/set_load", [this](const std::shared_ptr<agimus_franka_msgs::srv::SetLoad::Request>& request,
+                           const std::shared_ptr<agimus_franka_msgs::srv::SetLoad::Response>& response) {
         setLoadCallback(request, response);
       });
 
@@ -73,85 +73,85 @@ FrankaParamServiceServer::FrankaParamServiceServer(const rclcpp::NodeOptions& op
 }
 
 void FrankaParamServiceServer::setJointStiffnessCallback(
-    const franka_msgs::srv::SetJointStiffness::Request::SharedPtr& request,
-    const franka_msgs::srv::SetJointStiffness::Response::SharedPtr& response) {
+    const agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr& request,
+    const agimus_franka_msgs::srv::SetJointStiffness::Response::SharedPtr& response) {
   auto set_joint_stiffness_function =
-      [&](const franka_msgs::srv::SetJointStiffness::Request::SharedPtr& request) {
+      [&](const agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr& request) {
         robot_->setJointStiffness(request);
       };
-  setGenericRobotParam<franka_msgs::srv::SetJointStiffness::Request::SharedPtr,
-                       franka_msgs::srv::SetJointStiffness::Response::SharedPtr>(
+  setGenericRobotParam<agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr,
+                       agimus_franka_msgs::srv::SetJointStiffness::Response::SharedPtr>(
       set_joint_stiffness_function, request, response);
 }
 
 void FrankaParamServiceServer::setCartesianStiffnessCallback(
-    const franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& request,
-    const franka_msgs::srv::SetCartesianStiffness::Response::SharedPtr& response) {
+    const agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& request,
+    const agimus_franka_msgs::srv::SetCartesianStiffness::Response::SharedPtr& response) {
   auto set_cartesian_stiffness_function =
-      [&](const franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& request) {
+      [&](const agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& request) {
         robot_->setCartesianStiffness(request);
       };
-  setGenericRobotParam<franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr,
-                       franka_msgs::srv::SetCartesianStiffness::Response::SharedPtr>(
+  setGenericRobotParam<agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr,
+                       agimus_franka_msgs::srv::SetCartesianStiffness::Response::SharedPtr>(
       set_cartesian_stiffness_function, request, response);
 }
 
 void FrankaParamServiceServer::setTCPFrameCallback(
-    const franka_msgs::srv::SetTCPFrame::Request::SharedPtr& request,
-    const franka_msgs::srv::SetTCPFrame::Response::SharedPtr& response) {
+    const agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr& request,
+    const agimus_franka_msgs::srv::SetTCPFrame::Response::SharedPtr& response) {
   auto set_tcp_frame_function =
-      [&](const franka_msgs::srv::SetTCPFrame::Request::SharedPtr& request) {
+      [&](const agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr& request) {
         robot_->setTCPFrame(request);
       };
-  setGenericRobotParam<franka_msgs::srv::SetTCPFrame::Request::SharedPtr,
-                       franka_msgs::srv::SetTCPFrame::Response::SharedPtr>(set_tcp_frame_function,
+  setGenericRobotParam<agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr,
+                       agimus_franka_msgs::srv::SetTCPFrame::Response::SharedPtr>(set_tcp_frame_function,
                                                                            request, response);
 }
 
 void FrankaParamServiceServer::setStiffnessFrameCallback(
-    const franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& request,
-    const franka_msgs::srv::SetStiffnessFrame::Response::SharedPtr& response) {
+    const agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& request,
+    const agimus_franka_msgs::srv::SetStiffnessFrame::Response::SharedPtr& response) {
   auto set_stiffness_frame_function =
-      [&](const franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& request) {
+      [&](const agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& request) {
         robot_->setStiffnessFrame(request);
       };
-  setGenericRobotParam<franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr,
-                       franka_msgs::srv::SetStiffnessFrame::Response::SharedPtr>(
+  setGenericRobotParam<agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr,
+                       agimus_franka_msgs::srv::SetStiffnessFrame::Response::SharedPtr>(
       set_stiffness_frame_function, request, response);
 }
 
 void FrankaParamServiceServer::setForceTorqueCollisionBehaviorCallback(
-    const franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& request,
-    const franka_msgs::srv::SetForceTorqueCollisionBehavior::Response::SharedPtr& response) {
+    const agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& request,
+    const agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Response::SharedPtr& response) {
   auto set_force_torque_collision_behavior_function =
-      [&](const franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& request) {
+      [&](const agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& request) {
         robot_->setForceTorqueCollisionBehavior(request);
       };
-  setGenericRobotParam<franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr,
-                       franka_msgs::srv::SetForceTorqueCollisionBehavior::Response::SharedPtr>(
+  setGenericRobotParam<agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr,
+                       agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Response::SharedPtr>(
       set_force_torque_collision_behavior_function, request, response);
 }
 
 void FrankaParamServiceServer::setFullCollisionBehaviorCallback(
-    const franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& request,
-    const franka_msgs::srv::SetFullCollisionBehavior::Response::SharedPtr& response) {
+    const agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& request,
+    const agimus_franka_msgs::srv::SetFullCollisionBehavior::Response::SharedPtr& response) {
   auto set_full_collision_behavior_function =
-      [&](const franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& request) {
+      [&](const agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& request) {
         robot_->setFullCollisionBehavior(request);
       };
-  setGenericRobotParam<franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr,
-                       franka_msgs::srv::SetFullCollisionBehavior::Response::SharedPtr>(
+  setGenericRobotParam<agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr,
+                       agimus_franka_msgs::srv::SetFullCollisionBehavior::Response::SharedPtr>(
       set_full_collision_behavior_function, request, response);
 }
 
 void FrankaParamServiceServer::setLoadCallback(
-    const franka_msgs::srv::SetLoad::Request::SharedPtr& request,
-    const franka_msgs::srv::SetLoad::Response::SharedPtr& response) {
-  auto set_load_function = [&](const franka_msgs::srv::SetLoad::Request::SharedPtr& request) {
+    const agimus_franka_msgs::srv::SetLoad::Request::SharedPtr& request,
+    const agimus_franka_msgs::srv::SetLoad::Response::SharedPtr& response) {
+  auto set_load_function = [&](const agimus_franka_msgs::srv::SetLoad::Request::SharedPtr& request) {
     robot_->setLoad(request);
   };
-  setGenericRobotParam<franka_msgs::srv::SetLoad::Request::SharedPtr,
-                       franka_msgs::srv::SetLoad::Response::SharedPtr>(set_load_function, request,
+  setGenericRobotParam<agimus_franka_msgs::srv::SetLoad::Request::SharedPtr,
+                       agimus_franka_msgs::srv::SetLoad::Response::SharedPtr>(set_load_function, request,
                                                                        response);
 }
 

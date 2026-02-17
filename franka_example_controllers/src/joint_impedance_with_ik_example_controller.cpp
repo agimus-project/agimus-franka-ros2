@@ -234,7 +234,7 @@ CallbackReturn JointImpedanceWithIKExampleController::on_configure(
       franka_semantic_components::FrankaRobotModel(arm_id_ + "/" + k_robot_model_interface_name,
                                                    arm_id_ + "/" + k_robot_state_interface_name));
 
-  auto collision_client = get_node()->create_client<franka_msgs::srv::SetFullCollisionBehavior>(
+  auto collision_client = get_node()->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
       "/service_server/set_full_collision_behavior");
   compute_ik_client_ = get_node()->create_client<moveit_msgs::srv::GetPositionIK>("/compute_ik");
 

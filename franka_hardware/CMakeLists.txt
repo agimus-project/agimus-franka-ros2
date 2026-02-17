@@ -1,14 +1,6 @@
-cmake_minimum_required(VERSION 3.5)
-project(franka_hardware)
-
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+cmake_minimum_required(VERSION 3.22)
+set(BASE_NAME franka_hardware)
+project(agimus_${BASE_NAME})
 
 option(CHECK_TIDY "Adds clang-tidy tests" OFF)
 
@@ -16,13 +8,13 @@ option(CHECK_TIDY "Adds clang-tidy tests" OFF)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
-find_package(franka_msgs REQUIRED)
+find_package(agimus_franka_msgs REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
-find_package(Franka 0.9.3 REQUIRED)
+find_package(agimus_libfranka 0.9.3 REQUIRED)
 find_package(rclcpp_components REQUIRED)
 
-add_library(franka_hardware SHARED
+add_library(${BASE_NAME} SHARED
         src/franka_action_server.cpp
         src/franka_hardware_interface.cpp
         src/robot.cpp
@@ -31,26 +23,27 @@ add_library(franka_hardware SHARED
 )
 
 target_include_directories(
-        franka_hardware
+        ${BASE_NAME}
         PRIVATE
         include
 )
+target_link_libraries(${BASE_NAME} agimus_libfranka::agimus_libfranka)
 
 ament_target_dependencies(
-        franka_hardware
+        ${BASE_NAME}
         hardware_interface
-        Franka
+        agimus_libfranka
         pluginlib
         rclcpp
         rclcpp_action
-        franka_msgs
+        agimus_franka_msgs
 )
 
-pluginlib_export_plugin_description_file(hardware_interface franka_hardware.xml)
+pluginlib_export_plugin_description_file(hardware_interface ${BASE_NAME}.xml)
 
 
 install(
-        TARGETS franka_hardware
+        TARGETS ${BASE_NAME}
         DESTINATION lib
 )
 install(
@@ -90,7 +83,7 @@ ament_export_include_directories(
 )
 
 ament_export_libraries(
-        franka_hardware
+        ${BASE_NAME}
 )
 ament_export_dependencies(
         hardware_interface

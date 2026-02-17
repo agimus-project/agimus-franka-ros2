@@ -19,7 +19,7 @@
 #include "franka/exception.h"
 #include "franka_hardware/robot.hpp"
 
-#include <franka_msgs/action/error_recovery.hpp>
+#include <agimus_franka_msgs/action/error_recovery.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -41,7 +41,7 @@ class ActionServer : public rclcpp::Node {
 
  private:
   std::shared_ptr<Robot> robot_;
-  rclcpp_action::Server<franka_msgs::action::ErrorRecovery>::SharedPtr
+  rclcpp_action::Server<agimus_franka_msgs::action::ErrorRecovery>::SharedPtr
       error_recovery_action_server_;
 
   /**
@@ -50,7 +50,7 @@ class ActionServer : public rclcpp::Node {
    * @param goal_handle The goal handle for the error recovery action
    */
   auto errorRecoveryAction(
-      const std::shared_ptr<rclcpp_action::ServerGoalHandle<franka_msgs::action::ErrorRecovery>>&
+      const std::shared_ptr<rclcpp_action::ServerGoalHandle<agimus_franka_msgs::action::ErrorRecovery>>&
           goal_handle) -> void;
 };
 

@@ -80,7 +80,7 @@ TEST_F(FrankaRobotStateTest,
   ASSERT_EQ(end_effector_pose[13], franka_robot_state_msg.o_t_ee.pose.position.y);
   ASSERT_EQ(end_effector_pose[14], franka_robot_state_msg.o_t_ee.pose.position.z);
 
-  ASSERT_EQ(franka_msgs::msg::FrankaRobotState::ROBOT_MODE_USER_STOPPED,
+  ASSERT_EQ(agimus_franka_msgs::msg::FrankaRobotState::ROBOT_MODE_USER_STOPPED,
             franka_robot_state_msg.robot_mode);
   franka_state_friend->release_interfaces();
   // validate the count of state_interfaces_

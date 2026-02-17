@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>franka_ign_ros2_control</name>
+  <name>agimus_franka_ign_ros2_control</name>
   <version>1.0.0</version>
-  <description>Ignition ros2_control package allows to control simulated robots using ros2_control framework. </description>
-  <maintainer email="support@franka.de">Franka Robotics GmbH</maintainer>
-
-  <license>Apache 2</license>
+  <description>fork of franka_ign_ros2_control for franka robots not maintained anymore by franka</description>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -22,7 +21,13 @@
   <depend>rclcpp_lifecycle</depend>
   <depend>hardware_interface</depend>
   <depend>controller_manager</depend>
-  <depend>franka_hardware</depend>
+  <build_depend>agimus_libfranka_common</build_depend>
+  <depend>agimus_libfranka</depend>
+  <depend>agimus_franka_hardware</depend>
+  <depend>kdl_parser</depend>
+  <depend>urdf</depend>
+  <depend>tf2_eigen</depend>
+  <depend>tf2_geometry_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

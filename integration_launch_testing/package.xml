@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>integration_launch_testing</name>
+  <name>agimus_integration_launch_testing</name>
   <version>1.0.0</version>
-  <description>Functional integration tests for franka controllers</description>
-  <maintainer email="support@franka.de">Franka Robotics GmbH</maintainer>
-  <license>Apache 2.0</license>
+  <description>fork of integration_launch_testing for franka robots not maintained anymore by franka</description>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

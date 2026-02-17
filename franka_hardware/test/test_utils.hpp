@@ -58,28 +58,28 @@ class MockRobot : public franka_hardware::Robot {
               (override));
   MOCK_METHOD(void,
               setJointStiffness,
-              (const franka_msgs::srv::SetJointStiffness::Request::SharedPtr&),
+              (const agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr&),
               (override));
   MOCK_METHOD(void,
               setCartesianStiffness,
-              (const franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr&),
+              (const agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr&),
               (override));
-  MOCK_METHOD(void, setLoad, (const franka_msgs::srv::SetLoad::Request::SharedPtr&), (override));
+  MOCK_METHOD(void, setLoad, (const agimus_franka_msgs::srv::SetLoad::Request::SharedPtr&), (override));
   MOCK_METHOD(void,
               setTCPFrame,
-              (const franka_msgs::srv::SetTCPFrame::Request::SharedPtr&),
+              (const agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr&),
               (override));
   MOCK_METHOD(void,
               setStiffnessFrame,
-              (const franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr&),
+              (const agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr&),
               (override));
   MOCK_METHOD(void,
               setForceTorqueCollisionBehavior,
-              (const franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr&),
+              (const agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr&),
               (override));
   MOCK_METHOD(void,
               setFullCollisionBehavior,
-              (const franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr&),
+              (const agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr&),
               (override));
   MOCK_METHOD(void, automaticErrorRecovery, (), (override));
 };

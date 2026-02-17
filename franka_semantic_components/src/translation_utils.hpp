@@ -16,10 +16,10 @@
 
 #include "franka/robot_state.h"
 
-#include "franka_msgs/msg/collision_indicators.hpp"
-#include "franka_msgs/msg/elbow.hpp"
-#include "franka_msgs/msg/errors.hpp"
-#include "franka_msgs/msg/franka_robot_state.hpp"
+#include "agimus_franka_msgs/msg/collision_indicators.hpp"
+#include "agimus_franka_msgs/msg/elbow.hpp"
+#include "agimus_franka_msgs/msg/errors.hpp"
+#include "agimus_franka_msgs/msg/franka_robot_state.hpp"
 
 #include "builtin_interfaces/msg/time.hpp"
 
@@ -37,9 +37,9 @@ namespace translation {
 
 /**
  * @param error The internal error buffer
- * @return franka_msgs::msg::Errors The translated errors
+ * @return agimus_franka_msgs::msg::Errors The translated errors
  */
-auto errorsToMessage(const franka::Errors& error) -> franka_msgs::msg::Errors;
+auto errorsToMessage(const franka::Errors& error) -> agimus_franka_msgs::msg::Errors;
 
 /**
  * @param input_wrench The wrench which should be translated
@@ -82,13 +82,13 @@ auto toInertia(double mass,
  * @param cartesian_contact The Cartesian contact flags
  * @param joint_collision The joint collision flags
  * @param joint_contact The joint contact flags
- * @return franka_msgs::msg::CollisionIndicators The translated CollisionIndicator message
+ * @return agimus_franka_msgs::msg::CollisionIndicators The translated CollisionIndicator message
  */
 auto toCollisionIndicators(const std::array<double, 6>& cartesian_collision,
                            const std::array<double, 6>& cartesian_contact,
                            const std::array<double, 7>& joint_collision,
                            const std::array<double, 7>& joint_contact)
-    -> franka_msgs::msg::CollisionIndicators;
+    -> agimus_franka_msgs::msg::CollisionIndicators;
 
 /**
  * @param elbow The elbow position
@@ -96,13 +96,13 @@ auto toCollisionIndicators(const std::array<double, 6>& cartesian_collision,
  * @param elbow_c The commanded elbow position
  * @param delbow_c The commanded elbow velocity
  * @param ddelbow_c The commanded elbow acceleration
- * @return franka_msgs::msg::Elbow The translated elbow message
+ * @return agimus_franka_msgs::msg::Elbow The translated elbow message
  */
 auto toElbow(const std::array<double, 2>& elbow,
              const std::array<double, 2>& elbow_d,
              const std::array<double, 2>& elbow_c,
              const std::array<double, 2>& delbow_c,
-             const std::array<double, 2>& ddelbow_c) -> franka_msgs::msg::Elbow;
+             const std::array<double, 2>& ddelbow_c) -> agimus_franka_msgs::msg::Elbow;
 
 /**
  * @param data_vector Translates this data vector from an array to a vector
@@ -114,7 +114,7 @@ auto toJointStateVector(const std::array<double, 7>& data_vector) -> std::vector
  * @param robot_state Updates the the
  */
 auto updateTimeStamps(const builtin_interfaces::msg::Time& time_stamps,
-                      franka_msgs::msg::FrankaRobotState& robot_state) -> void;
+                      agimus_franka_msgs::msg::FrankaRobotState& robot_state) -> void;
 
 }  // namespace translation
 }  // namespace franka_semantic_components
