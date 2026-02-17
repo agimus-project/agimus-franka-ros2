@@ -12,6 +12,7 @@
   <depend>builtin_interfaces</depend>
   <depend>control_msgs</depend>
   <depend>controller_interface</depend>
+  <build_depend>agimus_libfranka_common</build_depend>
   <depend>agimus_libfranka</depend>
   <depend>agimus_franka_msgs</depend>
   <depend>agimus_franka_hardware</depend>

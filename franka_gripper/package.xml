@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
+  <build_depend>agimus_libfranka_common</build_depend>
   <depend>agimus_libfranka</depend>
   <depend>agimus_franka_msgs</depend>
   <depend>rclpy</depend>

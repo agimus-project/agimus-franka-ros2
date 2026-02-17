@@ -21,6 +21,7 @@
   <depend>rclcpp_lifecycle</depend>
   <depend>hardware_interface</depend>
   <depend>controller_manager</depend>
+  <build_depend>agimus_libfranka_common</build_depend>
   <depend>agimus_libfranka</depend>
   <depend>agimus_franka_hardware</depend>
   <depend>kdl_parser</depend>
