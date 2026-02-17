@@ -5,7 +5,7 @@ project(agimus_${BASE_NAME})
 option(CHECK_TIDY "Adds clang-tidy tests" OFF)
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
-    agimus_Franka
+    agimus_libfranka
     agimus_franka_hardware
     agimus_franka_msgs
     geometry_msgs
@@ -21,7 +21,7 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
-find_package(agimus_Franka 0.9.3 REQUIRED)
+find_package(agimus_libfranka 0.9.3 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 add_library(
@@ -33,10 +33,10 @@ add_library(
   src/franka_semantic_component_interface.cpp
   src/translation_utils.cpp)
 
-target_link_libraries(${BASE_NAME} agimus_Franka::Franka Eigen3::Eigen)
+target_link_libraries(${BASE_NAME} agimus_libfranka::agimus_libfranka Eigen3::Eigen)
 target_include_directories(${BASE_NAME} PUBLIC include)
 
-ament_target_dependencies(${BASE_NAME} agimus_Franka sensor_msgs
+ament_target_dependencies(${BASE_NAME} agimus_libfranka sensor_msgs
                           geometry_msgs ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 install(TARGETS ${BASE_NAME} DESTINATION lib)
@@ -79,7 +79,7 @@ if(BUILD_TESTING)
     agimus_franka_msgs
     sensor_msgs
     geometry_msgs
-    agimus_Franka
+    agimus_libfranka
   )
   ament_add_gmock(test_franka_robot_model test/franka_robot_model_test.cpp)
   target_include_directories(test_franka_robot_model PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -93,7 +93,7 @@ if(BUILD_TESTING)
     agimus_franka_msgs
     sensor_msgs
     geometry_msgs
-    agimus_Franka
+    agimus_libfranka
   )
 
   ament_add_gmock(

@@ -12,11 +12,11 @@ find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(control_msgs REQUIRED)
 
-find_package(agimus_Franka 0.9.3 REQUIRED)
+find_package(agimus_libfranka 0.9.3 REQUIRED)
 
 add_library(gripper_server SHARED
         src/gripper_action_server.cpp)
-target_link_libraries(gripper_server agimus_Franka::Franka)
+target_link_libraries(gripper_server agimus_libfranka::agimus_libfranka)
 target_include_directories(gripper_server PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
@@ -26,7 +26,7 @@ ament_target_dependencies(gripper_server
         rclcpp
         rclcpp_action
         rclcpp_components
-        agimus_Franka
+        agimus_libfranka
         sensor_msgs
         std_srvs
         control_msgs)

@@ -13,7 +13,7 @@ find_package(yaml_cpp_vendor REQUIRED)
 find_package(agimus_franka_hardware REQUIRED)
 find_package(urdf REQUIRED)
 find_package(kdl_parser REQUIRED)
-find_package(agimus_Franka 0.9.3 REQUIRED)
+find_package(agimus_libfranka 0.9.3 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_eigen REQUIRED)
 
@@ -61,7 +61,7 @@ ament_target_dependencies(${BASE_NAME}-system
   yaml_cpp_vendor
   rclcpp_lifecycle
   agimus_franka_hardware
-  agimus_Franka
+  agimus_libfranka
   urdf
   kdl_parser
   tf2_geometry_msgs
@@ -79,7 +79,7 @@ ament_target_dependencies(ign_hardware_plugins
   hardware_interface
   rclcpp
   agimus_franka_hardware
-  agimus_Franka
+  agimus_libfranka
   urdf
   kdl_parser
   tf2_geometry_msgs

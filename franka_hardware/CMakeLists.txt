@@ -11,7 +11,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(agimus_franka_msgs REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
-find_package(agimus_Franka 0.9.3 REQUIRED)
+find_package(agimus_libfranka 0.9.3 REQUIRED)
 find_package(rclcpp_components REQUIRED)
 
 add_library(${BASE_NAME} SHARED
@@ -27,12 +27,12 @@ target_include_directories(
         PRIVATE
         include
 )
-target_link_libraries(${BASE_NAME} agimus_Franka::Franka)
+target_link_libraries(${BASE_NAME} agimus_libfranka::agimus_libfranka)
 
 ament_target_dependencies(
         ${BASE_NAME}
         hardware_interface
-        agimus_Franka
+        agimus_libfranka
         pluginlib
         rclcpp
         rclcpp_action
