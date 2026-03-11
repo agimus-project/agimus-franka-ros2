@@ -138,6 +138,9 @@
                   # TODO
                   "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'clang_format|test_load_agimus_franka_robot_state_broadcaster'"
                 ];
+                preConfigure = ''
+                  export NIX_CFLAGS_COMPILE=$(echo $NIX_CFLAGS_COMPILE | tr ' ' '\n' | grep -v '/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' | tr '\n' ' ')
+                '';
               };
               agimus-franka-ros2 = _final: _ros-final: {
                 src = lib.fileset.toSource {
