@@ -23,9 +23,14 @@
 
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include "rclcpp/version.h"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/qos.hpp"
+#if RCLCPP_VERSION_GTE(20, 0, 0)
+#include "rclcpp/event_handler.hpp"
+#else
 #include "rclcpp/qos_event.hpp"
+#endif
 #include "rclcpp/time.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rcpputils/split.hpp"
