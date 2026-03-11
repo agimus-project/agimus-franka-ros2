@@ -17,6 +17,7 @@
 
 #include "controller_manager/controller_manager.hpp"
 #include "hardware_interface/resource_manager.hpp"
+#include "hardware_interface/version.h"
 #include "rclcpp/executor.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
 #include "rclcpp/utilities.hpp"
@@ -24,12 +25,19 @@
 
 TEST(TestLoadAgimusFrankaRobotStateBroadcaster, load_controller) {
   rclcpp::init(0, nullptr);
+  rclcpp::Node node_ = rclcpp::Node("TestLoadAgimusFrankaRobotStateBroadcaster");
 
   std::shared_ptr<rclcpp::Executor> executor =
       std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
   controller_manager::ControllerManager cm(std::make_unique<hardware_interface::ResourceManager>(
-                                               ros2_control_test_assets::minimal_robot_urdf),
+                                               ros2_control_test_assets::minimal_robot_urdf
+#if HARDWARE_INTERFACE_VERSION_GTE(4, 13, 0)
+  ,
+  node_.get_node_clock_interface(),
+  node_.get_node_logging_interface()
+#endif
+                                               ),
                                            executor, "test_controller_manager");
 
   auto controller =

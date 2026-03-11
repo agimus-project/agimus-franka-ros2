@@ -14,6 +14,7 @@
 
 #include <gmock/gmock.h>
 
+#include "controller_interface/version.h"
 #include "controller_interface/controller_interface.hpp"
 #include "agimus_franka_robot_state_broadcaster/agimus_franka_robot_state_broadcaster.hpp"
 #include "agimus_franka_semantic_components/agimus_franka_robot_state.hpp"
@@ -37,9 +38,14 @@ class TestAgimusFrankaRobotStateBroadcaster : public ::testing::Test {
     agimus_franka_robot_state_ = std::make_unique<MockAgimusFrankaRobotState>(
         "mock_franka_robot_state", ros2_control_test_assets::minimal_robot_urdf);
     broadcaster_ = std::make_unique<AgimusFrankaRobotStateBroadcaster>(std::move(agimus_franka_robot_state_));
+#if CONTROLLER_INTERFACE_VERSION_GTE(4, 0, 0)
+    const auto node_options = broadcaster_->define_custom_node_options();
+    broadcaster_->init("test_broadcaster", ros2_control_test_assets::minimal_robot_urdf, 50.0, "", node_options);
+#else
     broadcaster_->init("test_broadcaster");
     broadcaster_->get_node()->set_parameter(
         {"robot_description", ros2_control_test_assets::minimal_robot_urdf});
+#endif
   }
   std::unique_ptr<AgimusFrankaRobotStateBroadcaster> broadcaster_;
   std::unique_ptr<MockAgimusFrankaRobotState> agimus_franka_robot_state_;

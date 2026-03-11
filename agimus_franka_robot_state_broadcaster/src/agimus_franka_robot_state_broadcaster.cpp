@@ -21,6 +21,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "controller_interface/version.h"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/version.h"
@@ -69,10 +70,14 @@ controller_interface::CallbackReturn AgimusFrankaRobotStateBroadcaster::on_confi
     const rclcpp_lifecycle::State& /*previous_state*/) {
   params = param_listener->get_params();
   std::string robot_description;
+#if CONTROLLER_INTERFACE_VERSION_GTE(4, 0, 0)
+  robot_description = get_robot_description();
+#else
   if (!get_node()->get_parameter("robot_description", robot_description)) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter");
     return CallbackReturn::ERROR;
   }
+#endif
   if (!agimus_franka_robot_state_) {
     agimus_franka_robot_state_ = std::make_unique<agimus_franka_semantic_components::AgimusFrankaRobotState>(
         agimus_franka_semantic_components::AgimusFrankaRobotState(params.arm_id + "/" + state_interface_name,
