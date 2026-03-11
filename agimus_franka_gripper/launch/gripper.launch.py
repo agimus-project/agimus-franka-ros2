@@ -33,7 +33,9 @@ def generate_launch_description():
     joint_names = LaunchConfiguration(joint_names_parameter_name)
 
     gripper_config = os.path.join(
-        get_package_share_directory('agimus_franka_gripper'), 'config', 'agimus_franka_gripper_node.yaml'
+        get_package_share_directory('agimus_franka_gripper'),
+        'config',
+        'agimus_franka_gripper_node.yaml'
     )
 
     default_joint_name_postfix = '_finger_joint'
