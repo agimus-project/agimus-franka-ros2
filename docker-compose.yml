@@ -1,12 +1,12 @@
 services:
-  franka_ros2:
+  agimus_franka_ros2:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - USER_UID=${USER_UID}
         - USER_GID=${USER_GID}
-    container_name: franka_ros2
+    container_name: agimus_franka_ros2
     network_mode: "host"
     privileged: true
     command: /bin/bash

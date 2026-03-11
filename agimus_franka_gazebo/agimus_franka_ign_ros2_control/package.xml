@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>agimus_franka_ign_ros2_control</name>
+  <version>1.0.0</version>
+  <description>fork of agimus_franka_ign_ros2_control for agimus_franka robots not maintained anymore by agimus_franka</description>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>ament_index_cpp</depend>
+  <!-- default version to use in official ROS2 packages is Ignition Fortress for ROS2 Rolling -->
+  <depend condition="$IGNITION_VERSION == ''">ignition-gazebo6</depend>
+  <depend condition="$IGNITION_VERSION == citadel">ignition-gazebo3</depend>
+  <depend condition="$IGNITION_VERSION == edifice">ignition-gazebo5</depend>
+  <depend condition="$IGNITION_VERSION == fortress">ignition-gazebo6</depend>
+  <depend>ignition-plugin</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>yaml_cpp_vendor</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>hardware_interface</depend>
+  <depend>controller_manager</depend>
+  <depend>agimus_libfranka</depend>
+  <depend>agimus_franka_hardware</depend>
+  <depend>kdl_parser</depend>
+  <depend>urdf</depend>
+  <depend>tf2_eigen</depend>
+  <depend>tf2_geometry_msgs</depend>
+
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+      <build_type>ament_cmake</build_type>
+  </export>
+</package>

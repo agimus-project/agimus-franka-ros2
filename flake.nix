@@ -23,74 +23,155 @@
               agimus-franka-bringup = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_bringup ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_bringup ];
                 };
+                sourceRoot = "source/agimus_franka_bringup";
               };
-              agimus-franka-example-controllers = _final: _ros-final: {
+              agimus-franka-example-controllers = final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_example_controllers ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_example_controllers ];
                 };
+                sourceRoot = "source/agimus_franka_example_controllers";
+                preConfigure = ''
+                  export NIX_CFLAGS_COMPILE=$(echo $NIX_CFLAGS_COMPILE | tr ' ' '\n' | grep -v '/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' | tr '\n' ' ')
+                '';
+                cmakeFlags = [
+                  # This need to download an xml schema at check time
+                  # TODO: clang-format
+                  # TODO: load ?
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|clang_format|test_load_agimus_franka_robot_state_broadcaster'"
+                ];
+                nativeCheckInputs = [
+                  final.writableTmpDirAsHomeHook
+                ];
+                # can't load its own controllers otherwise
+                checkTarget = " ";
+                doInstallCheck = true;
+                preInstallCheck = "export AMENT_PREFIX_PATH=$out:$AMENT_PREFIX_PATH";
+                intsallCheckTarget = "test";
               };
               agimus-franka-fr3-moveit-config = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_fr3_moveit_config ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_fr3_moveit_config ];
                 };
+                sourceRoot = "source/agimus_franka_fr3_moveit_config";
+                cmakeFlags = [
+                  # This need to download an xml schema at check time
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;xmllint"
+                ];
+                # This package has a test that test xacro with an installed version of itself
+                checkTarget = " ";
+                doInstallCheck = true;
+                preInstallCheck = "export AMENT_PREFIX_PATH=$out:$AMENT_PREFIX_PATH";
+                intsallCheckTarget = "test";
               };
               agimus-franka-gazebo-bringup = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_gazebo/franka_gazebo_bringup ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_gazebo/agimus_franka_gazebo_bringup ];
                 };
+                sourceRoot = "source/agimus_franka_gazebo/agimus_franka_gazebo_bringup";
               };
               agimus-franka-ign-ros2-control = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_gazebo/franka_ign_ros2_control ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_gazebo/agimus_franka_ign_ros2_control ];
                 };
+                sourceRoot = "source/agimus_franka_gazebo/agimus_franka_ign_ros2_control";
               };
               agimus-franka-gripper = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_gripper ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_gripper ];
                 };
+                sourceRoot = "source/agimus_franka_gripper";
+                cmakeFlags = [
+                  # This need to download an xml schema at check time
+                  # TODO: clang-format
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|clang_format'"
+                ];
               };
-              agimus-franka-hardware = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_hardware ];
-                };
-              };
+              agimus-franka-hardware =
+                final: ros-final:
+                (super: {
+                  src = lib.fileset.toSource {
+                    root = ./.;
+                    fileset = lib.fileset.unions [ ./agimus_franka_hardware ];
+                  };
+                  sourceRoot = "source/agimus_franka_hardware";
+                  cmakeFlags = [
+                    # This need to download an xml schema at check time
+                    # TODO: clang-format
+                    "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|clang_format'"
+                  ];
+                  nativeBuildInputs = super.nativeBuildInputs ++ [
+                    final.writableTmpDirAsHomeHook
+                    ros-final.rmw-implementation-cmake
+                  ];
+                });
               agimus-franka-msgs = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_msgs ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_msgs ];
                 };
+                sourceRoot = "source/agimus_franka_msgs";
               };
-              agimus-franka-robot-state-broadcaster = _final: _ros-final: {
+              agimus-franka-robot-state-broadcaster = final: ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_robot_state_broadcaster ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_robot_state_broadcaster ];
                 };
+                sourceRoot = "source/agimus_franka_robot_state_broadcaster";
+                nativeCheckInputs = [
+                  final.writableTmpDirAsHomeHook
+                  ros-final.ament-cmake-clang-format
+                  ros-final.ament-cmake-copyright
+                  ros-final.ament-cmake-cppcheck
+                  ros-final.ament-cmake-flake8
+                  ros-final.ament-cmake-lint-cmake
+                  ros-final.ament-cmake-pep257
+                  ros-final.ament-cmake-xmllint
+                ];
+                cmakeFlags = [
+                  # TODO
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'clang_format|test_load_agimus_franka_robot_state_broadcaster'"
+                ];
               };
               agimus-franka-ros2 = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_ros2 ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_ros2 ];
                 };
+                sourceRoot = "source/agimus_franka_ros2";
               };
               agimus-franka-semantic-components = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./franka_semantic_components ];
+                  fileset = lib.fileset.unions [ ./agimus_franka_semantic_components ];
                 };
+                sourceRoot = "source/agimus_franka_semantic_components";
+                cmakeFlags = [
+                  # This need to download an xml schema at check time
+                  # TODO: clang-format
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|clang_format'"
+                ];
+                checkTarget = " ";
+                doInstallCheck = true;
+                preInstallCheck = "export AMENT_PREFIX_PATH=$out:$AMENT_PREFIX_PATH";
+                intsallCheckTarget = "test";
               };
-              integration-launch-testing = _final: _ros-final: {
+              agimus-integration-launch-testing = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
-                  fileset = lib.fileset.unions [ ./integration_launch_testing ];
+                  fileset = lib.fileset.unions [ ./agimus_integration_launch_testing ];
                 };
+                sourceRoot = "source/agimus_integration_launch_testing";
+                cmakeFlags = [
+                  # This need to download an xml schema at check time
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;xmllint"
+                ];
               };
             };
           }

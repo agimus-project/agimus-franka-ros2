@@ -1,0 +1,9 @@
+<library path="agimus_franka_robot_state_broadcaster">
+  <class name="agimus_franka_robot_state_broadcaster/AgimusFrankaRobotStateBroadcaster"
+         type="agimus_franka_robot_state_broadcaster::AgimusFrankaRobotStateBroadcaster"
+         base_class_type="controller_interface::ControllerInterface">
+  <description>
+    The agimus_franka state broadcaster publishes the full states of agimus_franka robots from ros2_control system.
+  </description>
+  </class>
+</library>
