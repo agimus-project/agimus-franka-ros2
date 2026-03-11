@@ -138,7 +138,8 @@ APPEND_LIBRARY_DIRS ${CMAKE_BINARY_DIR}
     APPEND_LIBRARY_DIRS ${CMAKE_BINARY_DIR}
   )
 
-  target_include_directories(agimus_franka_cartesian_pose_interface_test PRIVATE  ${CMAKE_CURRENT_SOURCE_DIR}/include ${EIGEN3_INCLUDE_DIRS})
+  target_include_directories(agimus_franka_cartesian_pose_interface_test
+    PRIVATE  ${CMAKE_CURRENT_SOURCE_DIR}/include ${EIGEN3_INCLUDE_DIRS})
 
   target_link_libraries(agimus_franka_cartesian_pose_interface_test
     ${PROJECT_NAME}
