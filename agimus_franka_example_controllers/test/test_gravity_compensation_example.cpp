@@ -19,6 +19,7 @@
 #include "agimus_franka_example_controllers/gravity_compensation_example_controller.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+#include "controller_interface/version.h"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/utilities.hpp"
@@ -73,7 +74,12 @@ void TestGravityCompensationExample::TearDown() {
 }
 
 void TestGravityCompensationExample::SetUpController() {
+#if CONTROLLER_INTERFACE_VERSION_GTE(4, 0, 0)
+  const auto node_options = controller_->define_custom_node_options();
+  const auto result = controller_->init("test_gravitiy_compensation_example" , "", 50.0, "", node_options);
+#else
   const auto result = controller_->init("test_gravitiy_compensation_example");
+#endif
   ASSERT_EQ(result, controller_interface::return_type::OK);
   std::vector<LoanedCommandInterface> command_ifs;
   command_ifs.emplace_back(joint_1_pos_cmd_);
