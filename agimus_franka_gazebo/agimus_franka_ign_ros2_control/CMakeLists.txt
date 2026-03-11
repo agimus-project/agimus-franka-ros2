@@ -16,12 +16,25 @@ find_package(agimus_libfranka 0.9.3 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_eigen REQUIRED)
 
-if("$ENV{IGNITION_VERSION}" STREQUAL "garden")
-  find_package(gz-sim7 REQUIRED)
-  set(GZ_SIM_VER ${gz-sim7_VERSION_MAJOR})
-  message(STATUS "Compiling against Gazebo garden")
-  find_package(gz-plugin2 REQUIRED)
-  set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
+set(IGNITION_SUPPORT OFF)
+
+if("$ENV{IGNITION_VERSION}" STREQUAL "fortress")
+  set(IGNITION_SUPPORT ON)
+  find_package(ignition-gazebo6 REQUIRED)
+  set(GZ_SIM_VER ${ignition-gazebo6_VERSION_MAJOR})
+  message(STATUS "Compiling against Ignition fortress")
+  find_package(ignition-plugin1 REQUIRED)
+  set(GZ_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
+  add_compile_definitions(IGNITION_SUPPORT)
+
+elseif("$ENV{IGNITION_VERSION}" STREQUAL "garden")
+  set(IGNITION_SUPPORT ON)
+  find_package(igintion-gazebo7 REQUIRED)
+  set(GZ_SIM_VER ${igintion-gazebo7_VERSION_MAJOR})
+  message(STATUS "Compiling against Ignition garden")
+  find_package(ignition-plugin2 REQUIRED)
+  set(GZ_PLUGIN_VER ${ignition-plugin2_VERSION_MAJOR})
+  add_compile_definitions(IGNITION_SUPPORT)
 
 elseif("$ENV{GAZEBO_VERSION}" STREQUAL "harmonic")
   find_package(gz-sim8 REQUIRED)
@@ -60,10 +73,18 @@ add_library(${PROJECT_NAME}-system SHARED
   src/model_kdl.cpp
 )
 
+if(IGNITION_SUPPORT)
+target_link_libraries(${PROJECT_NAME}-system
+        ignition-gazebo${GZ_SIM_VER}::core
+  ignition-plugin${GZ_PLUGIN_VER}::register
+)
+else()
 target_link_libraries(${PROJECT_NAME}-system
         gz-sim${GZ_SIM_VER}::core
   gz-plugin${GZ_PLUGIN_VER}::register
 )
+endif()
+
 ament_target_dependencies(${PROJECT_NAME}-system
   ament_index_cpp
   controller_manager
@@ -97,9 +118,15 @@ ament_target_dependencies(ign_hardware_plugins
   tf2_geometry_msgs
   tf2_eigen
 )
+if(IGNITION_SUPPORT)
+target_link_libraries(ign_hardware_plugins
+        ignition-gazebo${GZ_SIM_VER}::core
+      )
+else()
 target_link_libraries(ign_hardware_plugins
         gz-sim${GZ_SIM_VER}::core
 )
+endif()
 
 ## Install
 install(TARGETS

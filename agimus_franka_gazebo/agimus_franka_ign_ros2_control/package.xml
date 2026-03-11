@@ -10,11 +10,13 @@
 
   <depend>ament_index_cpp</depend>
   <depend condition="$IGNITION_VERSION == fortress">ignition-gazebo6</depend>
+  <depend condition="$IGNITION_VERSION == garden">ignition-gazebo7</depend>
   <depend condition="$GAZEBO_VERSION == harmonic">gz-sim8</depend>
   <depend condition="$GAZEBO_VERSION == ionic">gz-sim9</depend>
   <depend condition="$GAZEBO_VERSION == jetty">gz-sim10</depend>
 
   <depend condition="$IGNITION_VERSION == fortress">ignition-plugin</depend>
+  <depend condition="$IGNITION_VERSION == garden">ignition-plugin2</depend>
   <depend condition="$GAZEBO_VERSION == harmonic">gz-plugin2</depend>
   <depend condition="$GAZEBO_VERSION == ionic">gz-plugin3</depend>
   <depend condition="$GAZEBO_VERSION == jetty">gz-plugin4</depend>

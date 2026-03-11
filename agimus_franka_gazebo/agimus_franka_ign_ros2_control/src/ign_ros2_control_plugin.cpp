@@ -576,7 +576,11 @@ void IgnitionROS2ControlPlugin::PostUpdate(
 }
 }  // namespace ign_ros2_control
 
+#ifdef IGNITION_SUPPORT
+IGNITION_ADD_PLUGIN(
+#else
 GZ_ADD_PLUGIN(
+#endif
   ign_ros2_control::IgnitionROS2ControlPlugin,
   gz::sim::System,
   ign_ros2_control::IgnitionROS2ControlPlugin::ISystemConfigure,
