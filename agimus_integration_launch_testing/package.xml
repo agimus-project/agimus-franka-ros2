@@ -3,7 +3,7 @@
 <package format="3">
   <name>agimus_integration_launch_testing</name>
   <version>1.0.0</version>
-  <description>fork of integration_launch_testing for agimus_franka robots not maintained anymore by agimus_franka</description>
+  <description>fork of integration_launch_testing for franka robots not maintained anymore by agimus_franka</description>
   <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
   <license>Apache-2.0</license>
 

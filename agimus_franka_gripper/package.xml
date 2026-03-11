@@ -3,7 +3,7 @@
 <package format="3">
   <name>agimus_franka_gripper</name>
   <version>1.0.0</version>
-  <description>fork of agimus_franka_gripper for agimus_franka robots not maintained anymore by agimus_franka</description>
+  <description>fork of franka_gripper for franka robots not maintained anymore by agimus_franka</description>
   <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
   <license>Apache-2.0</license>
 
