@@ -37,9 +37,8 @@
                   export NIX_CFLAGS_COMPILE=$(echo $NIX_CFLAGS_COMPILE | tr ' ' '\n' | grep -v '/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' | tr '\n' ' ')
                 '';
                 cmakeFlags = [
-                  # This need to download an xml schema at check time
-                  # TODO: load ?
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|test_load_agimus_franka_robot_state_broadcaster'"
+                  # TODO: ?
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;test_load_agimus_franka_robot_state_broadcaster"
                 ];
                 nativeCheckInputs = [
                   final.writableTmpDirAsHomeHook
@@ -56,10 +55,6 @@
                   fileset = lib.fileset.unions [ ./agimus_franka_fr3_moveit_config ];
                 };
                 sourceRoot = "source/agimus_franka_fr3_moveit_config";
-                cmakeFlags = [
-                  # This need to download an xml schema at check time
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;xmllint"
-                ];
                 # This package has a test that test xacro with an installed version of itself
                 checkTarget = " ";
                 doInstallCheck = true;
@@ -86,10 +81,6 @@
                   fileset = lib.fileset.unions [ ./agimus_franka_gripper ];
                 };
                 sourceRoot = "source/agimus_franka_gripper";
-                cmakeFlags = [
-                  # This need to download an xml schema at check time
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;xmllint"
-                ];
               };
               agimus-franka-hardware =
                 final: ros-final:
@@ -99,10 +90,6 @@
                     fileset = lib.fileset.unions [ ./agimus_franka_hardware ];
                   };
                   sourceRoot = "source/agimus_franka_hardware";
-                  cmakeFlags = [
-                    # This need to download an xml schema at check time
-                    "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint"
-                  ];
                   nativeBuildInputs = super.nativeBuildInputs ++ [
                     final.writableTmpDirAsHomeHook
                     ros-final.rmw-implementation-cmake
@@ -154,10 +141,6 @@
                   fileset = lib.fileset.unions [ ./agimus_franka_semantic_components ];
                 };
                 sourceRoot = "source/agimus_franka_semantic_components";
-                cmakeFlags = [
-                  # This need to download an xml schema at check time
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;xmllint"
-                ];
                 checkTarget = " ";
                 doInstallCheck = true;
                 preInstallCheck = "export AMENT_PREFIX_PATH=$out:$AMENT_PREFIX_PATH";
@@ -169,10 +152,6 @@
                   fileset = lib.fileset.unions [ ./agimus_integration_launch_testing ];
                 };
                 sourceRoot = "source/agimus_integration_launch_testing";
-                cmakeFlags = [
-                  # This need to download an xml schema at check time
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;xmllint"
-                ];
               };
             };
           }
