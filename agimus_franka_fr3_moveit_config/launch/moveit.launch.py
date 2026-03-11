@@ -69,7 +69,7 @@ def generate_launch_description():
 
     # planning_context
     agimus_franka_xacro_file = os.path.join(
-        get_package_share_directory('franka_description'),
+        get_package_share_directory('agimus_franka_description'),
         'robots', 'fr3', 'fr3.urdf.xacro'
     )
 
@@ -82,7 +82,7 @@ def generate_launch_description():
         robot_description_config, value_type=str)}
 
     agimus_franka_semantic_xacro_file = os.path.join(
-        get_package_share_directory('franka_fr3_moveit_config'),
+        get_package_share_directory('agimus_franka_fr3_moveit_config'),
         'srdf',
         'fr3_arm.srdf.xacro'
     )
@@ -96,7 +96,7 @@ def generate_launch_description():
         robot_description_semantic_config, value_type=str)}
 
     kinematics_yaml = load_yaml(
-        'franka_fr3_moveit_config', 'config/kinematics.yaml'
+        'agimus_franka_fr3_moveit_config', 'config/kinematics.yaml'
     )
 
     # Planning Functionality
@@ -113,13 +113,13 @@ def generate_launch_description():
         }
     }
     ompl_planning_yaml = load_yaml(
-        'franka_fr3_moveit_config', 'config/ompl_planning.yaml'
+        'agimus_franka_fr3_moveit_config', 'config/ompl_planning.yaml'
     )
     ompl_planning_pipeline_config['move_group'].update(ompl_planning_yaml)
 
     # Trajectory Execution Functionality
     moveit_simple_controllers_yaml = load_yaml(
-        'franka_fr3_moveit_config', 'config/fr3_controllers.yaml'
+        'agimus_franka_fr3_moveit_config', 'config/fr3_controllers.yaml'
     )
     moveit_controllers = {
         'moveit_simple_controller_manager': moveit_simple_controllers_yaml,
@@ -159,7 +159,7 @@ def generate_launch_description():
 
     # RViz
     rviz_base = os.path.join(get_package_share_directory(
-        'franka_fr3_moveit_config'), 'rviz')
+        'agimus_franka_fr3_moveit_config'), 'rviz')
     rviz_full_config = os.path.join(rviz_base, 'moveit.rviz')
 
     rviz_node = Node(
@@ -186,7 +186,7 @@ def generate_launch_description():
     )
 
     ros2_controllers_path = os.path.join(
-        get_package_share_directory('franka_fr3_moveit_config'),
+        get_package_share_directory('agimus_franka_fr3_moveit_config'),
         'config',
         'fr3_ros_controllers.yaml',
     )
@@ -194,7 +194,7 @@ def generate_launch_description():
         package='controller_manager',
         executable='ros2_control_node',
         parameters=[robot_description, ros2_controllers_path],
-        remappings=[('joint_states', 'franka/joint_states')],
+        remappings=[('joint_states', 'agimus_franka/joint_states')],
         output={
             'stdout': 'screen',
             'stderr': 'screen',
@@ -219,13 +219,13 @@ def generate_launch_description():
         executable='joint_state_publisher',
         name='joint_state_publisher',
         parameters=[
-            {'source_list': ['franka/joint_states', 'fr3_gripper/joint_states'], 'rate': 30}],
+            {'source_list': ['agimus_franka/joint_states', 'fr3_gripper/joint_states'], 'rate': 30}],
     )
 
     agimus_franka_robot_state_broadcaster = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['franka_robot_state_broadcaster'],
+        arguments=['agimus_franka_robot_state_broadcaster'],
         output='screen',
         condition=UnlessCondition(use_fake_hardware),
     )
@@ -245,7 +245,7 @@ def generate_launch_description():
             use_fake_hardware_parameter_name))
     gripper_launch_file = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([PathJoinSubstitution(
-            [FindPackageShare('franka_gripper'), 'launch', 'gripper.launch.py'])]),
+            [FindPackageShare('agimus_franka_gripper'), 'launch', 'gripper.launch.py'])]),
         launch_arguments={'robot_ip': robot_ip,
                           use_fake_hardware_parameter_name: use_fake_hardware}.items(),
     )

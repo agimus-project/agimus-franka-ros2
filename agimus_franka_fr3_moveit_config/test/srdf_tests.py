@@ -17,7 +17,7 @@ from os import path
 from ament_index_python.packages import get_package_share_directory
 import xacro
 
-fr3_xacro_file_name = path.join(get_package_share_directory('franka_fr3_moveit_config'), 'srdf',
+fr3_xacro_file_name = path.join(get_package_share_directory('agimus_franka_fr3_moveit_config'), 'srdf',
                                 'fr3_arm.srdf.xacro')
 
 

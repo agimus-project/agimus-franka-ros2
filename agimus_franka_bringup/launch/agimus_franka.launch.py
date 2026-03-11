@@ -48,7 +48,7 @@ def robot_description_dependent_nodes_spawner(
     load_gripper_str = context.perform_substitution(load_gripper)
 
     agimus_franka_xacro_filepath = os.path.join(get_package_share_directory(
-        'franka_description'), 'robots', arm_id_str, arm_id_str+'.urdf.xacro')
+        'agimus_franka_description'), 'robots', arm_id_str, arm_id_str+'.urdf.xacro')
     robot_description = xacro.process_file(agimus_franka_xacro_filepath,
                                            mappings={
                                                'ros2_control': 'true',
@@ -60,7 +60,7 @@ def robot_description_dependent_nodes_spawner(
                                            }).toprettyxml(indent='  ')
 
     agimus_franka_controllers = PathJoinSubstitution(
-        [FindPackageShare('franka_bringup'), 'config', 'controllers.yaml'])
+        [FindPackageShare('agimus_franka_bringup'), 'config', 'controllers.yaml'])
 
     return [
         Node(
@@ -78,7 +78,7 @@ def robot_description_dependent_nodes_spawner(
                         {'arm_id': arm_id},
                         {'load_gripper': load_gripper},
                         ],
-            remappings=[('joint_states', 'franka/joint_states')],
+            remappings=[('joint_states', 'agimus_franka/joint_states')],
             output={
                 'stdout': 'screen',
                 'stderr': 'screen',
@@ -103,7 +103,7 @@ def generate_launch_description():
         fake_sensor_commands_parameter_name)
     use_rviz = LaunchConfiguration(use_rviz_parameter_name)
 
-    rviz_file = os.path.join(get_package_share_directory('franka_description'), 'rviz',
+    rviz_file = os.path.join(get_package_share_directory('agimus_franka_description'), 'rviz',
                              'visualize_franka.rviz')
 
     robot_description_dependent_nodes_spawner_opaque_function = OpaqueFunction(
@@ -145,7 +145,7 @@ def generate_launch_description():
             executable='joint_state_publisher',
             name='joint_state_publisher',
             parameters=[
-                {'source_list': ['franka/joint_states', 'franka_gripper/joint_states'],
+                {'source_list': ['agimus_franka/joint_states', 'agimus_franka_gripper/joint_states'],
                  'rate': 30}],
         ),
         robot_description_dependent_nodes_spawner_opaque_function,
@@ -158,14 +158,14 @@ def generate_launch_description():
         Node(
             package='controller_manager',
             executable='spawner',
-            arguments=['franka_robot_state_broadcaster'],
+            arguments=['agimus_franka_robot_state_broadcaster'],
             parameters=[{'arm_id': arm_id}],
             output='screen',
             condition=UnlessCondition(use_fake_hardware),
         ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution(
-                [FindPackageShare('franka_gripper'), 'launch', 'gripper.launch.py'])]),
+                [FindPackageShare('agimus_franka_gripper'), 'launch', 'gripper.launch.py'])]),
             launch_arguments={robot_ip_parameter_name: robot_ip,
                               use_fake_hardware_parameter_name: use_fake_hardware}.items(),
             condition=IfCondition(load_gripper)

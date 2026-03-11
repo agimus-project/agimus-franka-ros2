@@ -65,7 +65,7 @@ def generate_launch_description():
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution(
-                [FindPackageShare('franka_bringup'), 'launch', 'franka.launch.py'])]),
+                [FindPackageShare('agimus_franka_bringup'), 'launch', 'agimus_franka.launch.py'])]),
             launch_arguments={robot_ip_parameter_name: robot_ip,
                               arm_id_parameter_name: arm_id,
                               load_gripper_parameter_name: load_gripper,

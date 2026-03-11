@@ -54,7 +54,7 @@ def generate_launch_description():
     )
 
     agimus_franka_xacro_file = os.path.join(
-        get_package_share_directory('franka_description'),
+        get_package_share_directory('agimus_franka_description'),
         'robots', 'fr3', 'fr3.urdf.xacro'
     )
 
@@ -80,7 +80,7 @@ def generate_launch_description():
         robot_description_command, value_type=str)}
 
     agimus_franka_semantic_xacro_file = os.path.join(
-        get_package_share_directory('franka_fr3_moveit_config'),
+        get_package_share_directory('agimus_franka_fr3_moveit_config'),
         'srdf', 'fr3_arm.srdf.xacro'
     )
 
@@ -94,7 +94,7 @@ def generate_launch_description():
         robot_description_semantic_command, value_type=str)}
 
     kinematics_yaml = load_yaml(
-        'franka_fr3_moveit_config', 'config/kinematics.yaml')
+        'agimus_franka_fr3_moveit_config', 'config/kinematics.yaml')
 
     run_move_group_node = Node(
         package='moveit_ros_move_group',

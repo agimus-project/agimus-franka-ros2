@@ -24,7 +24,7 @@ ros2 launch agimus_franka_gazebo_bringup visualize_franka_robot.launch.py arm_id
 If you want to start the simulation including the agimus_franka_hand:
 
 ```bash
-ros2 launch agimus_franka_gazebo_bringup visualize_franka_robot.launch.py load_gripper:=true agimus_franka_hand:='franka_hand'
+ros2 launch agimus_franka_gazebo_bringup visualize_franka_robot.launch.py load_gripper:=true agimus_franka_hand:='agimus_franka_hand'
 ```
 
 
@@ -40,7 +40,7 @@ colcon build --packages-select agimus_franka_example_controllers
 Now you can launch the velocity example with Gazebo simulator.
 
 ```bash
-ros2 launch agimus_franka_gazebo_bringup gazebo_joint_velocity_controller_example.launch.py load_gripper:=true agimus_franka_hand:='franka_hand'
+ros2 launch agimus_franka_gazebo_bringup gazebo_joint_velocity_controller_example.launch.py load_gripper:=true agimus_franka_hand:='agimus_franka_hand'
 ```
 
 Keep in mind that the gripper joint has a bug with the joint velocity controller. 
@@ -54,7 +54,7 @@ To run the joint position control example you need to have the required software
 Then you can run with the following command.
 
 ```bash
-ros2 launch agimus_franka_gazebo_bringup gazebo_joint_position_controller_example.launch.py load_gripper:=true agimus_franka_hand:='franka_hand'
+ros2 launch agimus_franka_gazebo_bringup gazebo_joint_position_controller_example.launch.py load_gripper:=true agimus_franka_hand:='agimus_franka_hand'
 ```
 
 ## Joint Impedance Control Example with Gazebo
@@ -75,7 +75,7 @@ source install/setup.sh
 Then you can run the impedance control example.
 
 ```bash
-ros2 launch agimus_franka_gazebo_bringup gazebo_joint_impedance_controller_example.launch.py load_gripper:=true agimus_franka_hand:='franka_hand'
+ros2 launch agimus_franka_gazebo_bringup gazebo_joint_impedance_controller_example.launch.py load_gripper:=true agimus_franka_hand:='agimus_franka_hand'
 ```
 
 

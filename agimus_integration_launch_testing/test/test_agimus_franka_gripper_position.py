@@ -56,7 +56,7 @@ def generate_test_description():
             [
                 PathJoinSubstitution(
                     [
-                        FindPackageShare('franka_gripper'),
+                        FindPackageShare('agimus_franka_gripper'),
                         'launch',
                         'gripper.launch.py',
                     ]
@@ -103,7 +103,7 @@ def generate_test_description():
             ],
         ),
         {
-            'franka_gripper': agimus_franka_gripper_description,
+            'agimus_franka_gripper': agimus_franka_gripper_description,
         },
     )
 

@@ -33,7 +33,7 @@ def generate_launch_description():
     joint_names = LaunchConfiguration(joint_names_parameter_name)
 
     gripper_config = os.path.join(
-        get_package_share_directory('franka_gripper'), 'config', 'franka_gripper_node.yaml'
+        get_package_share_directory('agimus_franka_gripper'), 'config', 'agimus_franka_gripper_node.yaml'
     )
 
     default_joint_name_postfix = '_finger_joint'
@@ -75,14 +75,14 @@ def generate_launch_description():
                 description='Names of the gripper joints in the URDF',
             ),
             Node(
-                package='franka_gripper',
-                executable='franka_gripper_node',
+                package='agimus_franka_gripper',
+                executable='agimus_franka_gripper_node',
                 name=[arm_id, '_gripper'],
                 parameters=[{'robot_ip': robot_ip, 'joint_names': joint_names}, gripper_config],
                 condition=UnlessCondition(use_fake_hardware),
             ),
             Node(
-                package='franka_gripper',
+                package='agimus_franka_gripper',
                 executable='fake_gripper_state_publisher.py',
                 name=[arm_id, '_gripper'],
                 parameters=[{'robot_ip': robot_ip, 'joint_names': joint_names}, gripper_config],

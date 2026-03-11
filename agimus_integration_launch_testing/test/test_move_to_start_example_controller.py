@@ -45,7 +45,7 @@ def generate_test_description():
             [
                 PathJoinSubstitution(
                     [
-                        FindPackageShare('franka_bringup'),
+                        FindPackageShare('agimus_franka_bringup'),
                         'launch',
                         'move_to_start_example_controller.launch.py',
                     ]
