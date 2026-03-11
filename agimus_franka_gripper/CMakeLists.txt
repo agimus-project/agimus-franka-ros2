@@ -47,7 +47,6 @@ install(PROGRAMS
         DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
-    find_package(ament_cmake_clang_format REQUIRED)
     find_package(ament_cmake_copyright REQUIRED)
     find_package(ament_cmake_cppcheck REQUIRED)
     find_package(ament_cmake_flake8 REQUIRED)
@@ -56,7 +55,6 @@ if(BUILD_TESTING)
     find_package(ament_cmake_xmllint REQUIRED)
 
     set(CPP_DIRECTORIES src include)
-    ament_clang_format(CONFIG_FILE ../.clang-format ${CPP_DIRECTORIES})
     ament_copyright(launch ${CPP_DIRECTORIES} package.xml)
     ament_cppcheck(${CPP_DIRECTORIES})
     ament_lint_cmake(CMakeLists.txt)

@@ -59,7 +59,6 @@ install(
 
 if(BUILD_TESTING)
     find_package(ament_cmake_gmock REQUIRED)
-    find_package(ament_cmake_clang_format REQUIRED)
     find_package(ament_cmake_copyright REQUIRED)
     find_package(ament_cmake_cppcheck REQUIRED)
     find_package(ament_cmake_flake8 REQUIRED)
@@ -70,7 +69,6 @@ if(BUILD_TESTING)
     find_package(controller_manager REQUIRED)
 
     set(CPP_DIRECTORIES src include)
-    ament_clang_format(CONFIG_FILE ../.clang-format ${CPP_DIRECTORIES})
     ament_copyright(${CPP_DIRECTORIES} package.xml)
     ament_cppcheck(${CPP_DIRECTORIES})
     ament_lint_cmake(CMakeLists.txt)

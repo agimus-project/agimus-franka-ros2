@@ -38,9 +38,8 @@
                 '';
                 cmakeFlags = [
                   # This need to download an xml schema at check time
-                  # TODO: clang-format
                   # TODO: load ?
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|clang_format|test_load_agimus_franka_robot_state_broadcaster'"
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|test_load_agimus_franka_robot_state_broadcaster'"
                 ];
                 nativeCheckInputs = [
                   final.writableTmpDirAsHomeHook
@@ -89,8 +88,7 @@
                 sourceRoot = "source/agimus_franka_gripper";
                 cmakeFlags = [
                   # This need to download an xml schema at check time
-                  # TODO: clang-format
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|clang_format'"
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;xmllint"
                 ];
               };
               agimus-franka-hardware =
@@ -103,8 +101,7 @@
                   sourceRoot = "source/agimus_franka_hardware";
                   cmakeFlags = [
                     # This need to download an xml schema at check time
-                    # TODO: clang-format
-                    "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|clang_format'"
+                    "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint"
                   ];
                   nativeBuildInputs = super.nativeBuildInputs ++ [
                     final.writableTmpDirAsHomeHook
@@ -129,7 +126,6 @@
                 sourceRoot = "source/agimus_franka_robot_state_broadcaster";
                 nativeCheckInputs = [
                   final.writableTmpDirAsHomeHook
-                  ros-final.ament-cmake-clang-format
                   ros-final.ament-cmake-copyright
                   ros-final.ament-cmake-cppcheck
                   ros-final.ament-cmake-flake8
@@ -139,7 +135,7 @@
                 ];
                 cmakeFlags = [
                   # TODO
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'clang_format|test_load_agimus_franka_robot_state_broadcaster'"
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;test_load_agimus_franka_robot_state_broadcaster"
                 ];
                 preConfigure = ''
                   export NIX_CFLAGS_COMPILE=$(echo $NIX_CFLAGS_COMPILE | tr ' ' '\n' | grep -v '/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' | tr '\n' ' ')
@@ -160,8 +156,7 @@
                 sourceRoot = "source/agimus_franka_semantic_components";
                 cmakeFlags = [
                   # This need to download an xml schema at check time
-                  # TODO: clang-format
-                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;'xmllint|clang_format'"
+                  "-DCMAKE_CTEST_ARGUMENTS=--exclude-regex;xmllint"
                 ];
                 checkTarget = " ";
                 doInstallCheck = true;
