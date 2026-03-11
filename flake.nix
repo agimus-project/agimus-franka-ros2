@@ -110,6 +110,9 @@
                     final.writableTmpDirAsHomeHook
                     ros-final.rmw-implementation-cmake
                   ];
+                  preConfigure = ''
+                    export NIX_CFLAGS_COMPILE=$(echo $NIX_CFLAGS_COMPILE | tr ' ' '\n' | grep -v '/nix/store/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' | tr '\n' ' ')
+                  '';
                 });
               agimus-franka-msgs = _final: _ros-final: {
                 src = lib.fileset.toSource {
