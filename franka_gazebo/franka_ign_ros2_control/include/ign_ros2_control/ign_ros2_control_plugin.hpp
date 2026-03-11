@@ -18,7 +18,7 @@
 #include <memory>
 #include <string>
 
-#include <ignition/gazebo/System.hh>
+#include <gz/sim/System.hh>
 #include "ign_ros2_control/model_kdl.h"
 
 namespace ign_ros2_control
@@ -26,10 +26,10 @@ namespace ign_ros2_control
 // Forward declarations.
 class IgnitionROS2ControlPluginPrivate;
 
-class IgnitionROS2ControlPlugin : public ignition::gazebo::System,
-  public ignition::gazebo::ISystemConfigure,
-  public ignition::gazebo::ISystemPreUpdate,
-  public ignition::gazebo::ISystemPostUpdate
+class IgnitionROS2ControlPlugin : public gz::sim::System,
+  public gz::sim::ISystemConfigure,
+  public gz::sim::ISystemPreUpdate,
+  public gz::sim::ISystemPostUpdate
 {
 public:
   /// \brief Constructor
@@ -40,19 +40,19 @@ public:
 
   // Documentation inherited
   void Configure(
-    const ignition::gazebo::Entity & _entity,
+    const gz::sim::Entity & _entity,
     const std::shared_ptr<const sdf::Element> & _sdf,
-    ignition::gazebo::EntityComponentManager & _ecm,
-    ignition::gazebo::EventManager & _eventMgr) override;
+    gz::sim::EntityComponentManager & _ecm,
+    gz::sim::EventManager & _eventMgr) override;
 
   // Documentation inherited
   void PreUpdate(
-    const ignition::gazebo::UpdateInfo & _info,
-    ignition::gazebo::EntityComponentManager & _ecm) override;
+    const gz::sim::UpdateInfo & _info,
+    gz::sim::EntityComponentManager & _ecm) override;
 
   void PostUpdate(
-    const ignition::gazebo::UpdateInfo & _info,
-    const ignition::gazebo::EntityComponentManager & _ecm) override;
+    const gz::sim::UpdateInfo & _info,
+    const gz::sim::EntityComponentManager & _ecm) override;
 
 private:
   /// @brief gets the root link of the urdf model

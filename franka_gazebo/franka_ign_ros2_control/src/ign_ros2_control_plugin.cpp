@@ -23,14 +23,14 @@
 #include <utility>
 #include <vector>
 
-#include <ignition/gazebo/Model.hh>
-#include <ignition/gazebo/components/Joint.hh>
-#include <ignition/gazebo/components/JointType.hh>
-#include <ignition/gazebo/components/Name.hh>
-#include <ignition/gazebo/components/ParentEntity.hh>
-#include <ignition/gazebo/components/World.hh>
+#include <gz/sim/Model.hh>
+#include <gz/sim/components/Joint.hh>
+#include <gz/sim/components/JointType.hh>
+#include <gz/sim/components/Name.hh>
+#include <gz/sim/components/ParentEntity.hh>
+#include <gz/sim/components/World.hh>
 
-#include <ignition/plugin/Register.hh>
+#include <gz/plugin/Register.hh>
 
 #include <controller_manager/controller_manager.hpp>
 
@@ -63,12 +63,12 @@ public:
   /// configured for
   /// \param[in] _ecm Ignition Entity Component Manager
   /// \return List of entities containing all enabled joints
-  std::map<std::string, ignition::gazebo::Entity> GetEnabledJoints(
-    const ignition::gazebo::Entity & _entity,
-    ignition::gazebo::EntityComponentManager & _ecm) const;
+  std::map<std::string, gz::sim::Entity> GetEnabledJoints(
+    const gz::sim::Entity & _entity,
+    gz::sim::EntityComponentManager & _ecm) const;
 
   /// \brief Entity ID for sensor within Gazebo.
-  ignition::gazebo::Entity entity_;
+  gz::sim::Entity entity_;
 
   /// \brief Node Handles
   std::shared_ptr<rclcpp::Node> node_{nullptr};
@@ -100,31 +100,31 @@ public:
   rclcpp::Time last_update_sim_time_ros_ = rclcpp::Time((int64_t)0, RCL_ROS_TIME);
 
   /// \brief ECM pointer
-  ignition::gazebo::EntityComponentManager * ecm{nullptr};
+  gz::sim::EntityComponentManager * ecm{nullptr};
 
   /// \brief controller update rate
   int update_rate;
 };
 
 //////////////////////////////////////////////////
-std::map<std::string, ignition::gazebo::Entity> IgnitionROS2ControlPluginPrivate::GetEnabledJoints(
-  const ignition::gazebo::Entity & _entity,
-  ignition::gazebo::EntityComponentManager & _ecm) const
+std::map<std::string, gz::sim::Entity> IgnitionROS2ControlPluginPrivate::GetEnabledJoints(
+  const gz::sim::Entity & _entity,
+  gz::sim::EntityComponentManager & _ecm) const
 {
-  std::map<std::string, ignition::gazebo::Entity> output;
+  std::map<std::string, gz::sim::Entity> output;
 
   std::vector<std::string> enabledJoints;
 
   // Get all available joints
-  auto jointEntities = _ecm.ChildrenByComponents(_entity, ignition::gazebo::components::Joint());
+  auto jointEntities = _ecm.ChildrenByComponents(_entity, gz::sim::components::Joint());
 
   // Iterate over all joints and verify whether they can be enabled or not
   for (const auto & jointEntity : jointEntities) {
-    const auto jointName = _ecm.Component<ignition::gazebo::components::Name>(jointEntity)->Data();
+    const auto jointName = _ecm.Component<gz::sim::components::Name>(jointEntity)->Data();
 
     // Make sure the joint type is supported, i.e. it has exactly one
     // actuated axis
-    const auto * jointType = _ecm.Component<ignition::gazebo::components::JointType>(jointEntity);
+    const auto * jointType = _ecm.Component<gz::sim::components::JointType>(jointEntity);
     switch (jointType->Data()) {
       case sdf::JointType::PRISMATIC:
       case sdf::JointType::REVOLUTE:
@@ -278,14 +278,14 @@ std::string IgnitionROS2ControlPlugin::findTipLink(const urdf::Model & model)
 
 //////////////////////////////////////////////////
 void IgnitionROS2ControlPlugin::Configure(
-  const ignition::gazebo::Entity & _entity,
+  const gz::sim::Entity & _entity,
   const std::shared_ptr<const sdf::Element> & _sdf,
-  ignition::gazebo::EntityComponentManager & _ecm,
-  ignition::gazebo::EventManager &)
+  gz::sim::EntityComponentManager & _ecm,
+  gz::sim::EventManager &)
 {
   rclcpp::Logger logger = rclcpp::get_logger("GazeboSimROS2ControlPlugin");
   // Make sure the controller is attached to a valid model
-  const auto model = ignition::gazebo::Model(_entity);
+  const auto model = gz::sim::Model(_entity);
   if (!model.Valid(_ecm)) {
     RCLCPP_ERROR(
       logger,
@@ -515,8 +515,8 @@ void IgnitionROS2ControlPlugin::Configure(
 
 //////////////////////////////////////////////////
 void IgnitionROS2ControlPlugin::PreUpdate(
-  const ignition::gazebo::UpdateInfo & _info,
-  ignition::gazebo::EntityComponentManager & /*_ecm*/)
+  const gz::sim::UpdateInfo & _info,
+  gz::sim::EntityComponentManager & /*_ecm*/)
 {
   if (!this->dataPtr->controller_manager_) {
     return;
@@ -554,8 +554,8 @@ void IgnitionROS2ControlPlugin::PreUpdate(
 
 //////////////////////////////////////////////////
 void IgnitionROS2ControlPlugin::PostUpdate(
-  const ignition::gazebo::UpdateInfo & _info,
-  const ignition::gazebo::EntityComponentManager & /*_ecm*/)
+  const gz::sim::UpdateInfo & _info,
+  const gz::sim::EntityComponentManager & /*_ecm*/)
 {
   if (!this->dataPtr->controller_manager_) {
     return;
@@ -576,9 +576,9 @@ void IgnitionROS2ControlPlugin::PostUpdate(
 }
 }  // namespace ign_ros2_control
 
-IGNITION_ADD_PLUGIN(
+GZ_ADD_PLUGIN(
   ign_ros2_control::IgnitionROS2ControlPlugin,
-  ignition::gazebo::System,
+  gz::sim::System,
   ign_ros2_control::IgnitionROS2ControlPlugin::ISystemConfigure,
   ign_ros2_control::IgnitionROS2ControlPlugin::ISystemPreUpdate,
   ign_ros2_control::IgnitionROS2ControlPlugin::ISystemPostUpdate)

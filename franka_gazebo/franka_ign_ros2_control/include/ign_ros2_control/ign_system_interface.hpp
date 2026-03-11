@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include <ignition/gazebo/System.hh>
+#include <gz/sim/System.hh>
 #include "ign_ros2_control/model_kdl.h"
 
 #include <hardware_interface/system_interface.hpp>
@@ -111,9 +111,9 @@ public:
   virtual bool initSim(
     const ModelKDL & model_kdl,
     rclcpp::Node::SharedPtr & model_nh,
-    std::map<std::string, ignition::gazebo::Entity> & joints,
+    std::map<std::string, gz::sim::Entity> & joints,
     const hardware_interface::HardwareInfo & hardware_info,
-    ignition::gazebo::EntityComponentManager & _ecm,
+    gz::sim::EntityComponentManager & _ecm,
     int & update_rate) = 0;
 
   // Methods used to control a joint.
