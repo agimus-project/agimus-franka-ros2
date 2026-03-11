@@ -37,6 +37,7 @@
 #include <hardware_interface/component_parser.hpp>
 #include <hardware_interface/resource_manager.hpp>
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
+#include <hardware_interface/version.h>
 
 #include <pluginlib/class_loader.hpp>
 
@@ -428,10 +429,19 @@ void IgnitionROS2ControlPlugin::Configure(
   }
 
   std::unique_ptr<hardware_interface::ResourceManager> resource_manager_ =
-    std::make_unique<hardware_interface::ResourceManager>();
+    std::make_unique<hardware_interface::ResourceManager>(
+#if HARDWARE_INTERFACE_VERSION_GTE(4, 13, 0)
+  this->dataPtr->node_->get_node_clock_interface(),
+  this->dataPtr->node_->get_node_logging_interface()
+#endif
+        );
 
   try {
+#if HARDWARE_INTERFACE_VERSION_GTE(4, 12, 0)
+    resource_manager_->load_and_initialize_components(urdf_string);
+#else
     resource_manager_->load_urdf(urdf_string, false, false);
+#endif
   } catch (...) {
     RCLCPP_ERROR(
       this->dataPtr->node_->get_logger(),
@@ -449,7 +459,12 @@ void IgnitionROS2ControlPlugin::Configure(
   }
 
   for (unsigned int i = 0; i < control_hardware_info.size(); ++i) {
-    std::string robot_hw_sim_type_str_ = control_hardware_info[i].hardware_class_type;
+    std::string robot_hw_sim_type_str_ =
+#if HARDWARE_INTERFACE_VERSION_GTE(3, 5, 0)
+      control_hardware_info[i].hardware_plugin_name;
+#else
+      control_hardware_info[i].hardware_class_type;
+#endif
     std::unique_ptr<ign_ros2_control::IgnitionSystemInterface> ignitionSystem;
     RCLCPP_DEBUG(
       this->dataPtr->node_->get_logger(), "Load hardware interface %s ...",
