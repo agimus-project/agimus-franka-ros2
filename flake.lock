@@ -36,55 +36,83 @@
         "type": "github"
       }
     },
-    "gazebros2nix": {
+    "flakoboros": {
       "inputs": {
         "flake-parts": "flake-parts",
-        "gepetto-lib": "gepetto-lib",
         "nix-ros-overlay": "nix-ros-overlay",
         "nixpkgs": [
           "gazebros2nix",
+          "flakoboros",
           "nix-ros-overlay",
+          "nixpkgs"
+        ],
+        "systems": [
+          "gazebros2nix",
+          "flakoboros",
+          "nix-ros-overlay",
+          "flake-utils",
+          "systems"
+        ],
+        "treefmt-nix": "treefmt-nix"
+      },
+      "locked": {
+        "lastModified": 1774022045,
+        "narHash": "sha256-6bK5W5piTANNABlZF4PExwyHjxELcDXVRC2a6xJ8xAE=",
+        "owner": "gepetto",
+        "repo": "flakoboros",
+        "rev": "42322dcc96857639625c95eef5514441c4f56f3d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gepetto",
+        "repo": "flakoboros",
+        "type": "github"
+      }
+    },
+    "gazebros2nix": {
+      "inputs": {
+        "flake-parts": [
+          "gazebros2nix",
+          "flakoboros",
+          "flake-parts"
+        ],
+        "flakoboros": "flakoboros",
+        "nix-ros-overlay": [
+          "gazebros2nix",
+          "flakoboros",
+          "nix-ros-overlay"
+        ],
+        "nixpkgs": [
+          "gazebros2nix",
+          "flakoboros",
           "nixpkgs"
         ],
         "pyproject-build-systems": "pyproject-build-systems",
         "pyproject-nix": "pyproject-nix",
         "systems": [
           "gazebros2nix",
-          "nix-ros-overlay",
-          "flake-utils",
+          "flakoboros",
           "systems"
         ],
-        "treefmt-nix": "treefmt-nix",
+        "treefmt-nix": [
+          "gazebros2nix",
+          "flakoboros",
+          "treefmt-nix"
+        ],
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1773442950,
-        "narHash": "sha256-gKHvEPhqZfaepCJ0kWnC1eIMFEAmbg+t6RAedr/ujd4=",
-        "ref": "refs/heads/fork",
-        "rev": "481c67dd1b343d735dafa1b0c4c38c8635f1f4ca",
-        "revCount": 242,
-        "type": "git",
-        "url": "file:///home/gsaurel/local/gepetto/gazebros2nix"
+        "lastModified": 1774022387,
+        "narHash": "sha256-U3MA3Xx58zpbcFw3oLOGNbFboEYkWh52byZgrttcrN8=",
+        "owner": "gepetto",
+        "repo": "gazebros2nix",
+        "rev": "32343ebf03171d1022e6439464441e2726a71829",
+        "type": "github"
       },
       "original": {
         "owner": "gepetto",
         "ref": "fork",
         "repo": "gazebros2nix",
-        "type": "github"
-      }
-    },
-    "gepetto-lib": {
-      "locked": {
-        "lastModified": 1772454823,
-        "narHash": "sha256-jROeQxiRkzpHHAWDAxHJVfW/liA+t6JKDyPMJFqUE9E=",
-        "owner": "Gepetto",
-        "repo": "nix-lib",
-        "rev": "4500b5aa6af20c60011926ad6f42238375779c90",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Gepetto",
-        "repo": "nix-lib",
         "type": "github"
       }
     },
@@ -94,11 +122,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1772890336,
-        "narHash": "sha256-pjO4Od9QdCWDMmE/utZ2YVyxAL8+jo5oEpnQQ9dV0rc=",
+        "lastModified": 1773764250,
+        "narHash": "sha256-zU8nVciyfHEJ+RG/YcTUbf7P0doXofjm3QKamhPZ2rk=",
         "owner": "lopsided98",
         "repo": "nix-ros-overlay",
-        "rev": "8fe70ded2467c777c14bbd7087e57b0d3d88110e",
+        "rev": "d2730244d0551a510567d1093e6f368cdbfb8e66",
         "type": "github"
       },
       "original": {
@@ -155,11 +183,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772555609,
-        "narHash": "sha256-3BA3HnUvJSbHJAlJj6XSy0Jmu7RyP2gyB/0fL7XuEDo=",
+        "lastModified": 1773870109,
+        "narHash": "sha256-ZoTdqZP03DcdoyxvpFHCAek4bkPUTUPUF3oCCgc3dP4=",
         "owner": "pyproject-nix",
         "repo": "build-system-pkgs",
-        "rev": "c37f66a953535c394244888598947679af231863",
+        "rev": "b6e74f433b02fa4b8a7965ee24680f4867e2926f",
         "type": "github"
       },
       "original": {
@@ -176,11 +204,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772865871,
-        "narHash": "sha256-/ZTSg97aouL0SlPHaokA4r3iuH9QzHVuWPACD2CUCFY=",
+        "lastModified": 1773909723,
+        "narHash": "sha256-HmcZQ/hMPHR22Ri/6Sl7Z0B5J8nZa9bRnZJtDFInM7I=",
         "owner": "pyproject-nix",
         "repo": "pyproject.nix",
-        "rev": "e537db02e72d553cea470976b9733581bcf5b3ed",
+        "rev": "d37dcf34ac7194eac4b0d10520d01298c434267d",
         "type": "github"
       },
       "original": {
@@ -233,15 +261,16 @@
       "inputs": {
         "nixpkgs": [
           "gazebros2nix",
+          "flakoboros",
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1772660329,
-        "narHash": "sha256-IjU1FxYqm+VDe5qIOxoW+pISBlGvVApRjiw/Y/ttJzY=",
+        "lastModified": 1773297127,
+        "narHash": "sha256-6E/yhXP7Oy/NbXtf1ktzmU8SdVqJQ09HC/48ebEGBpk=",
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "rev": "3710e0e1218041bbad640352a0440114b1e10428",
+        "rev": "71b125cd05fbfd78cab3e070b73544abe24c5016",
         "type": "github"
       },
       "original": {
@@ -262,11 +291,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772545244,
-        "narHash": "sha256-Ys+5UMOqp2kRvnSjyBcvGnjOhkIXB88On1ZcAstz1vY=",
+        "lastModified": 1773958975,
+        "narHash": "sha256-Lr2k67KFPxPLqMtCWvwfg30S8huAEpEY9UcXHfi1Q+4=",
         "owner": "pyproject-nix",
         "repo": "uv2nix",
-        "rev": "482aba340ded40ef557d331315f227d5eba84ced",
+        "rev": "ffd52b90f29babbc4f309c29f2a2cdd6547be443",
         "type": "github"
       },
       "original": {
