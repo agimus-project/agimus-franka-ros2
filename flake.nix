@@ -20,7 +20,7 @@
         imports = [
           inputs.gazebros2nix.flakeModule
           {
-            gazebros2nix.rosOverrides = {
+            flakoboros.rosOverrides = {
               agimus-franka-bringup = _final: _ros-final: {
                 src = lib.fileset.toSource {
                   root = ./.;
