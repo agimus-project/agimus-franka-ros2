@@ -21,6 +21,7 @@
   <depend condition="$GAZEBO_VERSION == harmonic">gz-plugin2</depend>
   <depend condition="$GAZEBO_VERSION == ionic">gz-plugin3</depend>
   <depend condition="$GAZEBO_VERSION == jetty">gz-plugin4</depend>
+  <depend condition="$GAZEBO_VERSION == harmonic">gz_ros2_control</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>yaml_cpp_vendor</depend>

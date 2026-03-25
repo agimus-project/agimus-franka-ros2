@@ -43,15 +43,37 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#ifdef IGNITION_SUPPORT
 #include "ign_ros2_control/ign_ros2_control_plugin.hpp"
 #include "ign_ros2_control/ign_system.hpp"
+#define CONTROL_PLUGIN_NS ign_ros2_control
+#define SystemInterface_t ign_ros2_control::IgnitionSystemInterface
+#define PLUGIN_PACKAGE "agimus_franka_ign_ros2_control"
+#define PLUGIN_BASE_CLASS "ign_ros2_control::IgnitionSystemInterface"
+#else
+#include "gz_ros2_control/gz_ros2_control_plugin.hpp"
+#include "gz_ros2_control/gz_system.hpp"
+#define CONTROL_PLUGIN_NS gz_ros2_control
+#define SystemInterface_t gz_ros2_control::GazeboSimSystemInterface
+#define PLUGIN_PACKAGE "agimus_franka_gz_ros2_control"
+#define PLUGIN_BASE_CLASS "gz_ros2_control::GazeboSimSystemInterface"
+#endif
+
 
 #include "ign_ros2_control/model_kdl.h"
 
+#ifdef IGNITION_SUPPORT
 namespace ign_ros2_control
+#else
+namespace gz_ros2_control
+#endif
 {
 //////////////////////////////////////////////////
+#ifdef IGNITION_SUPPORT
 class IgnitionROS2ControlPluginPrivate
+#else
+class GazeboSimROS2ControlPluginPrivate
+#endif
 {
 public:
   /// \brief Get the URDF XML from the parameter server
@@ -84,7 +106,7 @@ public:
   rclcpp::Duration control_period_ = rclcpp::Duration(1, 0);
 
   /// \brief Interface loader
-  std::shared_ptr<pluginlib::ClassLoader<ign_ros2_control::IgnitionSystemInterface>>
+  std::shared_ptr<pluginlib::ClassLoader<SystemInterface_t>>
   robot_hw_sim_loader_{nullptr};
 
   /// \brief Controller manager
@@ -107,8 +129,15 @@ public:
   int update_rate;
 };
 
+// Alias used in non-constructor method definitions and make_unique calls
+#ifdef IGNITION_SUPPORT
+using PluginPrivate = IgnitionROS2ControlPluginPrivate;
+#else
+using PluginPrivate = GazeboSimROS2ControlPluginPrivate;
+#endif
+
 //////////////////////////////////////////////////
-std::map<std::string, gz::sim::Entity> IgnitionROS2ControlPluginPrivate::GetEnabledJoints(
+std::map<std::string, gz::sim::Entity> PluginPrivate::GetEnabledJoints(
   const gz::sim::Entity & _entity,
   gz::sim::EntityComponentManager & _ecm) const
 {
@@ -167,7 +196,7 @@ std::map<std::string, gz::sim::Entity> IgnitionROS2ControlPluginPrivate::GetEnab
 }
 
 //////////////////////////////////////////////////
-std::string IgnitionROS2ControlPluginPrivate::getURDF() const
+std::string PluginPrivate::getURDF() const
 {
   std::string urdf_string;
 
@@ -220,11 +249,19 @@ std::string IgnitionROS2ControlPluginPrivate::getURDF() const
 }
 
 //////////////////////////////////////////////////
+#ifdef IGNITION_SUPPORT
 IgnitionROS2ControlPlugin::IgnitionROS2ControlPlugin()
-: dataPtr(std::make_unique<IgnitionROS2ControlPluginPrivate>()) {}
+: dataPtr(std::make_unique<PluginPrivate>()) {}
 
 //////////////////////////////////////////////////
 IgnitionROS2ControlPlugin::~IgnitionROS2ControlPlugin()
+#else
+GazeboSimROS2ControlPlugin::GazeboSimROS2ControlPlugin()
+: dataPtr(std::make_unique<PluginPrivate>()) {}
+
+//////////////////////////////////////////////////
+GazeboSimROS2ControlPlugin::~GazeboSimROS2ControlPlugin()
+#endif
 {
   // Stop controller manager thread
   if (!this->dataPtr->controller_manager_) {
@@ -236,7 +273,11 @@ IgnitionROS2ControlPlugin::~IgnitionROS2ControlPlugin()
 }
 
 // Function to get the root link from the URDF model
+#ifdef IGNITION_SUPPORT
 urdf::LinkConstSharedPtr IgnitionROS2ControlPlugin::getRootLink(const urdf::Model & model)
+#else
+urdf::LinkConstSharedPtr GazeboSimROS2ControlPlugin::getRootLink(const urdf::Model & model)
+#endif
 {
   for (const auto & link_pair : model.links_) {
     if (!link_pair.second->parent_joint) {
@@ -247,7 +288,11 @@ urdf::LinkConstSharedPtr IgnitionROS2ControlPlugin::getRootLink(const urdf::Mode
 }
 
 // Function to iteratively find the tip link in the URDF model
+#ifdef IGNITION_SUPPORT
 std::string IgnitionROS2ControlPlugin::findTipLink(const urdf::Model & model)
+#else
+std::string GazeboSimROS2ControlPlugin::findTipLink(const urdf::Model & model)
+#endif
 {
   urdf::LinkConstSharedPtr root_link = getRootLink(model);
   if (!root_link) {
@@ -278,7 +323,11 @@ std::string IgnitionROS2ControlPlugin::findTipLink(const urdf::Model & model)
 }
 
 //////////////////////////////////////////////////
+#ifdef IGNITION_SUPPORT
 void IgnitionROS2ControlPlugin::Configure(
+#else
+void GazeboSimROS2ControlPlugin::Configure(
+#endif
   const gz::sim::Entity & _entity,
   const std::shared_ptr<const sdf::Element> & _sdf,
   gz::sim::EntityComponentManager & _ecm,
@@ -449,8 +498,8 @@ void IgnitionROS2ControlPlugin::Configure(
   }
   try {
     this->dataPtr->robot_hw_sim_loader_.reset(
-      new pluginlib::ClassLoader<ign_ros2_control::IgnitionSystemInterface>(
-        "agimus_franka_ign_ros2_control", "ign_ros2_control::IgnitionSystemInterface"));
+      new pluginlib::ClassLoader<SystemInterface_t>(
+        PLUGIN_PACKAGE, PLUGIN_BASE_CLASS));
   } catch (pluginlib::LibraryLoadException & ex) {
     RCLCPP_ERROR(
       this->dataPtr->node_->get_logger(),
@@ -465,13 +514,13 @@ void IgnitionROS2ControlPlugin::Configure(
 #else
       control_hardware_info[i].hardware_class_type;
 #endif
-    std::unique_ptr<ign_ros2_control::IgnitionSystemInterface> ignitionSystem;
+    std::unique_ptr<SystemInterface_t> ignitionSystem;
     RCLCPP_DEBUG(
       this->dataPtr->node_->get_logger(), "Load hardware interface %s ...",
       robot_hw_sim_type_str_.c_str());
 
     try {
-      ignitionSystem = std::unique_ptr<ign_ros2_control::IgnitionSystemInterface>(
+      ignitionSystem = std::unique_ptr<SystemInterface_t>(
         this->dataPtr->robot_hw_sim_loader_->createUnmanagedInstance(robot_hw_sim_type_str_));
     } catch (pluginlib::PluginlibException & ex) {
       RCLCPP_ERROR(
@@ -529,7 +578,11 @@ void IgnitionROS2ControlPlugin::Configure(
 }
 
 //////////////////////////////////////////////////
+#ifdef IGNITION_SUPPORT
 void IgnitionROS2ControlPlugin::PreUpdate(
+#else
+void GazeboSimROS2ControlPlugin::PreUpdate(
+#endif
   const gz::sim::UpdateInfo & _info,
   gz::sim::EntityComponentManager & /*_ecm*/)
 {
@@ -568,7 +621,11 @@ void IgnitionROS2ControlPlugin::PreUpdate(
 }
 
 //////////////////////////////////////////////////
+#ifdef IGNITION_SUPPORT
 void IgnitionROS2ControlPlugin::PostUpdate(
+#else
+void GazeboSimROS2ControlPlugin::PostUpdate(
+#endif
   const gz::sim::UpdateInfo & _info,
   const gz::sim::EntityComponentManager & /*_ecm*/)
 {
@@ -582,8 +639,8 @@ void IgnitionROS2ControlPlugin::PostUpdate(
 
   if (sim_period >= this->dataPtr->control_period_) {
     this->dataPtr->last_update_sim_time_ros_ = sim_time_ros;
-    auto ign_controller_manager =
-      std::dynamic_pointer_cast<ign_ros2_control::IgnitionSystemInterface>(
+    auto gz_controller_manager =
+      std::dynamic_pointer_cast<SystemInterface_t>(
       this->dataPtr->controller_manager_);
     this->dataPtr->controller_manager_->read(sim_time_ros, sim_period);
     this->dataPtr->controller_manager_->update(sim_time_ros, sim_period);
@@ -593,11 +650,16 @@ void IgnitionROS2ControlPlugin::PostUpdate(
 
 #ifdef IGNITION_SUPPORT
 IGNITION_ADD_PLUGIN(
-#else
-GZ_ADD_PLUGIN(
-#endif
   ign_ros2_control::IgnitionROS2ControlPlugin,
   gz::sim::System,
   ign_ros2_control::IgnitionROS2ControlPlugin::ISystemConfigure,
   ign_ros2_control::IgnitionROS2ControlPlugin::ISystemPreUpdate,
   ign_ros2_control::IgnitionROS2ControlPlugin::ISystemPostUpdate)
+#else
+GZ_ADD_PLUGIN(
+  gz_ros2_control::GazeboSimROS2ControlPlugin,
+  gz::sim::System,
+  gz_ros2_control::GazeboSimROS2ControlPlugin::ISystemConfigure,
+  gz_ros2_control::GazeboSimROS2ControlPlugin::ISystemPreUpdate,
+  gz_ros2_control::GazeboSimROS2ControlPlugin::ISystemPostUpdate)
+#endif

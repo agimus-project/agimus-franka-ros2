@@ -29,8 +29,8 @@ if("$ENV{IGNITION_VERSION}" STREQUAL "fortress")
 
 elseif("$ENV{IGNITION_VERSION}" STREQUAL "garden")
   set(IGNITION_SUPPORT ON)
-  find_package(igintion-gazebo7 REQUIRED)
-  set(GZ_SIM_VER ${igintion-gazebo7_VERSION_MAJOR})
+  find_package(ignition-gazebo7 REQUIRED)
+  set(GZ_SIM_VER ${ignition-gazebo7_VERSION_MAJOR})
   message(STATUS "Compiling against Ignition garden")
   find_package(ignition-plugin2 REQUIRED)
   set(GZ_PLUGIN_VER ${ignition-plugin2_VERSION_MAJOR})
@@ -42,6 +42,7 @@ elseif("$ENV{GAZEBO_VERSION}" STREQUAL "harmonic")
   message(STATUS "Compiling against Gazebo Harmonic")
   find_package(gz-plugin2 REQUIRED)
   set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
+  find_package(gz_ros2_control REQUIRED)
 
 elseif("$ENV{GAZEBO_VERSION}" STREQUAL "ionic")
   find_package(gz-sim9 REQUIRED)
@@ -99,6 +100,7 @@ ament_target_dependencies(${PROJECT_NAME}-system
   kdl_parser
   tf2_geometry_msgs
   tf2_eigen
+  gz_ros2_control
 )
 
 #########

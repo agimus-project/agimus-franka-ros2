@@ -20,93 +20,61 @@
         imports = [
           inputs.gazebros2nix.flakeModule
           {
-            flakoboros.rosOverrides = {
-              agimus-franka-bringup = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_bringup;
+            flakoboros = {
+              rosShellDistro = "humble";
+              rosOverrideAttrs = {
+                agimus-franka-bringup = _: _: {
+                  src = lib.cleanSource ./agimus_franka_bringup;
                 };
-              };
 
-              agimus-franka-example-controllers = final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_example_controllers;
+                agimus-franka-example-controllers = _: _: {
+                  src = lib.cleanSource ./agimus_franka_example_controllers;
                 };
-              };
 
-              agimus-franka-fr3-moveit-config = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_fr3_moveit_config;
+                agimus-franka-fr3-moveit-config = _: _: {
+                  src = lib.cleanSource ./agimus_franka_fr3_moveit_config;
                 };
-              };
 
-              agimus-franka-gazebo-bringup = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_gazebo/agimus_franka_gazebo_bringup;
+                agimus-franka-gazebo-bringup = _: _: {
+                  src = lib.cleanSource ./agimus_franka_gazebo/agimus_franka_gazebo_bringup;
                 };
-              };
 
-              agimus-franka-ign-ros2-control = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_gazebo/agimus_franka_ign_ros2_control;
+                agimus-franka-ign-ros2-control = _: _: {
+                  src = lib.cleanSource ./agimus_franka_gazebo/agimus_franka_ign_ros2_control;
                 };
-              };
 
-              agimus-franka-gripper = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_gripper;
+                agimus-franka-gripper = _: _: {
+                  src = lib.cleanSource ./agimus_franka_gripper;
                 };
-              };
 
-              agimus-franka-hardware = final: ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_hardware;
+                agimus-franka-hardware = _: _: {
+                  src = lib.cleanSource ./agimus_franka_hardware;
                 };
-              };
 
-              agimus-franka-msgs = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_msgs;
+                agimus-franka-msgs = _: _: {
+                  src = lib.cleanSource ./agimus_franka_msgs;
                 };
-              };
 
-              agimus-franka-robot-state-broadcaster = final: ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_robot_state_broadcaster;
+                agimus-franka-robot-state-broadcaster = _: _: {
+                  src = lib.cleanSource ./agimus_franka_robot_state_broadcaster;
                 };
-              };
 
-              agimus-franka-ros2 = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_ros2;
+                agimus-franka-ros2 = _: _: {
+                  src = lib.cleanSource ./agimus_franka_ros2;
                 };
-              };
 
-              agimus-franka-semantic-components = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_franka_semantic_components;
+                agimus-franka-semantic-components = _: _: {
+                  src = lib.cleanSource ./agimus_franka_semantic_components;
                 };
-              };
 
-              agimus-integration-launch-testing = _final: _ros-final: {
-                src = lib.fileset.toSource {
-                  root = ./.;
-                  fileset = ./agimus_integration_launch_testing;
+                agimus-integration-launch-testing = _: _: {
+                  src = lib.cleanSource ./agimus_integration_launch_testing;
                 };
               };
             };
           }
         ];
+        flake.nlib = inputs.nixpkgs.lib;
       }
     );
 }
