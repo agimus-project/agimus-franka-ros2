@@ -5,7 +5,7 @@ using ::testing::_;
 TEST_F(FrankaCartesianCommandInterfaceTest, cartesian_command_interface_number_is_setup_correctly) {
   auto mock_robot = std::make_shared<MockRobot>();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto command_interfaces = agimus_franka_hardware_interface.export_command_interfaces();
 
@@ -25,7 +25,7 @@ TEST_P(
   auto mock_robot = std::make_shared<MockRobot>();
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -55,7 +55,7 @@ TEST_P(
 
   auto mock_robot = std::make_shared<MockRobot>();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -85,7 +85,7 @@ TEST_P(
 
   auto mock_robot = std::make_shared<MockRobot>();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface, stop_interface;
 
@@ -108,7 +108,7 @@ TEST_P(
 
   auto mock_robot = std::make_shared<MockRobot>();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface, stop_interface;
 
@@ -134,7 +134,7 @@ TEST_F(FrankaCartesianCommandInterfaceTest,
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 6>{}, _)).Times(0);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -173,7 +173,7 @@ TEST_F(FrankaCartesianCommandInterfaceTest,
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 6>{})).Times(0);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -216,7 +216,7 @@ TEST_F(
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 6>{})).Times(0);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -256,7 +256,7 @@ TEST_F(FrankaCartesianCommandInterfaceTest,
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 6>{}));
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -285,7 +285,7 @@ TEST_F(
   auto mock_robot = std::make_shared<MockRobot>();
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -315,7 +315,7 @@ TEST_F(
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 16>{})).Times(0);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -352,7 +352,7 @@ TEST_F(
   EXPECT_CALL(*mock_robot, writeOnce(robot_state.O_T_EE)).Times(1);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -390,7 +390,7 @@ TEST_F(
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 16>{})).Times(0);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 
@@ -435,7 +435,7 @@ TEST_F(
   EXPECT_CALL(*mock_robot, writeOnce(robot_state.O_T_EE, robot_state.elbow)).Times(1);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   std::vector<std::string> start_interface;
 

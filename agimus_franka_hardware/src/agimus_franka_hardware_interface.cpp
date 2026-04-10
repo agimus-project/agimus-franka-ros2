@@ -33,14 +33,14 @@ namespace agimus_franka_hardware {
 using StateInterface = hardware_interface::StateInterface;
 using CommandInterface = hardware_interface::CommandInterface;
 
-FrankaHardwareInterface::FrankaHardwareInterface(std::shared_ptr<Robot> robot,
+AgimusFrankaHardwareInterface::AgimusFrankaHardwareInterface(std::shared_ptr<Robot> robot,
                                                  const std::string& arm_id)
-    : FrankaHardwareInterface() {
+    : AgimusFrankaHardwareInterface() {
   robot_ = std::move(robot);  // NOLINT(cppcoreguidelines-prefer-member-initializer)
   arm_id_ = arm_id;
 }
 
-FrankaHardwareInterface::FrankaHardwareInterface()
+AgimusFrankaHardwareInterface::AgimusFrankaHardwareInterface()
     : command_interfaces_info_({
           {hardware_interface::HW_IF_EFFORT, kNumberOfJoints, effort_interface_claimed_},
           {hardware_interface::HW_IF_VELOCITY, kNumberOfJoints, velocity_joint_interface_claimed_},
@@ -52,7 +52,7 @@ FrankaHardwareInterface::FrankaHardwareInterface()
            pose_cartesian_interface_claimed_},
       }) {}
 
-std::vector<StateInterface> FrankaHardwareInterface::export_state_interfaces() {
+std::vector<StateInterface> AgimusFrankaHardwareInterface::export_state_interfaces() {
   std::vector<StateInterface> state_interfaces;
   for (auto i = 0U; i < info_.joints.size(); i++) {
     state_interfaces.emplace_back(StateInterface(
@@ -89,7 +89,7 @@ std::vector<StateInterface> FrankaHardwareInterface::export_state_interfaces() {
   return state_interfaces;
 }
 
-std::vector<CommandInterface> FrankaHardwareInterface::export_command_interfaces() {
+std::vector<CommandInterface> AgimusFrankaHardwareInterface::export_command_interfaces() {
   std::vector<CommandInterface> command_interfaces;
   command_interfaces.reserve(info_.joints.size());
   for (auto i = 0U; i < info_.joints.size(); i++) {
@@ -123,7 +123,7 @@ std::vector<CommandInterface> FrankaHardwareInterface::export_command_interfaces
   return command_interfaces;
 }
 
-CallbackReturn FrankaHardwareInterface::on_activate(
+CallbackReturn AgimusFrankaHardwareInterface::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   read(rclcpp::Time(0),
        rclcpp::Duration(0, 0));  // makes sure that the robot state is properly initialized.
@@ -131,7 +131,7 @@ CallbackReturn FrankaHardwareInterface::on_activate(
   return CallbackReturn::SUCCESS;
 }
 
-CallbackReturn FrankaHardwareInterface::on_deactivate(
+CallbackReturn AgimusFrankaHardwareInterface::on_deactivate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   RCLCPP_INFO(getLogger(), "trying to Stop...");
   robot_->stopRobot();
@@ -150,7 +150,7 @@ void initializeCommand(bool& first_update,
   }
 }
 
-void FrankaHardwareInterface::initializePositionCommands(const agimus_franka::RobotState& robot_state) {
+void AgimusFrankaHardwareInterface::initializePositionCommands(const agimus_franka::RobotState& robot_state) {
   initializeCommand(first_elbow_update_, elbow_command_interface_running_, hw_elbow_command_,
                     robot_state.elbow);
   initializeCommand(first_position_update_, position_joint_interface_running_,
@@ -159,7 +159,7 @@ void FrankaHardwareInterface::initializePositionCommands(const agimus_franka::Ro
                     hw_cartesian_pose_commands_, robot_state.O_T_EE);
 }
 
-hardware_interface::return_type FrankaHardwareInterface::read(const rclcpp::Time& /*time*/,
+hardware_interface::return_type AgimusFrankaHardwareInterface::read(const rclcpp::Time& /*time*/,
                                                               const rclcpp::Duration& /*period*/) {
   if (hw_franka_model_ptr_ == nullptr) {
     hw_franka_model_ptr_ = robot_->getModel();
@@ -183,7 +183,7 @@ bool hasInfinite(const CommandType& commands) {
                      [](double command) { return !std::isfinite(command); });
 }
 
-hardware_interface::return_type FrankaHardwareInterface::write(const rclcpp::Time& /*time*/,
+hardware_interface::return_type AgimusFrankaHardwareInterface::write(const rclcpp::Time& /*time*/,
                                                                const rclcpp::Duration& /*period*/) {
   if (hasInfinite(hw_position_commands_) || hasInfinite(hw_effort_commands_) ||
       hasInfinite(hw_velocity_commands_) || hasInfinite(hw_cartesian_velocities_) ||
@@ -218,7 +218,7 @@ hardware_interface::return_type FrankaHardwareInterface::write(const rclcpp::Tim
   return hardware_interface::return_type::OK;
 }
 
-CallbackReturn FrankaHardwareInterface::on_init(const hardware_interface::HardwareInfo& info) {
+CallbackReturn AgimusFrankaHardwareInterface::on_init(const hardware_interface::HardwareInfo& info) {
   if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
     return CallbackReturn::ERROR;
   }
@@ -303,11 +303,11 @@ CallbackReturn FrankaHardwareInterface::on_init(const hardware_interface::Hardwa
   return CallbackReturn::SUCCESS;
 }
 
-rclcpp::Logger FrankaHardwareInterface::getLogger() {
-  return rclcpp::get_logger("FrankaHardwareInterface");
+rclcpp::Logger AgimusFrankaHardwareInterface::getLogger() {
+  return rclcpp::get_logger("AgimusFrankaHardwareInterface");
 }
 
-hardware_interface::return_type FrankaHardwareInterface::perform_command_mode_switch(
+hardware_interface::return_type AgimusFrankaHardwareInterface::perform_command_mode_switch(
     const std::vector<std::string>& /*start_interfaces*/,
     const std::vector<std::string>& /*stop_interfaces*/) {
   if (!effort_interface_running_ && effort_interface_claimed_) {
@@ -390,7 +390,7 @@ hardware_interface::return_type FrankaHardwareInterface::perform_command_mode_sw
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type FrankaHardwareInterface::prepare_command_mode_switch(
+hardware_interface::return_type AgimusFrankaHardwareInterface::prepare_command_mode_switch(
     const std::vector<std::string>& start_interfaces,
     const std::vector<std::string>& stop_interfaces) {
   auto contains_interface_type = [](const std::string& interface,
@@ -446,5 +446,5 @@ hardware_interface::return_type FrankaHardwareInterface::prepare_command_mode_sw
 
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_hardware::FrankaHardwareInterface,
+PLUGINLIB_EXPORT_CLASS(agimus_franka_hardware::AgimusFrankaHardwareInterface,
                        hardware_interface::SystemInterface)

@@ -384,9 +384,9 @@
 		<limit effort="20" lower="0.0" upper="0.04" velocity="0.2"/>
 		<mimic joint="fr3_finger_joint1"/>
 	</joint>
-	<ros2_control name="FrankaHardwareInterface" type="system">
+	<ros2_control name="AgimusFrankaHardwareInterface" type="system">
 		<hardware>
-			<plugin>franka_hardware/FrankaHardwareInterface</plugin>
+			<plugin>agimus_franka_hardware/AgimusFrankaHardwareInterface</plugin>
 			<param name="robot_ip">localhost</param>
 		</hardware>
 		<joint name="fr3_joint1">

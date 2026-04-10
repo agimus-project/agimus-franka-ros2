@@ -38,7 +38,7 @@
 
 using namespace std::chrono_literals;
 
-class FrankaHardwareInterfaceTest : public ::testing::TestWithParam<std::string> {};
+class AgimusFrankaHardwareInterfaceTest : public ::testing::TestWithParam<std::string> {};
 
 template <typename service_client_type,
           typename service_request_type,
@@ -51,7 +51,7 @@ void get_param_service_response(
   mock_function(mock_robot);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -77,18 +77,18 @@ void get_param_service_response(
   response = *result.get();
 }
 
-TEST_F(FrankaHardwareInterfaceTest, when_on_init_called_expect_success) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, when_on_init_called_expect_success) {
   auto mock_robot = std::make_shared<MockRobot>();
   const hardware_interface::HardwareInfo info = createHardwareInfo();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
   auto return_type = agimus_franka_hardware_interface.on_init(info);
 
   ASSERT_EQ(return_type,
             rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS);
 }
 
-TEST_F(FrankaHardwareInterfaceTest,
+TEST_F(AgimusFrankaHardwareInterfaceTest,
        given_that_the_robot_interfaces_set_when_read_called_return_ok) {
   agimus_franka::RobotState robot_state;
   MockModel mock_model;
@@ -99,7 +99,7 @@ TEST_F(FrankaHardwareInterfaceTest,
   EXPECT_CALL(*mock_robot, getModel()).WillOnce(testing::Return(model_address));
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   auto time = rclcpp::Time(0, 0);
   auto duration = rclcpp::Duration(0, 0);
@@ -108,7 +108,7 @@ TEST_F(FrankaHardwareInterfaceTest,
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_that_the_robot_interfaces_are_set_when_call_export_state_return_zero_values_and_correct_interface_names) {
   agimus_franka::RobotState robot_state;
   const size_t state_interface_size = 42;  // position, effort and velocity states for 7*3
@@ -123,7 +123,7 @@ TEST_F(
   EXPECT_CALL(*mock_robot, readOnce()).WillOnce(testing::Return(robot_state));
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -160,7 +160,7 @@ TEST_F(
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_that_the_robot_interfaces_are_set_when_call_export_state_interface_robot_model_interface_exists) {
   agimus_franka::RobotState robot_state;
   auto mock_robot = std::make_shared<MockRobot>();
@@ -171,7 +171,7 @@ TEST_F(
 
   EXPECT_CALL(*mock_robot, getModel()).WillOnce(testing::Return(model_address));
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -189,7 +189,7 @@ TEST_F(
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_that_the_robot_interfaces_are_set_when_call_export_state_interface_robot_state_interface_exists) {
   auto mock_robot = std::make_shared<MockRobot>();
 
@@ -201,7 +201,7 @@ TEST_F(
   EXPECT_CALL(*mock_robot, readOnce()).WillOnce(testing::Return(robot_state));
   EXPECT_CALL(*mock_robot, getModel()).WillOnce(testing::Return(model_address));
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -217,13 +217,13 @@ TEST_F(
                        // is correctly pushed to state interface
 }
 
-TEST_P(FrankaHardwareInterfaceTest,
+TEST_P(AgimusFrankaHardwareInterfaceTest,
        when_prepare_command_mode_interface_for_stop_effort_interfaces_expect_ok) {
   std::string command_interface = GetParam();
 
   auto mock_robot = std::make_shared<MockRobot>();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -239,13 +239,13 @@ TEST_P(FrankaHardwareInterfaceTest,
 }
 
 TEST_P(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     when_prepare_command_mode_interface_is_called_with_invalid_start_interface_number_expect_throw) {
   std::string command_interface = GetParam();
 
   auto mock_robot = std::make_shared<MockRobot>();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -261,13 +261,13 @@ TEST_P(
       std::invalid_argument);
 }
 
-TEST_P(FrankaHardwareInterfaceTest,
+TEST_P(AgimusFrankaHardwareInterfaceTest,
        when_prepare_command_mode_interface_for_start_effort_interfaces_expect_ok) {
   std::string command_interface = GetParam();
 
   auto mock_robot = std::make_shared<MockRobot>();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -285,13 +285,13 @@ TEST_P(FrankaHardwareInterfaceTest,
 }
 
 TEST_P(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     when_prepare_command_mode_interface_is_called_with_invalid_stop_interface_number_expect_throw) {
   std::string command_interface = GetParam();
 
   auto mock_robot = std::make_shared<MockRobot>();
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -309,14 +309,14 @@ TEST_P(
       std::invalid_argument);
 }
 
-TEST_P(FrankaHardwareInterfaceTest, when_write_called_expect_ok) {
+TEST_P(AgimusFrankaHardwareInterfaceTest, when_write_called_expect_ok) {
   std::string command_interface = GetParam();
 
   auto mock_robot = std::make_shared<MockRobot>();
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 7>{}));
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -344,7 +344,7 @@ TEST_P(FrankaHardwareInterfaceTest, when_write_called_expect_ok) {
   ASSERT_EQ(agimus_franka_hardware_interface.write(time, duration), hardware_interface::return_type::OK);
 }
 
-TEST_F(FrankaHardwareInterfaceTest, when_write_called_with_inifite_command_expect_error) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, when_write_called_with_inifite_command_expect_error) {
   auto mock_robot = std::make_shared<MockRobot>();
   agimus_franka::RobotState robot_state;
   robot_state.q = std::array<double, 7>{std::numeric_limits<double>::infinity()};
@@ -353,7 +353,7 @@ TEST_F(FrankaHardwareInterfaceTest, when_write_called_with_inifite_command_expec
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 7>{})).Times(0);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -381,13 +381,13 @@ TEST_F(FrankaHardwareInterfaceTest, when_write_called_with_inifite_command_expec
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_position_joint_command_interface_initialized_if_write_called_without_read_expect_write_once_not_to_called) {
   auto mock_robot = std::make_shared<MockRobot>();
   EXPECT_CALL(*mock_robot, writeOnce(std::array<double, 7>{})).Times(0);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -412,7 +412,7 @@ TEST_F(
   ASSERT_EQ(agimus_franka_hardware_interface.write(time, duration), hardware_interface::return_type::OK);
 }
 
-TEST_F(FrankaHardwareInterfaceTest, when_on_activate_called_expect_success) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, when_on_activate_called_expect_success) {
   agimus_franka::RobotState robot_state;
 
   MockModel mock_model;
@@ -423,26 +423,26 @@ TEST_F(FrankaHardwareInterfaceTest, when_on_activate_called_expect_success) {
   EXPECT_CALL(*mock_robot, getModel()).WillOnce(testing::Return(model_address));
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   ASSERT_EQ(agimus_franka_hardware_interface.on_activate(rclcpp_lifecycle::State()),
             rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS);
 }
 
-TEST_F(FrankaHardwareInterfaceTest, when_on_deactivate_called_expect_success) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, when_on_deactivate_called_expect_success) {
   agimus_franka::RobotState robot_state;
 
   auto mock_robot = std::make_shared<MockRobot>();
   EXPECT_CALL(*mock_robot, stopRobot());
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   ASSERT_EQ(agimus_franka_hardware_interface.on_deactivate(rclcpp_lifecycle::State()),
             rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS);
 }
 
-TEST_P(FrankaHardwareInterfaceTest,
+TEST_P(AgimusFrankaHardwareInterfaceTest,
        given_start_effort_interface_prepared_when_perform_command_mode_switch_called_expect_ok) {
   std::string command_interface = GetParam();
 
@@ -457,7 +457,7 @@ TEST_P(FrankaHardwareInterfaceTest,
   }
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -477,7 +477,7 @@ TEST_P(FrankaHardwareInterfaceTest,
             hardware_interface::return_type::OK);
 }
 
-TEST_P(FrankaHardwareInterfaceTest,
+TEST_P(AgimusFrankaHardwareInterfaceTest,
        given_that_effort_control_started_perform_command_mode_switch_stop_expect_ok) {
   std::string command_interface = GetParam();
 
@@ -485,7 +485,7 @@ TEST_P(FrankaHardwareInterfaceTest,
   EXPECT_CALL(*mock_robot, stopRobot()).Times(2);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
@@ -519,7 +519,7 @@ TEST_P(FrankaHardwareInterfaceTest,
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_param_service_server_setup_when_set_joint_stiffness_service_called_expect_robot_set_joint_stiffness_to_be_called) {
   auto expect_call_set_joint_stiffness = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setJointStiffness(testing::_)).Times(1);
@@ -534,7 +534,7 @@ TEST_F(
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_param_service_server_setup_when_set_joint_cartesian_service_called_expect_robot_set_joint_cartesian_to_be_called) {
   auto expect_call_set_cartesian_stiffness = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setCartesianStiffness(testing::_)).Times(1);
@@ -549,7 +549,7 @@ TEST_F(
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_param_service_server_setup_when_set_load_service_called_expect_robot_set_load_to_be_called) {
   auto expect_call_set_load = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setLoad(testing::_)).Times(1);
@@ -563,7 +563,7 @@ TEST_F(
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_param_service_server_setup_when_set_tcp_frame_service_called_expect_robot_set_tcp_frame_to_be_called) {
   auto expect_call_set_tcp_frame = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setTCPFrame(testing::_)).Times(1);
@@ -577,7 +577,7 @@ TEST_F(
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_param_service_server_setup_when_set_stiffness_frame_service_called_expect_robot_set_stiffness_frame_to_be_called) {
   auto expect_call_set_stiffness_frame = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setStiffnessFrame(testing::_)).Times(1);
@@ -592,7 +592,7 @@ TEST_F(
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_param_service_server_setup_when_set_force_torque_collision_behavior_service_called_expect_same_function_in_robot_class_to_be_called) {
   auto expect_call_set_force_torque_collision_behavior =
       [&](std::shared_ptr<MockRobot> mock_robot) {
@@ -609,7 +609,7 @@ TEST_F(
 }
 
 TEST_F(
-    FrankaHardwareInterfaceTest,
+    AgimusFrankaHardwareInterfaceTest,
     given_param_service_server_setup_when_set_full_collision_behavior_service_called_expect_same_function_in_robot_class_to_be_called) {
   auto expect_call_set_full_collision_behavior = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setFullCollisionBehavior(testing::_)).Times(1);
@@ -624,7 +624,7 @@ TEST_F(
   ASSERT_TRUE(response.success);
 }
 
-TEST_F(FrankaHardwareInterfaceTest, set_joint_stiffness_throws_error) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, set_joint_stiffness_throws_error) {
   auto set_joint_stiffness_mock_throw = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setJointStiffness(testing::_))
         .Times(1)
@@ -640,7 +640,7 @@ TEST_F(FrankaHardwareInterfaceTest, set_joint_stiffness_throws_error) {
   ASSERT_EQ(response.error, "network exception error");
 }
 
-TEST_F(FrankaHardwareInterfaceTest, set_cartesian_stiffness_throws_error) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, set_cartesian_stiffness_throws_error) {
   auto set_cartesian_stiffness_mock_throw = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setCartesianStiffness(testing::_))
         .Times(1)
@@ -655,7 +655,7 @@ TEST_F(FrankaHardwareInterfaceTest, set_cartesian_stiffness_throws_error) {
   ASSERT_EQ(response.error, "network exception error");
 }
 
-TEST_F(FrankaHardwareInterfaceTest, set_load_throws_error) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, set_load_throws_error) {
   auto set_load_mock_throw = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setLoad(testing::_))
         .Times(1)
@@ -670,7 +670,7 @@ TEST_F(FrankaHardwareInterfaceTest, set_load_throws_error) {
   ASSERT_EQ(response.error, "network exception error");
 }
 
-TEST_F(FrankaHardwareInterfaceTest, set_EE_frame_throws_error) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, set_EE_frame_throws_error) {
   auto set_tcp_frame_mock_throw = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setTCPFrame(testing::_))
         .Times(1)
@@ -684,7 +684,7 @@ TEST_F(FrankaHardwareInterfaceTest, set_EE_frame_throws_error) {
   ASSERT_EQ(response.error, "network exception error");
 }
 
-TEST_F(FrankaHardwareInterfaceTest, set_K_frame_throws_error) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, set_K_frame_throws_error) {
   auto set_stiffness_frame_mock_throw = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setStiffnessFrame(testing::_))
         .Times(1)
@@ -699,7 +699,7 @@ TEST_F(FrankaHardwareInterfaceTest, set_K_frame_throws_error) {
   ASSERT_EQ(response.error, "network exception error");
 }
 
-TEST_F(FrankaHardwareInterfaceTest, set_force_torque_collision_behavior_throws_error) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, set_force_torque_collision_behavior_throws_error) {
   auto set_force_torque_collision_behavior_mock_throw = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setForceTorqueCollisionBehavior(testing::_))
         .Times(1)
@@ -716,7 +716,7 @@ TEST_F(FrankaHardwareInterfaceTest, set_force_torque_collision_behavior_throws_e
   ASSERT_EQ(response.error, "network exception error");
 }
 
-TEST_F(FrankaHardwareInterfaceTest, set_full_collision_behavior_throws_error) {
+TEST_F(AgimusFrankaHardwareInterfaceTest, set_full_collision_behavior_throws_error) {
   auto set_full_collision_behavior_mock_throw = [&](std::shared_ptr<MockRobot> mock_robot) {
     EXPECT_CALL(*mock_robot, setFullCollisionBehavior(testing::_))
         .Times(1)
@@ -738,8 +738,8 @@ int main(int argc, char** argv) {
   return RUN_ALL_TESTS();
 }
 
-INSTANTIATE_TEST_SUITE_P(FrankaHardwareTests,
-                         FrankaHardwareInterfaceTest,
+INSTANTIATE_TEST_SUITE_P(AgimusFrankaHardwareTests,
+                         AgimusFrankaHardwareInterfaceTest,
                          ::testing::Values(k_velocity_controller,
                                            k_effort_controller,
                                            k_position_controller));

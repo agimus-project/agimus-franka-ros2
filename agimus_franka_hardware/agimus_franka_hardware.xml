@@ -1,6 +1,6 @@
 <library path="agimus_franka_hardware">
-    <class name="agimus_franka_hardware/FrankaHardwareInterface"
-           type="agimus_franka_hardware::FrankaHardwareInterface"
+    <class name="agimus_franka_hardware/AgimusFrankaHardwareInterface"
+           type="agimus_franka_hardware::AgimusFrankaHardwareInterface"
            base_class_type="hardware_interface::SystemInterface">
 
         <description>

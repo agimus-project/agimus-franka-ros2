@@ -35,15 +35,15 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
 
 namespace agimus_franka_hardware {
 
-class FrankaHardwareInterface : public hardware_interface::SystemInterface {
+class AgimusFrankaHardwareInterface : public hardware_interface::SystemInterface {
  public:
-  explicit FrankaHardwareInterface(std::shared_ptr<Robot> robot, const std::string& arm_id);
-  FrankaHardwareInterface();
-  FrankaHardwareInterface(const FrankaHardwareInterface&) = delete;
-  FrankaHardwareInterface& operator=(const FrankaHardwareInterface& other) = delete;
-  FrankaHardwareInterface& operator=(FrankaHardwareInterface&& other) = delete;
-  FrankaHardwareInterface(FrankaHardwareInterface&& other) = delete;
-  ~FrankaHardwareInterface() override = default;
+  explicit AgimusFrankaHardwareInterface(std::shared_ptr<Robot> robot, const std::string& arm_id);
+  AgimusFrankaHardwareInterface();
+  AgimusFrankaHardwareInterface(const AgimusFrankaHardwareInterface&) = delete;
+  AgimusFrankaHardwareInterface& operator=(const AgimusFrankaHardwareInterface& other) = delete;
+  AgimusFrankaHardwareInterface& operator=(AgimusFrankaHardwareInterface&& other) = delete;
+  AgimusFrankaHardwareInterface(AgimusFrankaHardwareInterface&& other) = delete;
+  ~AgimusFrankaHardwareInterface() override = default;
 
   hardware_interface::return_type prepare_command_mode_switch(
       const std::vector<std::string>& start_interfaces,

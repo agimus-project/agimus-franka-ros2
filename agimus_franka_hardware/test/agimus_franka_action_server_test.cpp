@@ -21,7 +21,7 @@ void get_action_service_response(
   mock_function(mock_robot);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::FrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
