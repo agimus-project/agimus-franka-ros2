@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "test_move_to_start_example_controller.hpp"
+
 #include <memory>
 #include <vector>
-
-#include "rclcpp/rclcpp.hpp"
-#include "test_move_to_start_example_controller.hpp"
 
 #include "controller_interface/version.h"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "rclcpp/utilities.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 
@@ -35,7 +35,8 @@ void MoveToStartExampleControllerTest::TearDownTestSuite() {
 }
 
 void MoveToStartExampleControllerTest::SetUp() {
-  controller_ = std::make_unique<agimus_franka_example_controllers::MoveToStartExampleController>();
+  controller_ = std::make_unique<
+      agimus_franka_example_controllers::MoveToStartExampleController>();
 }
 
 void MoveToStartExampleControllerTest::TearDown() {
@@ -45,7 +46,8 @@ void MoveToStartExampleControllerTest::TearDown() {
 void MoveToStartExampleControllerTest::SetUpController() {
 #if CONTROLLER_INTERFACE_VERSION_GTE(4, 0, 0)
   const auto node_options = controller_->define_custom_node_options();
-  const auto result = controller_->init("test_move_to_start_example" , "", 50.0, "", node_options);
+  const auto result = controller_->init("test_move_to_start_example", "", 50.0,
+                                        "", node_options);
 #else
   const auto result = controller_->init("test_move_to_start_example");
 #endif
@@ -83,7 +85,8 @@ TEST_F(MoveToStartExampleControllerTest, controller_gains_not_set_failure) {
   SetUpController();
 
   // Failure due to not set K, D gains
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::FAILURE);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::FAILURE);
 }
 
 TEST_F(MoveToStartExampleControllerTest, contoller_gain_empty) {
@@ -91,7 +94,8 @@ TEST_F(MoveToStartExampleControllerTest, contoller_gain_empty) {
   controller_->get_node()->set_parameter({"k_gains", std::vector<double>()});
 
   // Failure due empty k gain parameter
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::FAILURE);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::FAILURE);
 }
 
 TEST_F(MoveToStartExampleControllerTest, contoller_damping_gain_empty) {
@@ -100,7 +104,8 @@ TEST_F(MoveToStartExampleControllerTest, contoller_damping_gain_empty) {
   controller_->get_node()->set_parameter({"d_gains", std::vector<double>()});
 
   // Failure due to empty d gain parameter
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::FAILURE);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::FAILURE);
 }
 
 TEST_F(MoveToStartExampleControllerTest, correct_controller_gains_success) {
@@ -108,16 +113,20 @@ TEST_F(MoveToStartExampleControllerTest, correct_controller_gains_success) {
   controller_->get_node()->set_parameter({"k_gains", K_gains_});
   controller_->get_node()->set_parameter({"d_gains", D_gains_});
 
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
 }
 
-TEST_F(MoveToStartExampleControllerTest, correct_setup_on_activate_expect_success) {
+TEST_F(MoveToStartExampleControllerTest,
+       correct_setup_on_activate_expect_success) {
   SetUpController();
   controller_->get_node()->set_parameter({"k_gains", K_gains_});
   controller_->get_node()->set_parameter({"d_gains", D_gains_});
 
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
-  ASSERT_EQ(controller_->on_activate(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_activate(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
 }
 
 TEST_F(MoveToStartExampleControllerTest, correct_setup_on_update_expect_ok) {
@@ -125,13 +134,16 @@ TEST_F(MoveToStartExampleControllerTest, correct_setup_on_update_expect_ok) {
   controller_->get_node()->set_parameter({"k_gains", K_gains_});
   controller_->get_node()->set_parameter({"d_gains", D_gains_});
 
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
-  ASSERT_EQ(controller_->on_activate(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_activate(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
 
   auto time = rclcpp::Time(0);
   auto duration = rclcpp::Duration(0, 0);
 
-  ASSERT_EQ(controller_->update(time, duration), controller_interface::return_type::OK);
+  ASSERT_EQ(controller_->update(time, duration),
+            controller_interface::return_type::OK);
 
   EXPECT_NEAR(joint_1_pos_cmd_.get_value(), 0.0, k_EPS);
   EXPECT_NEAR(joint_2_pos_cmd_.get_value(), 0.0, k_EPS);

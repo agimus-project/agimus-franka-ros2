@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// modified ros2 control semantic control interface to add command interface access.
+// modified ros2 control semantic control interface to add command interface
+// access.
 // https://github.com/ros-controls/ros2_control/blob/humble/controller_interface/include/semantic_components/semantic_component_interface.hpp
 
 #pragma once
@@ -30,67 +31,77 @@ namespace agimus_franka_semantic_components {
 class FrankaSemanticComponentInterface {
  public:
   /**
-   * \param[in] name of the semantic component interface. Used to prefix the state and command
-   * interfaces if not assigned
+   * \param[in] name of the semantic component interface. Used to prefix the
+   * state and command interfaces if not assigned
    *
-   * \param[in] state_interface_size size of the loaned state interfaces. If not given defaulted to
-   * 0.
+   * \param[in] state_interface_size size of the loaned state interfaces. If not
+   * given defaulted to 0.
    *
-   * \param[in] command_interface_size size of the loaned command interfaces. If not given defaulted
-   * to 0.
+   * \param[in] command_interface_size size of the loaned command interfaces. If
+   * not given defaulted to 0.
    */
   explicit FrankaSemanticComponentInterface(const std::string& name,
                                             size_t state_interface_size = 0,
                                             size_t command_interface_size = 0);
-  FrankaSemanticComponentInterface(const FrankaSemanticComponentInterface&) = delete;
-  FrankaSemanticComponentInterface& operator=(FrankaSemanticComponentInterface const&) = delete;
-  FrankaSemanticComponentInterface(FrankaSemanticComponentInterface&&) = default;
-  FrankaSemanticComponentInterface& operator=(FrankaSemanticComponentInterface&&) = default;
+  FrankaSemanticComponentInterface(const FrankaSemanticComponentInterface&) =
+      delete;
+  FrankaSemanticComponentInterface& operator=(
+      FrankaSemanticComponentInterface const&) = delete;
+  FrankaSemanticComponentInterface(FrankaSemanticComponentInterface&&) =
+      default;
+  FrankaSemanticComponentInterface& operator=(
+      FrankaSemanticComponentInterface&&) = default;
 
   virtual ~FrankaSemanticComponentInterface() = default;
 
   /**
-   * Assign loaned state interfaces from the hardware.Assign loaned state interfaces on the
-   * controller start.
+   * Assign loaned state interfaces from the hardware.Assign loaned state
+   * interfaces on the controller start.
    *
-   * \param[in] state_interfaces vector of interfaces provided by the controller.
+   * \param[in] state_interfaces vector of interfaces provided by the
+   * controller.
    * \return true when success, else false
    */
   bool assign_loaned_state_interfaces(
       std::vector<hardware_interface::LoanedStateInterface>& state_interfaces);
 
   /**
-   * Assign loaned command interfaces from the hardware. Assign loaned command interfaces on
-   * the controller start.
+   * Assign loaned command interfaces from the hardware. Assign loaned command
+   * interfaces on the controller start.
    *
-   * \param[in] command_interfaces vector of interfaces provided by the controller.
+   * \param[in] command_interfaces vector of interfaces provided by the
+   * controller.
    * \return true when success, else false
    */
   bool assign_loaned_command_interfaces(
-      std::vector<hardware_interface::LoanedCommandInterface>& command_interfaces);
+      std::vector<hardware_interface::LoanedCommandInterface>&
+          command_interfaces);
 
   /// Release loaned interfaces from the hardware.
   void release_interfaces();
 
   /**
-   * The function should be used in "state_interface_configuration()" of a controller to provide
-   * standardized interface names for the semantic component.
+   * The function should be used in "state_interface_configuration()" of a
+   * controller to provide standardized interface names for the semantic
+   * component.
    *
-   * \default Default implementation defined state interfaces as "name/NR" where NR is number
-   * from 0 to size of values;
-   * \return list of strings with state interface names for the semantic component.
+   * \default Default implementation defined state interfaces as "name/NR" where
+   * NR is number from 0 to size of values;
+   * \return list of strings with state interface names for the semantic
+   * component.
    */
   virtual std::vector<std::string> get_state_interface_names();
 
   /**
    * Definition of command interface names for the component.
    *
-   * The function should be used in "command_interface_configuration()" of a controller to provide
-   * standardized interface names semantic component.
+   * The function should be used in "command_interface_configuration()" of a
+   * controller to provide standardized interface names semantic component.
    *
-   * \default Default implementation defined command interfaces as "name/NR" where NR is number
-   * from 0 to size of values;
-   * \return list of strings with command interface names for the semantic component.
+   * \default Default implementation defined command interfaces as "name/NR"
+   * where NR is number from 0 to size of values;
+   * \return list of strings with command interface names for the semantic
+   * component.
    */
   virtual std::vector<std::string> get_command_interface_names();
 
@@ -113,13 +124,15 @@ class FrankaSemanticComponentInterface {
    *
    * \param[in] std::vector<double> commanded values to be set
    *
-   * \return true if commanded_values size matches the loaned command_interface size, else false
+   * \return true if commanded_values size matches the loaned command_interface
+   * size, else false
    */
   bool set_values(const std::vector<double>& commanded_values);
 
  protected:
-  std::string name_;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes,
-                      // misc-non-private-member-variables-in-classes)
+  std::string
+      name_;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes,
+              // misc-non-private-member-variables-in-classes)
   std::vector<std::string>
       state_interface_names_;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes,
                                // misc-non-private-member-variables-in-classes)
@@ -130,7 +143,8 @@ class FrankaSemanticComponentInterface {
   std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
       state_interfaces_;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes,
                           // misc-non-private-member-variables-in-classes)
-  std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
+  std::vector<
+      std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
       command_interfaces_;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes,
                             // misc-non-private-member-variables-in-classes)
 };

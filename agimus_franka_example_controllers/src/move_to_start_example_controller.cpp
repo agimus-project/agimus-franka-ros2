@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <Eigen/Eigen>
 #include <agimus_franka_example_controllers/move_to_start_example_controller.hpp>
-
 #include <cassert>
 #include <cmath>
-#include <exception>
-
-#include <Eigen/Eigen>
 #include <controller_interface/controller_interface.hpp>
+#include <exception>
 
 namespace agimus_franka_example_controllers {
 
@@ -39,25 +37,27 @@ MoveToStartExampleController::state_interface_configuration() const {
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
   for (int i = 1; i <= num_joints; ++i) {
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/position");
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/velocity");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/position");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/velocity");
   }
   return config;
 }
 
 controller_interface::return_type MoveToStartExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& /*period*/) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   updateJointStates();
   auto trajectory_time = this->get_node()->now() - start_time_;
-  auto motion_generator_output = motion_generator_->getDesiredJointPositions(trajectory_time);
+  auto motion_generator_output =
+      motion_generator_->getDesiredJointPositions(trajectory_time);
   Vector7d q_desired = motion_generator_output.first;
   bool finished = motion_generator_output.second;
   if (not finished) {
     const double kAlpha = 0.99;
     dq_filtered_ = (1 - kAlpha) * dq_filtered_ + kAlpha * dq_;
-    Vector7d tau_d_calculated =
-        k_gains_.cwiseProduct(q_desired - q_) + d_gains_.cwiseProduct(-dq_filtered_);
+    Vector7d tau_d_calculated = k_gains_.cwiseProduct(q_desired - q_) +
+                                d_gains_.cwiseProduct(-dq_filtered_);
     for (int i = 0; i < 7; ++i) {
       command_interfaces_[i].set_value(tau_d_calculated(i));
     }
@@ -78,7 +78,8 @@ CallbackReturn MoveToStartExampleController::on_init() {
     auto_declare<std::vector<double>>("k_gains", {});
     auto_declare<std::vector<double>>("d_gains", {});
   } catch (const std::exception& e) {
-    fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+    fprintf(stderr, "Exception thrown during init stage with message: %s \n",
+            e.what());
     return CallbackReturn::ERROR;
   }
   return CallbackReturn::SUCCESS;
@@ -94,8 +95,9 @@ CallbackReturn MoveToStartExampleController::on_configure(
     return CallbackReturn::FAILURE;
   }
   if (k_gains.size() != static_cast<uint>(num_joints)) {
-    RCLCPP_FATAL(get_node()->get_logger(), "k_gains should be of size %d but is of size %ld",
-                 num_joints, k_gains.size());
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "k_gains should be of size %d but is of size %ld", num_joints,
+                 k_gains.size());
     return CallbackReturn::FAILURE;
   }
   if (d_gains.empty()) {
@@ -103,8 +105,9 @@ CallbackReturn MoveToStartExampleController::on_configure(
     return CallbackReturn::FAILURE;
   }
   if (d_gains.size() != static_cast<uint>(num_joints)) {
-    RCLCPP_FATAL(get_node()->get_logger(), "d_gains should be of size %d but is of size %ld",
-                 num_joints, d_gains.size());
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "d_gains should be of size %d but is of size %ld", num_joints,
+                 d_gains.size());
     return CallbackReturn::FAILURE;
   }
   for (int i = 0; i < num_joints; ++i) {
@@ -138,5 +141,6 @@ void MoveToStartExampleController::updateJointStates() {
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::MoveToStartExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::MoveToStartExampleController,
+    controller_interface::ControllerInterface)

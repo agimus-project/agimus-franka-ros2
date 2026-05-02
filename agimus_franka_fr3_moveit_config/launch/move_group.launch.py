@@ -31,74 +31,88 @@ def load_yaml(package_name, file_path):
     package_path = get_package_share_directory(package_name)
     absolute_file_path = os.path.join(package_path, file_path)
     try:
-        with open(absolute_file_path, 'r') as file:
+        with open(absolute_file_path, "r") as file:
             return yaml.safe_load(file)
-    except EnvironmentError:  # parent of IOError, OSError *and* Windows Error where available
+    except (
+        EnvironmentError
+    ):  # parent of IOError, OSError *and* Windows Error where available
         return None
 
 
 def generate_launch_description():
-    robot_ip_parameter_name = 'robot_ip'
-    load_gripper_parameter_name = 'load_gripper'
-    use_fake_hardware_parameter_name = 'use_fake_hardware'
-    fake_sensor_commands_parameter_name = 'fake_sensor_commands'
+    robot_ip_parameter_name = "robot_ip"
+    load_gripper_parameter_name = "load_gripper"
+    use_fake_hardware_parameter_name = "use_fake_hardware"
+    fake_sensor_commands_parameter_name = "fake_sensor_commands"
 
     robot_ip = LaunchConfiguration(robot_ip_parameter_name)
     load_gripper = LaunchConfiguration(load_gripper_parameter_name)
     use_fake_hardware = LaunchConfiguration(use_fake_hardware_parameter_name)
-    fake_sensor_commands = LaunchConfiguration(
-        fake_sensor_commands_parameter_name)
+    fake_sensor_commands = LaunchConfiguration(fake_sensor_commands_parameter_name)
 
     db_arg = DeclareLaunchArgument(
-        'db', default_value='False', description='Database flag'
+        "db", default_value="False", description="Database flag"
     )
 
     agimus_franka_xacro_file = os.path.join(
-        get_package_share_directory('agimus_franka_description'),
-        'robots', 'fr3', 'fr3.urdf.xacro'
+        get_package_share_directory("agimus_franka_description"),
+        "robots",
+        "fr3",
+        "fr3.urdf.xacro",
     )
 
     robot_description_command = Command(
         [
-            FindExecutable(name='xacro'),
-            ' ',
+            FindExecutable(name="xacro"),
+            " ",
             agimus_franka_xacro_file,
-            ' ros2_control:=false',
-            ' hand:=',
+            " ros2_control:=false",
+            " hand:=",
             load_gripper,
-            ' arm_id:=fr3',
-            ' robot_ip:=',
+            " arm_id:=fr3",
+            " robot_ip:=",
             robot_ip,
-            ' use_fake_hardware:=',
+            " use_fake_hardware:=",
             use_fake_hardware,
-            ' fake_sensor_commands:=',
+            " fake_sensor_commands:=",
             fake_sensor_commands,
         ]
     )
 
-    robot_description = {'robot_description': ParameterValue(
-        robot_description_command, value_type=str)}
+    robot_description = {
+        "robot_description": ParameterValue(robot_description_command, value_type=str)
+    }
 
     agimus_franka_semantic_xacro_file = os.path.join(
-        get_package_share_directory('agimus_franka_fr3_moveit_config'),
-        'srdf', 'fr3_arm.srdf.xacro'
+        get_package_share_directory("agimus_franka_fr3_moveit_config"),
+        "srdf",
+        "fr3_arm.srdf.xacro",
     )
 
     robot_description_semantic_command = Command(
-        [FindExecutable(name='xacro'), ' ',
-         agimus_franka_semantic_xacro_file, ' hand:=', load_gripper]
+        [
+            FindExecutable(name="xacro"),
+            " ",
+            agimus_franka_semantic_xacro_file,
+            " hand:=",
+            load_gripper,
+        ]
     )
 
     # Use ParameterValue here as well if needed
-    robot_description_semantic = {'robot_description_semantic': ParameterValue(
-        robot_description_semantic_command, value_type=str)}
+    robot_description_semantic = {
+        "robot_description_semantic": ParameterValue(
+            robot_description_semantic_command, value_type=str
+        )
+    }
 
     kinematics_yaml = load_yaml(
-        'agimus_franka_fr3_moveit_config', 'config/kinematics.yaml')
+        "agimus_franka_fr3_moveit_config", "config/kinematics.yaml"
+    )
 
     run_move_group_node = Node(
-        package='moveit_ros_move_group',
-        executable='move_group',
+        package="moveit_ros_move_group",
+        executable="move_group",
         parameters=[
             robot_description,
             robot_description_semantic,

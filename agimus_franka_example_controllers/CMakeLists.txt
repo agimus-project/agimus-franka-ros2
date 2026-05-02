@@ -20,27 +20,26 @@ find_package(std_srvs REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 add_library(
-  ${PROJECT_NAME}
-        SHARED
-        src/cartesian_elbow_example_controller.cpp
-        src/cartesian_orientation_example_controller.cpp
-        src/cartesian_pose_example_controller.cpp
-        src/cartesian_velocity_example_controller.cpp
-        src/elbow_example_controller.cpp
-        src/gravity_compensation_example_controller.cpp
-        src/gripper_example_controller.cpp
-        src/joint_impedance_example_controller.cpp
-        src/joint_impedance_with_ik_example_controller.cpp
-        src/joint_position_example_controller.cpp
-        src/joint_velocity_example_controller.cpp
-        src/model_example_controller.cpp
-        src/motion_generator.cpp
-        src/move_to_start_example_controller.cpp)
+    ${PROJECT_NAME}
+    SHARED
+    src/cartesian_elbow_example_controller.cpp
+    src/cartesian_orientation_example_controller.cpp
+    src/cartesian_pose_example_controller.cpp
+    src/cartesian_velocity_example_controller.cpp
+    src/elbow_example_controller.cpp
+    src/gravity_compensation_example_controller.cpp
+    src/gripper_example_controller.cpp
+    src/joint_impedance_example_controller.cpp
+    src/joint_impedance_with_ik_example_controller.cpp
+    src/joint_position_example_controller.cpp
+    src/joint_velocity_example_controller.cpp
+    src/model_example_controller.cpp
+    src/motion_generator.cpp
+    src/move_to_start_example_controller.cpp
+)
 target_include_directories(
-  ${PROJECT_NAME}
-        PUBLIC
-        include
-        ${EIGEN3_INCLUDE_DIRS}
+    ${PROJECT_NAME}
+    PUBLIC include ${EIGEN3_INCLUDE_DIRS}
 )
 ament_target_dependencies(
   ${PROJECT_NAME}
@@ -58,20 +57,17 @@ ament_target_dependencies(
 )
 
 pluginlib_export_plugin_description_file(
-  controller_interface ${PROJECT_NAME}.xml)
-
-install(
-        TARGETS
-        ${PROJECT_NAME}
-        RUNTIME DESTINATION bin
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
+  controller_interface ${PROJECT_NAME}.xml
 )
 
 install(
-        DIRECTORY include/
-        DESTINATION include
+    TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
 )
+
+install(DIRECTORY include/ DESTINATION include)
 
 if(BUILD_TESTING)
     find_package(ament_cmake_copyright REQUIRED)
@@ -99,19 +95,24 @@ if(BUILD_TESTING)
     )
 
     ament_add_gmock(${PROJECT_NAME}_test_load_move_to_start test/test_load_move_to_start_example_controller.cpp)
-    target_include_directories(${PROJECT_NAME}_test_load_move_to_start PRIVATE include)
+    target_include_directories(
+        ${PROJECT_NAME}_test_load_move_to_start
+        PRIVATE include
+    )
     ament_target_dependencies(${PROJECT_NAME}_test_load_move_to_start
         controller_manager
         ros2_control_test_assets
     )
-
 
     ament_add_gmock(${PROJECT_NAME}_gravity_test test/test_gravity_compensation_example.cpp)
     target_include_directories(${PROJECT_NAME}_gravity_test PRIVATE include)
     target_link_libraries(${PROJECT_NAME}_gravity_test ${PROJECT_NAME})
 
     ament_add_gmock(${PROJECT_NAME}_move_to_start_test test/test_move_to_start_example_controller.cpp)
-    target_include_directories(${PROJECT_NAME}_move_to_start_test PRIVATE include)
+    target_include_directories(
+        ${PROJECT_NAME}_move_to_start_test
+        PRIVATE include
+    )
     target_link_libraries(${PROJECT_NAME}_move_to_start_test ${PROJECT_NAME})
 
     if(CHECK_TIDY)

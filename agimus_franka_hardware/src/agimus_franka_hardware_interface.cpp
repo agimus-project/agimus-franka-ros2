@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "agimus_franka_hardware/agimus_franka_hardware_interface.hpp"
+
+#include <agimus_franka/exception.h>
 #include <fmt/core.h>
+
 #include <algorithm>
 #include <cmath>
 #include <exception>
-
-#include <agimus_franka/exception.h>
 #include <hardware_interface/handle.hpp>
 #include <hardware_interface/hardware_info.hpp>
 #include <hardware_interface/system_interface.hpp>
@@ -26,98 +28,115 @@
 #include <rclcpp/macros.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include "agimus_franka_hardware/agimus_franka_hardware_interface.hpp"
-
 namespace agimus_franka_hardware {
 
 using StateInterface = hardware_interface::StateInterface;
 using CommandInterface = hardware_interface::CommandInterface;
 
-AgimusFrankaHardwareInterface::AgimusFrankaHardwareInterface(std::shared_ptr<Robot> robot,
-                                                 const std::string& arm_id)
+AgimusFrankaHardwareInterface::AgimusFrankaHardwareInterface(
+    std::shared_ptr<Robot> robot, const std::string& arm_id)
     : AgimusFrankaHardwareInterface() {
-  robot_ = std::move(robot);  // NOLINT(cppcoreguidelines-prefer-member-initializer)
+  robot_ =
+      std::move(robot);  // NOLINT(cppcoreguidelines-prefer-member-initializer)
   arm_id_ = arm_id;
 }
 
 AgimusFrankaHardwareInterface::AgimusFrankaHardwareInterface()
     : command_interfaces_info_({
-          {hardware_interface::HW_IF_EFFORT, kNumberOfJoints, effort_interface_claimed_},
-          {hardware_interface::HW_IF_VELOCITY, kNumberOfJoints, velocity_joint_interface_claimed_},
-          {hardware_interface::HW_IF_POSITION, kNumberOfJoints, position_joint_interface_claimed_},
-          {k_HW_IF_ELBOW_COMMAND, hw_elbow_command_names_.size(), elbow_command_interface_claimed_},
+          {hardware_interface::HW_IF_EFFORT, kNumberOfJoints,
+           effort_interface_claimed_},
+          {hardware_interface::HW_IF_VELOCITY, kNumberOfJoints,
+           velocity_joint_interface_claimed_},
+          {hardware_interface::HW_IF_POSITION, kNumberOfJoints,
+           position_joint_interface_claimed_},
+          {k_HW_IF_ELBOW_COMMAND, hw_elbow_command_names_.size(),
+           elbow_command_interface_claimed_},
           {k_HW_IF_CARTESIAN_VELOCITY, hw_cartesian_velocities_.size(),
            velocity_cartesian_interface_claimed_},
           {k_HW_IF_CARTESIAN_POSE_COMMAND, hw_cartesian_pose_commands_.size(),
            pose_cartesian_interface_claimed_},
       }) {}
 
-std::vector<StateInterface> AgimusFrankaHardwareInterface::export_state_interfaces() {
+std::vector<StateInterface>
+AgimusFrankaHardwareInterface::export_state_interfaces() {
   std::vector<StateInterface> state_interfaces;
   for (auto i = 0U; i < info_.joints.size(); i++) {
-    state_interfaces.emplace_back(StateInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_positions_.at(i)));
-    state_interfaces.emplace_back(StateInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_velocities_.at(i)));
     state_interfaces.emplace_back(
-        StateInterface(info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_efforts_.at(i)));
+        StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION,
+                       &hw_positions_.at(i)));
+    state_interfaces.emplace_back(
+        StateInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY,
+                       &hw_velocities_.at(i)));
+    state_interfaces.emplace_back(
+        StateInterface(info_.joints[i].name, hardware_interface::HW_IF_EFFORT,
+                       &hw_efforts_.at(i)));
   }
 
   state_interfaces.emplace_back(StateInterface(
       arm_id_, k_robot_state_interface_name,
-      reinterpret_cast<double*>(  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+      reinterpret_cast<
+          double*>(  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
           &hw_franka_robot_state_addr_)));
   state_interfaces.emplace_back(StateInterface(
       arm_id_, k_robot_model_interface_name,
-      reinterpret_cast<double*>(  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+      reinterpret_cast<
+          double*>(  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
           &hw_franka_model_ptr_)));
 
   // cartesian pose state interface 16 element pose matrix
   for (auto i = 0U; i < 16; i++) {
-    state_interfaces.emplace_back(StateInterface(std::to_string(i), k_HW_IF_CARTESIAN_POSE_STATE,
+    state_interfaces.emplace_back(StateInterface(std::to_string(i),
+                                                 k_HW_IF_CARTESIAN_POSE_STATE,
                                                  &cartesian_pose_state_.at(i)));
   }
 
   // elbow state interface
   for (auto i = 0U; i < elbow_state_names_.size(); i++) {
-    state_interfaces.emplace_back(
-        StateInterface(elbow_state_names_.at(i), k_HW_IF_ELBOW_STATE, &elbow_state_.at(i)));
+    state_interfaces.emplace_back(StateInterface(
+        elbow_state_names_.at(i), k_HW_IF_ELBOW_STATE, &elbow_state_.at(i)));
   }
 
-  state_interfaces.emplace_back(StateInterface(arm_id_, "robot_time", &robot_time_state_));
+  state_interfaces.emplace_back(
+      StateInterface(arm_id_, "robot_time", &robot_time_state_));
 
   return state_interfaces;
 }
 
-std::vector<CommandInterface> AgimusFrankaHardwareInterface::export_command_interfaces() {
+std::vector<CommandInterface>
+AgimusFrankaHardwareInterface::export_command_interfaces() {
   std::vector<CommandInterface> command_interfaces;
   command_interfaces.reserve(info_.joints.size());
   for (auto i = 0U; i < info_.joints.size(); i++) {
+    command_interfaces.emplace_back(
+        CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_EFFORT,
+                         &hw_effort_commands_.at(i)));
     command_interfaces.emplace_back(CommandInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_effort_commands_.at(i)));
+        info_.joints[i].name, hardware_interface::HW_IF_VELOCITY,
+        &hw_velocity_commands_.at(i)));
     command_interfaces.emplace_back(CommandInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_velocity_commands_.at(i)));
-    command_interfaces.emplace_back(CommandInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_position_commands_.at(i)));
+        info_.joints[i].name, hardware_interface::HW_IF_POSITION,
+        &hw_position_commands_.at(i)));
   }
 
   // cartesian velocity command interface 6 in order: dx, dy, dz, wx, wy, wz
   for (auto i = 0U; i < hw_cartesian_velocities_.size(); i++) {
-    command_interfaces.emplace_back(CommandInterface(hw_cartesian_velocities_names_.at(i),
-                                                     k_HW_IF_CARTESIAN_VELOCITY,
-                                                     &hw_cartesian_velocities_.at(i)));
+    command_interfaces.emplace_back(CommandInterface(
+        hw_cartesian_velocities_names_.at(i), k_HW_IF_CARTESIAN_VELOCITY,
+        &hw_cartesian_velocities_.at(i)));
   }
 
   // cartesian pose command interface 16 element pose matrix
   for (auto i = 0U; i < 16; i++) {
-    command_interfaces.emplace_back(CommandInterface(
-        std::to_string(i), k_HW_IF_CARTESIAN_POSE_COMMAND, &hw_cartesian_pose_commands_.at(i)));
+    command_interfaces.emplace_back(
+        CommandInterface(std::to_string(i), k_HW_IF_CARTESIAN_POSE_COMMAND,
+                         &hw_cartesian_pose_commands_.at(i)));
   }
 
   // elbow command interface
   for (auto i = 0U; i < hw_elbow_command_names_.size(); i++) {
-    command_interfaces.emplace_back(CommandInterface(
-        hw_elbow_command_names_.at(i), k_HW_IF_ELBOW_COMMAND, &hw_elbow_command_.at(i)));
+    command_interfaces.emplace_back(
+        CommandInterface(hw_elbow_command_names_.at(i), k_HW_IF_ELBOW_COMMAND,
+                         &hw_elbow_command_.at(i)));
   }
 
   return command_interfaces;
@@ -126,7 +145,8 @@ std::vector<CommandInterface> AgimusFrankaHardwareInterface::export_command_inte
 CallbackReturn AgimusFrankaHardwareInterface::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   read(rclcpp::Time(0),
-       rclcpp::Duration(0, 0));  // makes sure that the robot state is properly initialized.
+       rclcpp::Duration(
+           0, 0));  // makes sure that the robot state is properly initialized.
   RCLCPP_INFO(getLogger(), "Started");
   return CallbackReturn::SUCCESS;
 }
@@ -140,8 +160,7 @@ CallbackReturn AgimusFrankaHardwareInterface::on_deactivate(
 }
 
 template <typename CommandType>
-void initializeCommand(bool& first_update,
-                       const bool& interface_running,
+void initializeCommand(bool& first_update, const bool& interface_running,
                        CommandType& hw_command,
                        const CommandType& new_command) {
   if (first_update && interface_running) {
@@ -150,17 +169,19 @@ void initializeCommand(bool& first_update,
   }
 }
 
-void AgimusFrankaHardwareInterface::initializePositionCommands(const agimus_franka::RobotState& robot_state) {
-  initializeCommand(first_elbow_update_, elbow_command_interface_running_, hw_elbow_command_,
-                    robot_state.elbow);
+void AgimusFrankaHardwareInterface::initializePositionCommands(
+    const agimus_franka::RobotState& robot_state) {
+  initializeCommand(first_elbow_update_, elbow_command_interface_running_,
+                    hw_elbow_command_, robot_state.elbow);
   initializeCommand(first_position_update_, position_joint_interface_running_,
                     hw_position_commands_, robot_state.q);
-  initializeCommand(first_cartesian_pose_update_, pose_cartesian_interface_running_,
+  initializeCommand(first_cartesian_pose_update_,
+                    pose_cartesian_interface_running_,
                     hw_cartesian_pose_commands_, robot_state.O_T_EE);
 }
 
-hardware_interface::return_type AgimusFrankaHardwareInterface::read(const rclcpp::Time& /*time*/,
-                                                              const rclcpp::Duration& /*period*/) {
+hardware_interface::return_type AgimusFrankaHardwareInterface::read(
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   if (hw_franka_model_ptr_ == nullptr) {
     hw_franka_model_ptr_ = robot_->getModel();
   }
@@ -183,11 +204,12 @@ bool hasInfinite(const CommandType& commands) {
                      [](double command) { return !std::isfinite(command); });
 }
 
-hardware_interface::return_type AgimusFrankaHardwareInterface::write(const rclcpp::Time& /*time*/,
-                                                               const rclcpp::Duration& /*period*/) {
+hardware_interface::return_type AgimusFrankaHardwareInterface::write(
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   if (hasInfinite(hw_position_commands_) || hasInfinite(hw_effort_commands_) ||
-      hasInfinite(hw_velocity_commands_) || hasInfinite(hw_cartesian_velocities_) ||
-      hasInfinite(hw_elbow_command_) || hasInfinite(hw_cartesian_pose_commands_)) {
+      hasInfinite(hw_velocity_commands_) ||
+      hasInfinite(hw_cartesian_velocities_) || hasInfinite(hw_elbow_command_) ||
+      hasInfinite(hw_cartesian_pose_commands_)) {
     return hardware_interface::return_type::ERROR;
   }
 
@@ -197,71 +219,88 @@ hardware_interface::return_type AgimusFrankaHardwareInterface::write(const rclcp
     robot_->writeOnce(hw_effort_commands_);
   } else if (position_joint_interface_running_ && !first_position_update_) {
     robot_->writeOnce(hw_position_commands_);
-  } else if (velocity_cartesian_interface_running_ && elbow_command_interface_running_ &&
-             !first_elbow_update_) {
-    // Wait until the first read pass after robot controller is activated to write the elbow
-    // command to the robot
+  } else if (velocity_cartesian_interface_running_ &&
+             elbow_command_interface_running_ && !first_elbow_update_) {
+    // Wait until the first read pass after robot controller is activated to
+    // write the elbow command to the robot
     robot_->writeOnce(hw_cartesian_velocities_, hw_elbow_command_);
-  } else if (pose_cartesian_interface_running_ && elbow_command_interface_running_ &&
+  } else if (pose_cartesian_interface_running_ &&
+             elbow_command_interface_running_ &&
              !first_cartesian_pose_update_ && !first_elbow_update_) {
-    // Wait until the first read pass after robot controller is activated to write the elbow
-    // command to the robot
+    // Wait until the first read pass after robot controller is activated to
+    // write the elbow command to the robot
     robot_->writeOnce(hw_cartesian_pose_commands_, hw_elbow_command_);
-  } else if (pose_cartesian_interface_running_ && !first_cartesian_pose_update_) {
-    // Wait until the first read pass after robot controller is activated to write the cartesian
-    // pose
+  } else if (pose_cartesian_interface_running_ &&
+             !first_cartesian_pose_update_) {
+    // Wait until the first read pass after robot controller is activated to
+    // write the cartesian pose
     robot_->writeOnce(hw_cartesian_pose_commands_);
-  } else if (velocity_cartesian_interface_running_ && !elbow_command_interface_running_) {
+  } else if (velocity_cartesian_interface_running_ &&
+             !elbow_command_interface_running_) {
     robot_->writeOnce(hw_cartesian_velocities_);
   }
 
   return hardware_interface::return_type::OK;
 }
 
-CallbackReturn AgimusFrankaHardwareInterface::on_init(const hardware_interface::HardwareInfo& info) {
-  if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
+CallbackReturn AgimusFrankaHardwareInterface::on_init(
+    const hardware_interface::HardwareInfo& info) {
+  if (hardware_interface::SystemInterface::on_init(info) !=
+      CallbackReturn::SUCCESS) {
     return CallbackReturn::ERROR;
   }
   if (info_.joints.size() != kNumberOfJoints) {
-    RCLCPP_FATAL(getLogger(), "Got %ld joints. Expected %ld.", info_.joints.size(),
-                 kNumberOfJoints);
+    RCLCPP_FATAL(getLogger(), "Got %ld joints. Expected %ld.",
+                 info_.joints.size(), kNumberOfJoints);
     return CallbackReturn::ERROR;
   }
 
   for (const auto& joint : info_.joints) {
     if (joint.command_interfaces.size() != 3) {
-      RCLCPP_FATAL(getLogger(), "Joint '%s' has %zu command interfaces found. 3 expected.",
+      RCLCPP_FATAL(getLogger(),
+                   "Joint '%s' has %zu command interfaces found. 3 expected.",
                    joint.name.c_str(), joint.command_interfaces.size());
       return CallbackReturn::ERROR;
     }
     if (joint.command_interfaces[0].name != hardware_interface::HW_IF_EFFORT &&
-        joint.command_interfaces[0].name != hardware_interface::HW_IF_VELOCITY &&
-        joint.command_interfaces[0].name != hardware_interface::HW_IF_POSITION) {
+        joint.command_interfaces[0].name !=
+            hardware_interface::HW_IF_VELOCITY &&
+        joint.command_interfaces[0].name !=
+            hardware_interface::HW_IF_POSITION) {
       RCLCPP_FATAL(getLogger(),
-                   "Joint '%s' has unexpected command interface '%s'. Expected '%s' and '%s' ",
+                   "Joint '%s' has unexpected command interface '%s'. Expected "
+                   "'%s' and '%s' ",
                    joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
-                   hardware_interface::HW_IF_EFFORT, hardware_interface::HW_IF_VELOCITY);
+                   hardware_interface::HW_IF_EFFORT,
+                   hardware_interface::HW_IF_VELOCITY);
       return CallbackReturn::ERROR;
     }
     if (joint.state_interfaces.size() != 3) {
-      RCLCPP_FATAL(getLogger(), "Joint '%s' has %zu state interfaces found. 3 expected.",
+      RCLCPP_FATAL(getLogger(),
+                   "Joint '%s' has %zu state interfaces found. 3 expected.",
                    joint.name.c_str(), joint.state_interfaces.size());
       return CallbackReturn::ERROR;
     }
     if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION) {
-      RCLCPP_FATAL(getLogger(), "Joint '%s' has unexpected state interface '%s'. Expected '%s'",
-                   joint.name.c_str(), joint.state_interfaces[0].name.c_str(),
-                   hardware_interface::HW_IF_POSITION);
+      RCLCPP_FATAL(
+          getLogger(),
+          "Joint '%s' has unexpected state interface '%s'. Expected '%s'",
+          joint.name.c_str(), joint.state_interfaces[0].name.c_str(),
+          hardware_interface::HW_IF_POSITION);
     }
     if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY) {
-      RCLCPP_FATAL(getLogger(), "Joint '%s' has unexpected state interface '%s'. Expected '%s'",
-                   joint.name.c_str(), joint.state_interfaces[1].name.c_str(),
-                   hardware_interface::HW_IF_VELOCITY);
+      RCLCPP_FATAL(
+          getLogger(),
+          "Joint '%s' has unexpected state interface '%s'. Expected '%s'",
+          joint.name.c_str(), joint.state_interfaces[1].name.c_str(),
+          hardware_interface::HW_IF_VELOCITY);
     }
     if (joint.state_interfaces[2].name != hardware_interface::HW_IF_EFFORT) {
-      RCLCPP_FATAL(getLogger(), "Joint '%s' has unexpected state interface '%s'. Expected '%s'",
-                   joint.name.c_str(), joint.state_interfaces[2].name.c_str(),
-                   hardware_interface::HW_IF_EFFORT);
+      RCLCPP_FATAL(
+          getLogger(),
+          "Joint '%s' has unexpected state interface '%s'. Expected '%s'",
+          joint.name.c_str(), joint.state_interfaces[2].name.c_str(),
+          hardware_interface::HW_IF_EFFORT);
     }
   }
   if (!robot_) {
@@ -276,14 +315,17 @@ CallbackReturn AgimusFrankaHardwareInterface::on_init(const hardware_interface::
       arm_id_ = info_.hardware_parameters.at("arm_id");
     } catch (const std::out_of_range& ex) {
       RCLCPP_WARN(getLogger(), "Parameter 'arm_id' is not set.");
-      RCLCPP_WARN(getLogger(),
-                  "Deprecation Warning: In the next release, 'arm_id' should be set in the URDF. "
-                  "Using 'panda' as default 'arm_id' will not be supported."
-                  "Please use the latest agimus_franka_description package from: "
-                  "https://github.com/agimus_frankaemika/agimus_franka_description");
+      RCLCPP_WARN(
+          getLogger(),
+          "Deprecation Warning: In the next release, 'arm_id' should be set in "
+          "the URDF. "
+          "Using 'panda' as default 'arm_id' will not be supported."
+          "Please use the latest agimus_franka_description package from: "
+          "https://github.com/agimus_frankaemika/agimus_franka_description");
     }
     try {
-      RCLCPP_INFO(getLogger(), "Connecting to robot at \"%s\" ...", robot_ip.c_str());
+      RCLCPP_INFO(getLogger(), "Connecting to robot at \"%s\" ...",
+                  robot_ip.c_str());
       robot_ = std::make_shared<Robot>(robot_ip, getLogger());
     } catch (const agimus_franka::Exception& e) {
       RCLCPP_FATAL(getLogger(), "Could not connect to robot");
@@ -293,7 +335,8 @@ CallbackReturn AgimusFrankaHardwareInterface::on_init(const hardware_interface::
     RCLCPP_INFO(getLogger(), "Successfully connected to robot");
   }
 
-  service_node_ = std::make_shared<FrankaParamServiceServer>(rclcpp::NodeOptions(), robot_);
+  service_node_ =
+      std::make_shared<FrankaParamServiceServer>(rclcpp::NodeOptions(), robot_);
   executor_ = std::make_shared<FrankaExecutor>();
   executor_->add_node(service_node_);
 
@@ -307,7 +350,8 @@ rclcpp::Logger AgimusFrankaHardwareInterface::getLogger() {
   return rclcpp::get_logger("AgimusFrankaHardwareInterface");
 }
 
-hardware_interface::return_type AgimusFrankaHardwareInterface::perform_command_mode_switch(
+hardware_interface::return_type
+AgimusFrankaHardwareInterface::perform_command_mode_switch(
     const std::vector<std::string>& /*start_interfaces*/,
     const std::vector<std::string>& /*stop_interfaces*/) {
   if (!effort_interface_running_ && effort_interface_claimed_) {
@@ -325,7 +369,8 @@ hardware_interface::return_type AgimusFrankaHardwareInterface::perform_command_m
     robot_->stopRobot();
     robot_->initializeJointVelocityInterface();
     velocity_joint_interface_running_ = true;
-  } else if (velocity_joint_interface_running_ && !velocity_joint_interface_claimed_) {
+  } else if (velocity_joint_interface_running_ &&
+             !velocity_joint_interface_claimed_) {
     robot_->stopRobot();
     velocity_joint_interface_running_ = false;
   }
@@ -335,12 +380,14 @@ hardware_interface::return_type AgimusFrankaHardwareInterface::perform_command_m
     robot_->initializeJointPositionInterface();
     position_joint_interface_running_ = true;
     first_position_update_ = true;
-  } else if (position_joint_interface_running_ && !position_joint_interface_claimed_) {
+  } else if (position_joint_interface_running_ &&
+             !position_joint_interface_claimed_) {
     robot_->stopRobot();
     position_joint_interface_running_ = false;
   }
 
-  if (!velocity_cartesian_interface_running_ && velocity_cartesian_interface_claimed_) {
+  if (!velocity_cartesian_interface_running_ &&
+      velocity_cartesian_interface_claimed_) {
     hw_cartesian_velocities_.fill(0);
     robot_->stopRobot();
     robot_->initializeCartesianVelocityInterface();
@@ -349,9 +396,11 @@ hardware_interface::return_type AgimusFrankaHardwareInterface::perform_command_m
       first_elbow_update_ = true;
     }
     velocity_cartesian_interface_running_ = true;
-  } else if (velocity_cartesian_interface_running_ && !velocity_cartesian_interface_claimed_) {
+  } else if (velocity_cartesian_interface_running_ &&
+             !velocity_cartesian_interface_claimed_) {
     robot_->stopRobot();
-    // Elbow command interface can't be commanded without cartesian velocity or pose interface
+    // Elbow command interface can't be commanded without cartesian velocity or
+    // pose interface
     if (elbow_command_interface_running_) {
       elbow_command_interface_running_ = false;
       elbow_command_interface_claimed_ = false;
@@ -369,9 +418,11 @@ hardware_interface::return_type AgimusFrankaHardwareInterface::perform_command_m
     pose_cartesian_interface_running_ = true;
     initial_robot_state_update_ = true;
     first_cartesian_pose_update_ = true;
-  } else if (pose_cartesian_interface_running_ && !pose_cartesian_interface_claimed_) {
+  } else if (pose_cartesian_interface_running_ &&
+             !pose_cartesian_interface_claimed_) {
     robot_->stopRobot();
-    // Elbow command interface can't be commanded without cartesian pose or pose interface
+    // Elbow command interface can't be commanded without cartesian pose or pose
+    // interface
     if (elbow_command_interface_running_) {
       elbow_command_interface_running_ = false;
       elbow_command_interface_claimed_ = false;
@@ -381,22 +432,26 @@ hardware_interface::return_type AgimusFrankaHardwareInterface::perform_command_m
 
   // check if the elbow command is activated without cartesian command interface
   if (elbow_command_interface_claimed_ &&
-      !(velocity_cartesian_interface_claimed_ || pose_cartesian_interface_claimed_)) {
+      !(velocity_cartesian_interface_claimed_ ||
+        pose_cartesian_interface_claimed_)) {
     RCLCPP_FATAL(getLogger(),
-                 "Elbow cannot be commanded without cartesian velocity or pose interface");
+                 "Elbow cannot be commanded without cartesian velocity or pose "
+                 "interface");
     return hardware_interface::return_type::ERROR;
   }
 
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type AgimusFrankaHardwareInterface::prepare_command_mode_switch(
+hardware_interface::return_type
+AgimusFrankaHardwareInterface::prepare_command_mode_switch(
     const std::vector<std::string>& start_interfaces,
     const std::vector<std::string>& stop_interfaces) {
   auto contains_interface_type = [](const std::string& interface,
                                     const std::string& interface_type) {
     size_t slash_position = interface.find('/');
-    if (slash_position != std::string::npos && slash_position + 1 < interface.size()) {
+    if (slash_position != std::string::npos &&
+        slash_position + 1 < interface.size()) {
       std::string after_slash = interface.substr(slash_position + 1);
       return after_slash == interface_type;
     }
@@ -407,9 +462,10 @@ hardware_interface::return_type AgimusFrankaHardwareInterface::prepare_command_m
                                        const std::string& interface_name,
                                        size_t actual_interface_size,
                                        size_t expected_interface_size) {
-    std::string error_message =
-        fmt::format("Invalid number of {} interfaces to {}. Expected {}, given {}", interface_name,
-                    start_stop_command, expected_interface_size, actual_interface_size);
+    std::string error_message = fmt::format(
+        "Invalid number of {} interfaces to {}. Expected {}, given {}",
+        interface_name, start_stop_command, expected_interface_size,
+        actual_interface_size);
     RCLCPP_FATAL(this->getLogger(), "%s", error_message.c_str());
 
     throw std::invalid_argument(error_message);
@@ -418,25 +474,30 @@ hardware_interface::return_type AgimusFrankaHardwareInterface::prepare_command_m
   for (const auto& interface : command_interfaces_info_) {
     size_t num_stop_interface =
         std::count_if(stop_interfaces.begin(), stop_interfaces.end(),
-                      [contains_interface_type, &interface](const std::string& interface_given) {
-                        return contains_interface_type(interface_given, interface.interface_type);
+                      [contains_interface_type,
+                       &interface](const std::string& interface_given) {
+                        return contains_interface_type(
+                            interface_given, interface.interface_type);
                       });
     size_t num_start_interface =
         std::count_if(start_interfaces.begin(), start_interfaces.end(),
-                      [contains_interface_type, &interface](const std::string& interface_given) {
-                        return contains_interface_type(interface_given, interface.interface_type);
+                      [contains_interface_type,
+                       &interface](const std::string& interface_given) {
+                        return contains_interface_type(
+                            interface_given, interface.interface_type);
                       });
 
     if (num_stop_interface == interface.size) {
       interface.claim_flag = false;
     } else if (num_stop_interface != 0U) {
-      generate_error_message("stop", interface.interface_type, num_stop_interface, interface.size);
+      generate_error_message("stop", interface.interface_type,
+                             num_stop_interface, interface.size);
     }
     if (num_start_interface == interface.size) {
       interface.claim_flag = true;
     } else if (num_start_interface != 0U) {
-      generate_error_message("start", interface.interface_type, num_start_interface,
-                             interface.size);
+      generate_error_message("start", interface.interface_type,
+                             num_start_interface, interface.size);
     }
   }
 

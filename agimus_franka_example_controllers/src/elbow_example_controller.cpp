@@ -14,7 +14,6 @@
 
 #include <agimus_franka_example_controllers/default_robot_behavior_utils.hpp>
 #include <agimus_franka_example_controllers/elbow_example_controller.hpp>
-
 #include <cassert>
 #include <cmath>
 #include <exception>
@@ -26,13 +25,14 @@ controller_interface::InterfaceConfiguration
 ElbowExampleController::command_interface_configuration() const {
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-  config.names = agimus_franka_cartesian_velocity_->get_command_interface_names();
+  config.names =
+      agimus_franka_cartesian_velocity_->get_command_interface_names();
 
   return config;
 }
 
-controller_interface::InterfaceConfiguration ElbowExampleController::state_interface_configuration()
-    const {
+controller_interface::InterfaceConfiguration
+ElbowExampleController::state_interface_configuration() const {
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
   config.names = agimus_franka_cartesian_velocity_->get_state_interface_names();
@@ -44,10 +44,10 @@ controller_interface::InterfaceConfiguration ElbowExampleController::state_inter
 }
 
 controller_interface::return_type ElbowExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& /*period*/) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   if (initialization_flag_) {
-    initial_elbow_configuration_ = agimus_franka_cartesian_velocity_->getCurrentElbowConfiguration();
+    initial_elbow_configuration_ =
+        agimus_franka_cartesian_velocity_->getCurrentElbowConfiguration();
 
     initial_robot_time_ = state_interfaces_.back().get_value();
     elapsed_time_ = 0.0;
@@ -64,14 +64,17 @@ controller_interface::return_type ElbowExampleController::update(
   Eigen::Vector3d cartesian_angular_velocity(0.0, 0.0, 0.0);
 
   std::array<double, 2> elbow_command = {
-      {initial_elbow_configuration_[0] + angle, initial_elbow_configuration_[1]}};
+      {initial_elbow_configuration_[0] + angle,
+       initial_elbow_configuration_[1]}};
 
-  if (agimus_franka_cartesian_velocity_->setCommand(cartesian_linear_velocity, cartesian_angular_velocity,
-                                             elbow_command)) {
+  if (agimus_franka_cartesian_velocity_->setCommand(cartesian_linear_velocity,
+                                                    cartesian_angular_velocity,
+                                                    elbow_command)) {
     return controller_interface::return_type::OK;
   } else {
-    RCLCPP_FATAL(get_node()->get_logger(),
-                 "Set command failed. Did you activate the elbow command interface?");
+    RCLCPP_FATAL(
+        get_node()->get_logger(),
+        "Set command failed. Did you activate the elbow command interface?");
     return controller_interface::return_type::ERROR;
   }
 }
@@ -82,12 +85,15 @@ CallbackReturn ElbowExampleController::on_init() {
 
 CallbackReturn ElbowExampleController::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  agimus_franka_cartesian_velocity_ =
-      std::make_unique<agimus_franka_semantic_components::FrankaCartesianVelocityInterface>(
-          agimus_franka_semantic_components::FrankaCartesianVelocityInterface(k_elbow_activated_));
+  agimus_franka_cartesian_velocity_ = std::make_unique<
+      agimus_franka_semantic_components::FrankaCartesianVelocityInterface>(
+      agimus_franka_semantic_components::FrankaCartesianVelocityInterface(
+          k_elbow_activated_));
 
-  auto client = get_node()->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
-      "service_server/set_full_collision_behavior");
+  auto client =
+      get_node()
+          ->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
+              "service_server/set_full_collision_behavior");
   auto request = DefaultRobotBehavior::getDefaultCollisionBehaviorRequest();
 
   auto future_result = client->async_send_request(request);
@@ -95,14 +101,15 @@ CallbackReturn ElbowExampleController::on_configure(
 
   auto success = future_result.get();
   if (!success) {
-    RCLCPP_FATAL(get_node()->get_logger(), "Failed to set default collision behavior.");
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "Failed to set default collision behavior.");
     return CallbackReturn::ERROR;
   } else {
     RCLCPP_INFO(get_node()->get_logger(), "Default collision behavior set.");
   }
 
-  auto parameters_client =
-      std::make_shared<rclcpp::AsyncParametersClient>(get_node(), "/robot_state_publisher");
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+      get_node(), "/robot_state_publisher");
   parameters_client->wait_for_service();
 
   auto future = parameters_client->get_parameters({"robot_description"});
@@ -110,18 +117,22 @@ CallbackReturn ElbowExampleController::on_configure(
   if (!result.empty()) {
     robot_description_ = result[0].value_to_string();
   } else {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter.");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Failed to get robot_description parameter.");
   }
 
-  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_, get_node()->get_logger());
+  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_,
+                                                     get_node()->get_logger());
 
   return CallbackReturn::SUCCESS;
 }
 
 CallbackReturn ElbowExampleController::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  agimus_franka_cartesian_velocity_->assign_loaned_command_interfaces(command_interfaces_);
-  agimus_franka_cartesian_velocity_->assign_loaned_state_interfaces(state_interfaces_);
+  agimus_franka_cartesian_velocity_->assign_loaned_command_interfaces(
+      command_interfaces_);
+  agimus_franka_cartesian_velocity_->assign_loaned_state_interfaces(
+      state_interfaces_);
 
   initialization_flag_ = true;
   elapsed_time_ = 0.0;
@@ -137,5 +148,6 @@ controller_interface::CallbackReturn ElbowExampleController::on_deactivate(
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::ElbowExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::ElbowExampleController,
+    controller_interface::ControllerInterface)

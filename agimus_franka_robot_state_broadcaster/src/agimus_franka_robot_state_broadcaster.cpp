@@ -24,9 +24,9 @@
 #include "controller_interface/version.h"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "rclcpp/version.h"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/qos.hpp"
+#include "rclcpp/version.h"
 #if RCLCPP_VERSION_GTE(20, 0, 0)
 #include "rclcpp/event_handler.hpp"
 #else
@@ -40,12 +40,14 @@
 
 namespace agimus_franka_robot_state_broadcaster {
 
-controller_interface::CallbackReturn AgimusFrankaRobotStateBroadcaster::on_init() {
+controller_interface::CallbackReturn
+AgimusFrankaRobotStateBroadcaster::on_init() {
   try {
     param_listener = std::make_shared<ParamListener>(get_node());
     params = param_listener->get_params();
   } catch (const std::exception& e) {
-    fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+    fprintf(stderr, "Exception thrown during init stage with message: %s \n",
+            e.what());
     return CallbackReturn::ERROR;
   }
 
@@ -61,12 +63,15 @@ AgimusFrankaRobotStateBroadcaster::command_interface_configuration() const {
 controller_interface::InterfaceConfiguration
 AgimusFrankaRobotStateBroadcaster::state_interface_configuration() const {
   controller_interface::InterfaceConfiguration state_interfaces_config;
-  state_interfaces_config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-  state_interfaces_config.names = agimus_franka_robot_state_->get_state_interface_names();
+  state_interfaces_config.type =
+      controller_interface::interface_configuration_type::INDIVIDUAL;
+  state_interfaces_config.names =
+      agimus_franka_robot_state_->get_state_interface_names();
   return state_interfaces_config;
 }
 
-controller_interface::CallbackReturn AgimusFrankaRobotStateBroadcaster::on_configure(
+controller_interface::CallbackReturn
+AgimusFrankaRobotStateBroadcaster::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   params = param_listener->get_params();
   std::string robot_description;
@@ -74,45 +79,56 @@ controller_interface::CallbackReturn AgimusFrankaRobotStateBroadcaster::on_confi
   robot_description = get_robot_description();
 #else
   if (!get_node()->get_parameter("robot_description", robot_description)) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Failed to get robot_description parameter");
     return CallbackReturn::ERROR;
   }
 #endif
   if (!agimus_franka_robot_state_) {
-    agimus_franka_robot_state_ = std::make_unique<agimus_franka_semantic_components::AgimusFrankaRobotState>(
-        agimus_franka_semantic_components::AgimusFrankaRobotState(params.arm_id + "/" + state_interface_name,
-                                                     robot_description));
+    agimus_franka_robot_state_ = std::make_unique<
+        agimus_franka_semantic_components::AgimusFrankaRobotState>(
+        agimus_franka_semantic_components::AgimusFrankaRobotState(
+            params.arm_id + "/" + state_interface_name, robot_description));
   }
-  current_pose_stamped_publisher_ = get_node()->create_publisher<geometry_msgs::msg::PoseStamped>(
-      kCurrentPoseTopic, rclcpp::SystemDefaultsQoS());
+  current_pose_stamped_publisher_ =
+      get_node()->create_publisher<geometry_msgs::msg::PoseStamped>(
+          kCurrentPoseTopic, rclcpp::SystemDefaultsQoS());
   last_desired_pose_stamped_publisher_ =
-      get_node()->create_publisher<geometry_msgs::msg::PoseStamped>(kLastDesiredPoseTopic,
-                                                                    rclcpp::SystemDefaultsQoS());
+      get_node()->create_publisher<geometry_msgs::msg::PoseStamped>(
+          kLastDesiredPoseTopic, rclcpp::SystemDefaultsQoS());
   desired_end_effector_twist_stamped_publisher_ =
-      get_node()->create_publisher<geometry_msgs::msg::TwistStamped>(kDesiredEETwist,
-                                                                     rclcpp::SystemDefaultsQoS());
-  measured_joint_states_publisher_ = get_node()->create_publisher<sensor_msgs::msg::JointState>(
-      kMeasuredJointStates, rclcpp::SystemDefaultsQoS());
+      get_node()->create_publisher<geometry_msgs::msg::TwistStamped>(
+          kDesiredEETwist, rclcpp::SystemDefaultsQoS());
+  measured_joint_states_publisher_ =
+      get_node()->create_publisher<sensor_msgs::msg::JointState>(
+          kMeasuredJointStates, rclcpp::SystemDefaultsQoS());
   external_wrench_in_stiffness_frame_publisher_ =
       get_node()->create_publisher<geometry_msgs::msg::WrenchStamped>(
           kExternalWrenchInStiffnessFrame, rclcpp::SystemDefaultsQoS());
   external_wrench_in_base_frame_publisher_ =
-      get_node()->create_publisher<geometry_msgs::msg::WrenchStamped>(kExternalWrenchInBaseFrame,
-                                                                      rclcpp::SystemDefaultsQoS());
-  external_joint_torques_publisher_ = get_node()->create_publisher<sensor_msgs::msg::JointState>(
-      kExternalJointTorques, rclcpp::SystemDefaultsQoS());
-  desired_joint_states_publisher_ = get_node()->create_publisher<sensor_msgs::msg::JointState>(
-      kDesiredJointStates, rclcpp::SystemDefaultsQoS());
+      get_node()->create_publisher<geometry_msgs::msg::WrenchStamped>(
+          kExternalWrenchInBaseFrame, rclcpp::SystemDefaultsQoS());
+  external_joint_torques_publisher_ =
+      get_node()->create_publisher<sensor_msgs::msg::JointState>(
+          kExternalJointTorques, rclcpp::SystemDefaultsQoS());
+  desired_joint_states_publisher_ =
+      get_node()->create_publisher<sensor_msgs::msg::JointState>(
+          kDesiredJointStates, rclcpp::SystemDefaultsQoS());
   try {
-    agimus_franka_state_publisher = get_node()->create_publisher<agimus_franka_msgs::msg::AgimusFrankaRobotState>(
-        "~/" + state_interface_name, rclcpp::SystemDefaultsQoS());
+    agimus_franka_state_publisher =
+        get_node()
+            ->create_publisher<agimus_franka_msgs::msg::AgimusFrankaRobotState>(
+                "~/" + state_interface_name, rclcpp::SystemDefaultsQoS());
     realtime_franka_state_publisher =
-        std::make_shared<realtime_tools::RealtimePublisher<agimus_franka_msgs::msg::AgimusFrankaRobotState>>(
+        std::make_shared<realtime_tools::RealtimePublisher<
+            agimus_franka_msgs::msg::AgimusFrankaRobotState>>(
             agimus_franka_state_publisher);
-    agimus_franka_robot_state_->initialize_robot_state_msg(realtime_franka_state_publisher->msg_);
+    agimus_franka_robot_state_->initialize_robot_state_msg(
+        realtime_franka_state_publisher->msg_);
   } catch (const std::exception& e) {
     fprintf(stderr,
-            "Exception thrown during publisher creation at configure stage with message : %s \n",
+            "Exception thrown during publisher creation at configure stage "
+            "with message : %s \n",
             e.what());
     return CallbackReturn::ERROR;
   }
@@ -120,27 +136,31 @@ controller_interface::CallbackReturn AgimusFrankaRobotStateBroadcaster::on_confi
   return CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn AgimusFrankaRobotStateBroadcaster::on_activate(
+controller_interface::CallbackReturn
+AgimusFrankaRobotStateBroadcaster::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   agimus_franka_robot_state_->assign_loaned_state_interfaces(state_interfaces_);
   return CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn AgimusFrankaRobotStateBroadcaster::on_deactivate(
+controller_interface::CallbackReturn
+AgimusFrankaRobotStateBroadcaster::on_deactivate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   agimus_franka_robot_state_->release_interfaces();
   return CallbackReturn::SUCCESS;
 }
 
 controller_interface::return_type AgimusFrankaRobotStateBroadcaster::update(
-    const rclcpp::Time& time,
-    const rclcpp::Duration& /*period*/) {
-  if (realtime_franka_state_publisher && realtime_franka_state_publisher->trylock()) {
+    const rclcpp::Time& time, const rclcpp::Duration& /*period*/) {
+  if (realtime_franka_state_publisher &&
+      realtime_franka_state_publisher->trylock()) {
     realtime_franka_state_publisher->msg_.header.stamp = time;
 
-    if (!agimus_franka_robot_state_->get_values_as_message(realtime_franka_state_publisher->msg_)) {
+    if (!agimus_franka_robot_state_->get_values_as_message(
+            realtime_franka_state_publisher->msg_)) {
       RCLCPP_ERROR(get_node()->get_logger(),
-                   "Failed to get agimus_franka state via agimus_franka state interface.");
+                   "Failed to get agimus_franka state via agimus_franka state "
+                   "interface.");
       realtime_franka_state_publisher->unlock();
       return controller_interface::return_type::ERROR;
     }
@@ -151,19 +171,26 @@ controller_interface::return_type AgimusFrankaRobotStateBroadcaster::update(
 
     current_pose_stamped_publisher_->publish(agimus_franka_state_msg.o_t_ee);
 
-    last_desired_pose_stamped_publisher_->publish(agimus_franka_state_msg.o_t_ee_d);
+    last_desired_pose_stamped_publisher_->publish(
+        agimus_franka_state_msg.o_t_ee_d);
 
-    desired_end_effector_twist_stamped_publisher_->publish(agimus_franka_state_msg.o_dp_ee_d);
+    desired_end_effector_twist_stamped_publisher_->publish(
+        agimus_franka_state_msg.o_dp_ee_d);
 
-    external_wrench_in_base_frame_publisher_->publish(agimus_franka_state_msg.o_f_ext_hat_k);
+    external_wrench_in_base_frame_publisher_->publish(
+        agimus_franka_state_msg.o_f_ext_hat_k);
 
-    external_wrench_in_stiffness_frame_publisher_->publish(agimus_franka_state_msg.k_f_ext_hat_k);
+    external_wrench_in_stiffness_frame_publisher_->publish(
+        agimus_franka_state_msg.k_f_ext_hat_k);
 
-    measured_joint_states_publisher_->publish(agimus_franka_state_msg.measured_joint_state);
+    measured_joint_states_publisher_->publish(
+        agimus_franka_state_msg.measured_joint_state);
 
-    external_joint_torques_publisher_->publish(agimus_franka_state_msg.tau_ext_hat_filtered);
+    external_joint_torques_publisher_->publish(
+        agimus_franka_state_msg.tau_ext_hat_filtered);
 
-    desired_joint_states_publisher_->publish(agimus_franka_state_msg.desired_joint_state);
+    desired_joint_states_publisher_->publish(
+        agimus_franka_state_msg.desired_joint_state);
 
     return controller_interface::return_type::OK;
 
@@ -176,5 +203,6 @@ controller_interface::return_type AgimusFrankaRobotStateBroadcaster::update(
 
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_robot_state_broadcaster::AgimusFrankaRobotStateBroadcaster,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_robot_state_broadcaster::AgimusFrankaRobotStateBroadcaster,
+    controller_interface::ControllerInterface)

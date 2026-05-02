@@ -18,30 +18,36 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "urdf/model.h"
 
 #include "agimus_franka/robot_state.h"
 #include "agimus_franka_msgs/msg/agimus_franka_robot_state.hpp"
 #include "semantic_components/semantic_component_interface.hpp"
+#include "urdf/model.h"
 
 namespace agimus_franka_semantic_components {
 class AgimusFrankaRobotState
-    : public semantic_components::SemanticComponentInterface<agimus_franka_msgs::msg::AgimusFrankaRobotState> {
+    : public semantic_components::SemanticComponentInterface<
+          agimus_franka_msgs::msg::AgimusFrankaRobotState> {
  public:
-  explicit AgimusFrankaRobotState(const std::string& name, const std::string& robot_description);
+  explicit AgimusFrankaRobotState(const std::string& name,
+                                  const std::string& robot_description);
 
   virtual ~AgimusFrankaRobotState() = default;
 
   /**
-   * @param[in/out] message Initializes this message to contain the respective frame_id information
+   * @param[in/out] message Initializes this message to contain the respective
+   * frame_id information
    */
-  virtual auto initialize_robot_state_msg(agimus_franka_msgs::msg::AgimusFrankaRobotState& message) -> void;
+  virtual auto initialize_robot_state_msg(
+      agimus_franka_msgs::msg::AgimusFrankaRobotState& message) -> void;
 
   /**
-   * Constructs and return a AgimusFrankaRobotState message from the current values.
+   * Constructs and return a AgimusFrankaRobotState message from the current
+   * values.
    * \return AgimusFrankaRobotState message from values;
    */
-  virtual auto get_values_as_message(agimus_franka_msgs::msg::AgimusFrankaRobotState& message) -> bool;
+  virtual auto get_values_as_message(
+      agimus_franka_msgs::msg::AgimusFrankaRobotState& message) -> bool;
 
  protected:
   /**
@@ -65,14 +71,15 @@ class AgimusFrankaRobotState
   std::vector<std::string> joint_names, link_names;
 
   /**
-   * @brief Populate the link_name std::vector with the links from urdf object in order.
-   *       The root link is the first element and tcp is the last element.
+   * @brief Populate the link_name std::vector with the links from urdf object
+   * in order. The root link is the first element and tcp is the last element.
    *
    */
   auto set_links_from_urdf() -> void;
 
   /**
-   * @brief Populate the joint_name std::vector with the joints from urdf object in order.
+   * @brief Populate the joint_name std::vector with the joints from urdf object
+   * in order.
    *
    */
   auto set_joints_from_urdf() -> void;

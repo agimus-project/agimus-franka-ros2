@@ -14,34 +14,36 @@
 
 #pragma once
 
-#include <chrono>
-#include <functional>
-#include <future>
-#include <memory>
-#include <string>
-#include <thread>
-
 #include <agimus_franka/exception.h>
 #include <agimus_franka/gripper.h>
 #include <agimus_franka/gripper_state.h>
-#include <control_msgs/action/gripper_command.hpp>
+
 #include <agimus_franka_msgs/action/grasp.hpp>
 #include <agimus_franka_msgs/action/homing.hpp>
 #include <agimus_franka_msgs/action/move.hpp>
+#include <chrono>
+#include <control_msgs/action/gripper_command.hpp>
+#include <functional>
+#include <future>
+#include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include <string>
+#include <thread>
 
 namespace agimus_franka_gripper {
 
 /// checks whether an asynchronous command has finished
 /// @tparam T the expected return type of the future
 /// @param t the future which should be checked
-/// @param future_wait_timeout how long to wait for the result before returning false
+/// @param future_wait_timeout how long to wait for the result before returning
+/// false
 /// @return whether the asynchronous function has already finished
 template <typename T>
-bool resultIsReady(std::future<T>& t, std::chrono::nanoseconds future_wait_timeout) {
+bool resultIsReady(std::future<T>& t,
+                   std::chrono::nanoseconds future_wait_timeout) {
   return t.wait_for(future_wait_timeout) == std::future_status::ready;
 }
 
@@ -58,13 +60,15 @@ class GripperActionServer : public rclcpp::Node {
   using GoalHandleGrasp = rclcpp_action::ServerGoalHandle<Grasp>;
 
   using GripperCommand = control_msgs::action::GripperCommand;
-  using GoalHandleGripperCommand = rclcpp_action::ServerGoalHandle<GripperCommand>;
+  using GoalHandleGripperCommand =
+      rclcpp_action::ServerGoalHandle<GripperCommand>;
 
   using Trigger = std_srvs::srv::Trigger;
 
   /// creates an instance of a GripperActionServer
   /// @param options options for node initialization
-  explicit GripperActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
+  explicit GripperActionServer(
+      const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
 
  private:
   /// describes the different tasks. Each task corresponds to one action server
@@ -82,14 +86,18 @@ class GripperActionServer : public rclcpp::Node {
       case Task::kGripperCommand:
         return {"GripperCommand"};
       default:
-        throw std::invalid_argument("getTaskName is not implemented for this case");
+        throw std::invalid_argument(
+            "getTaskName is not implemented for this case");
     }
   };
 
-  const double k_default_grasp_epsilon = 0.005;    // default inner and outer grasp epsilon in meter
-  const double k_default_speed = 0.1;              // default gripper speed in m/s
-  const int k_default_state_publish_rate = 30;     // default gripper state publish rate
-  const int k_default_feedback_publish_rate = 10;  // default action feedback publish rate
+  const double k_default_grasp_epsilon =
+      0.005;  // default inner and outer grasp epsilon in meter
+  const double k_default_speed = 0.1;  // default gripper speed in m/s
+  const int k_default_state_publish_rate =
+      30;  // default gripper state publish rate
+  const int k_default_feedback_publish_rate =
+      10;  // default action feedback publish rate
 
   std::unique_ptr<agimus_franka::Gripper> gripper_;
   rclcpp_action::Server<Homing>::SharedPtr homing_server_;
@@ -99,19 +107,23 @@ class GripperActionServer : public rclcpp::Node {
   rclcpp::Service<Trigger>::SharedPtr stop_service_;
   std::mutex gripper_state_mutex_;
   agimus_franka::GripperState current_gripper_state_;
-  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_states_publisher_;
+  rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr
+      joint_states_publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
 
-  double default_speed_;          // default gripper speed parameter value in m/s
-  double default_epsilon_inner_;  // default gripper inner epsilon parameter value in m
-  double default_epsilon_outer_;  //  default gripper outer epsilon parameter value in m
+  double default_speed_;  // default gripper speed parameter value in m/s
+  double default_epsilon_inner_;  // default gripper inner epsilon parameter
+                                  // value in m
+  double default_epsilon_outer_;  //  default gripper outer epsilon parameter
+                                  //  value in m
   std::vector<std::string> joint_names_;
   std::chrono::nanoseconds future_wait_timeout_{0};
 
   void publishGripperState();
 
   /// stops the gripper and writes the result into the response
-  /// @param[out] response  will be updated with the success status and error message
+  /// @param[out] response  will be updated with the success status and error
+  /// message
   void stopServiceCallback(const std::shared_ptr<Trigger::Response>& response);
 
   /// accepts any cancel request
@@ -131,25 +143,29 @@ class GripperActionServer : public rclcpp::Node {
 
   /// Performs the moveit grasp command
   /// @param goal_handle
-  /// @param command_handler eiter a grasp or move command defined by the onExecuteGripperCommand
-  /// method
-  void executeGripperCommand(const std::shared_ptr<GoalHandleGripperCommand>& goal_handle,
-                             const std::function<bool()>& command_handler);
+  /// @param command_handler eiter a grasp or move command defined by the
+  /// onExecuteGripperCommand method
+  void executeGripperCommand(
+      const std::shared_ptr<GoalHandleGripperCommand>& goal_handle,
+      const std::function<bool()>& command_handler);
 
-  /// Defines a function for either grasping or moving the gripper, depending on the current gripper
-  /// state and the commanded goal. Then it calls executeGripperCommand to execute that function
-  void onExecuteGripperCommand(const std::shared_ptr<GoalHandleGripperCommand>& goal_handle);
+  /// Defines a function for either grasping or moving the gripper, depending on
+  /// the current gripper state and the commanded goal. Then it calls
+  /// executeGripperCommand to execute that function
+  void onExecuteGripperCommand(
+      const std::shared_ptr<GoalHandleGripperCommand>& goal_handle);
 
   /// Executes a gripper command
   /// @tparam T A gripper action message type (Move, Grasp, Homing)
   /// @param[in] goal_handle The goal handle from the action server
   /// @param[in] task The type of the Task
-  /// @param[in] command_handler a function that performs the the task. Returns true on success.
-  /// This function is allowed to throw a agimus_franka::Exception
+  /// @param[in] command_handler a function that performs the the task. Returns
+  /// true on success. This function is allowed to throw a
+  /// agimus_franka::Exception
   template <typename T>
-  void executeCommand(const std::shared_ptr<rclcpp_action::ServerGoalHandle<T>>& goal_handle,
-                      Task task,
-                      const std::function<bool()>& command_handler) {
+  void executeCommand(
+      const std::shared_ptr<rclcpp_action::ServerGoalHandle<T>>& goal_handle,
+      Task task, const std::function<bool()>& command_handler) {
     const auto kTaskName = getTaskName(task);
     RCLCPP_INFO(this->get_logger(), "Gripper %s...", kTaskName.c_str());
 
@@ -158,7 +174,8 @@ class GripperActionServer : public rclcpp::Node {
     std::future<std::shared_ptr<typename T::Result>> result_future =
         std::async(std::launch::async, command_execution_thread);
 
-    while (!resultIsReady(result_future, future_wait_timeout_) && rclcpp::ok()) {
+    while (!resultIsReady(result_future, future_wait_timeout_) &&
+           rclcpp::ok()) {
       if (goal_handle->is_canceling()) {
         gripper_->stop();
         auto result = result_future.get();
@@ -180,13 +197,14 @@ class GripperActionServer : public rclcpp::Node {
     }
   }
 
-  /// Creates a function that catches exceptions for the gripper command function and returns a
-  /// result
+  /// Creates a function that catches exceptions for the gripper command
+  /// function and returns a result
   /// @tparam T A gripper action message type (Move, Grasp, Homing)
-  /// @param[in] command_handler a function that performs the the task. Returns true on success.
-  /// This function is allowed to throw a agimus_franka::Exception
-  /// @return[in] enhanced command_handler that now returns a result an does not throw a
-  /// agimus_franka::exception anymore
+  /// @param[in] command_handler a function that performs the the task. Returns
+  /// true on success. This function is allowed to throw a
+  /// agimus_franka::Exception
+  /// @return[in] enhanced command_handler that now returns a result an does not
+  /// throw a agimus_franka::exception anymore
   template <typename T>
   auto withResultGenerator(const std::function<bool()>& command_handler)
       -> std::function<std::shared_ptr<typename T::Result>()> {
@@ -216,6 +234,7 @@ class GripperActionServer : public rclcpp::Node {
 
   /// Publishes the gripper width as feedback for the GripperCommand action
   void publishGripperCommandFeedback(
-      const std::shared_ptr<rclcpp_action::ServerGoalHandle<GripperCommand>>& goal_handle);
+      const std::shared_ptr<rclcpp_action::ServerGoalHandle<GripperCommand>>&
+          goal_handle);
 };
 }  // namespace agimus_franka_gripper

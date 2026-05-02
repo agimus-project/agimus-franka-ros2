@@ -14,19 +14,19 @@
 
 #pragma once
 
-#include <string>
-
 #include <controller_interface/controller_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include <string>
 
 #include "agimus_franka_example_controllers/robot_utils.hpp"
 #include "agimus_franka_msgs/action/grasp.hpp"
 #include "agimus_franka_msgs/action/move.hpp"
 
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+using CallbackReturn =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
 namespace agimus_franka_example_controllers {
 
@@ -34,14 +34,16 @@ namespace agimus_franka_example_controllers {
  * The Gripper Example Controller
  *
  * Assumptions:
- * - The Franka Hand ("Gripper") is correctly attached to the Franka FR3 Robotic Arm.
- * - The Robotic Arm is powered on, unlocked, and in FCI (Franka Control Interface) mode.
+ * - The Franka Hand ("Gripper") is correctly attached to the Franka FR3 Robotic
+ * Arm.
+ * - The Robotic Arm is powered on, unlocked, and in FCI (Franka Control
+ * Interface) mode.
  * - The Arm is positioned and ready to test only the Gripper functionality,
  *   with no movement of other joints involved.
  *
  * Purpose:
- * This controller demonstrates the Franka action interface for controlling the gripper.
- * It uses two hard-coded goals:
+ * This controller demonstrates the Franka action interface for controlling the
+ * gripper. It uses two hard-coded goals:
  *
  * 1. Grasp Goal (see: GripperExampleController::graspGripper()):
  *    - Target width: 0.015 meters (e.g., to grasp a "Magic Marker").
@@ -65,20 +67,24 @@ namespace agimus_franka_example_controllers {
  * and the defined tolerances.
  */
 
-class GripperExampleController : public controller_interface::ControllerInterface {
+class GripperExampleController
+    : public controller_interface::ControllerInterface {
  public:
-  [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
-      const override;
-  [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
-      const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  command_interface_configuration() const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  state_interface_configuration() const override;
 
   CallbackReturn on_init() override;
-  CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_configure(
+      const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_activate(
+      const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_deactivate(
+      const rclcpp_lifecycle::State& previous_state) override;
 
-  controller_interface::return_type update(const rclcpp::Time& time,
-                                           const rclcpp::Duration& period) override;
+  controller_interface::return_type update(
+      const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
  private:
   // Close Gripper if Open, Open Gripper if Closed
@@ -92,8 +98,10 @@ class GripperExampleController : public controller_interface::ControllerInterfac
   // Populates the callbacks for the Grasp Goal
   void assignGraspGoalOptionsCallbacks();
 
-  std::shared_ptr<rclcpp_action::Client<agimus_franka_msgs::action::Grasp>> gripper_grasp_action_client_;
-  std::shared_ptr<rclcpp_action::Client<agimus_franka_msgs::action::Move>> gripper_move_action_client_;
+  std::shared_ptr<rclcpp_action::Client<agimus_franka_msgs::action::Grasp>>
+      gripper_grasp_action_client_;
+  std::shared_ptr<rclcpp_action::Client<agimus_franka_msgs::action::Move>>
+      gripper_move_action_client_;
   std::shared_ptr<rclcpp::Client<std_srvs::srv::Trigger>> gripper_stop_client_;
 
   /**
@@ -102,8 +110,10 @@ class GripperExampleController : public controller_interface::ControllerInterfac
    * GripperExampleController instance, so the SendGoalOptions objects
    * are stored as members of the class.
    */
-  rclcpp_action::Client<agimus_franka_msgs::action::Move>::SendGoalOptions move_goal_options_;
-  rclcpp_action::Client<agimus_franka_msgs::action::Grasp>::SendGoalOptions grasp_goal_options_;
+  rclcpp_action::Client<agimus_franka_msgs::action::Move>::SendGoalOptions
+      move_goal_options_;
+  rclcpp_action::Client<agimus_franka_msgs::action::Grasp>::SendGoalOptions
+      grasp_goal_options_;
 
   std::string arm_id_;
 };

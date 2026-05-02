@@ -28,11 +28,11 @@ import sensor_msgs.msg
 
 
 def generate_test_description():
-    robot_ip_parameter_name = 'robot_ip'
-    load_gripper_parameter_name = 'load_gripper'
-    use_fake_hardware_parameter_name = 'use_fake_hardware'
-    fake_sensor_commands_parameter_name = 'fake_sensor_commands'
-    use_rviz_parameter_name = 'use_rviz'
+    robot_ip_parameter_name = "robot_ip"
+    load_gripper_parameter_name = "load_gripper"
+    use_fake_hardware_parameter_name = "use_fake_hardware"
+    fake_sensor_commands_parameter_name = "fake_sensor_commands"
+    use_rviz_parameter_name = "use_rviz"
 
     robot_ip = LaunchConfiguration(robot_ip_parameter_name)
     load_gripper = LaunchConfiguration(load_gripper_parameter_name)
@@ -45,9 +45,9 @@ def generate_test_description():
             [
                 PathJoinSubstitution(
                     [
-                        FindPackageShare('agimus_franka_bringup'),
-                        'launch',
-                        'move_to_start_example_controller.launch.py',
+                        FindPackageShare("agimus_franka_bringup"),
+                        "launch",
+                        "move_to_start_example_controller.launch.py",
                     ]
                 )
             ]
@@ -65,32 +65,33 @@ def generate_test_description():
         LaunchDescription(
             [
                 DeclareLaunchArgument(
-                    robot_ip_parameter_name, description='Hostname or IP address of the robot.'
+                    robot_ip_parameter_name,
+                    description="Hostname or IP address of the robot.",
                 ),
                 DeclareLaunchArgument(
                     use_rviz_parameter_name,
-                    default_value='false',
-                    description='Visualize the robot in Rviz',
+                    default_value="false",
+                    description="Visualize the robot in Rviz",
                 ),
                 DeclareLaunchArgument(
                     use_fake_hardware_parameter_name,
-                    default_value='false',
-                    description='Use fake hardware',
+                    default_value="false",
+                    description="Use fake hardware",
                 ),
                 DeclareLaunchArgument(
                     fake_sensor_commands_parameter_name,
-                    default_value='false',
+                    default_value="false",
                     description=(
-                        'Fake sensor commands. Only valid when'
-                        f' {use_fake_hardware_parameter_name} is true'
+                        "Fake sensor commands. Only valid when"
+                        f" {use_fake_hardware_parameter_name} is true"
                     ),
                 ),
                 DeclareLaunchArgument(
                     load_gripper_parameter_name,
-                    default_value='true',
+                    default_value="true",
                     description=(
-                        'Use Franka Gripper as an end-effector, otherwise, the robot is loaded '
-                        'without an end-effector.'
+                        "Use Franka Gripper as an end-effector, otherwise, the robot is loaded "
+                        "without an end-effector."
                     ),
                 ),
                 move_to_start_controller_description,
@@ -99,14 +100,13 @@ def generate_test_description():
             ]
         ),
         {
-            'move_to_start_controller': move_to_start_controller_description,
+            "move_to_start_controller": move_to_start_controller_description,
         },
     )
 
 
 # Test node
 class TestStartJointPositions(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         # Initialize the ROS context for the test node
@@ -119,12 +119,14 @@ class TestStartJointPositions(unittest.TestCase):
 
     def setUp(self):
         # Create a ROS node for tests
-        self.link_node = rclpy.create_node('controller_test_link')  # type: ignore
+        self.link_node = rclpy.create_node("controller_test_link")  # type: ignore
 
     def tearDown(self):
         self.link_node.destroy_node()
 
-    def test_start_joint_positions(self, launch_service, move_to_start_controller, proc_output):
+    def test_start_joint_positions(
+        self, launch_service, move_to_start_controller, proc_output
+    ):
         self.joint_positions_goal = [0, -pi / 4, 0, -3 * pi / 4, 0, pi / 2, pi / 4]
         self.joint_positions = []
         self.process_finished = False
@@ -143,19 +145,19 @@ class TestStartJointPositions(unittest.TestCase):
 
         sub = self.link_node.create_subscription(
             sensor_msgs.msg.JointState,
-            'joint_states',
+            "joint_states",
             _service_callback,
             10,
         )
 
         client = self.link_node.create_client(
-            GetParameters, '/move_to_start_example_controller/get_parameters'
+            GetParameters, "/move_to_start_example_controller/get_parameters"
         )
         while not client.wait_for_service(timeout_sec=1.0):
-            self.link_node.get_logger().info('Service not available, waiting...')
+            self.link_node.get_logger().info("Service not available, waiting...")
 
         request = GetParameters.Request()
-        request.names = {'process_finished'}
+        request.names = {"process_finished"}
 
         while not self.process_finished or len(self.joint_positions) < total_joint_no:
             future = client.call_async(request)
@@ -165,10 +167,24 @@ class TestStartJointPositions(unittest.TestCase):
         self.link_node.destroy_subscription(sub)
         self.link_node.destroy_client(client)
 
-        self.assertAlmostEqual(self.joint_positions_goal[0], self.joint_positions[0], ACCURACY)
-        self.assertAlmostEqual(self.joint_positions_goal[1], self.joint_positions[1], ACCURACY)
-        self.assertAlmostEqual(self.joint_positions_goal[2], self.joint_positions[2], ACCURACY)
-        self.assertAlmostEqual(self.joint_positions_goal[3], self.joint_positions[3], ACCURACY)
-        self.assertAlmostEqual(self.joint_positions_goal[4], self.joint_positions[4], ACCURACY)
-        self.assertAlmostEqual(self.joint_positions_goal[5], self.joint_positions[5], ACCURACY)
-        self.assertAlmostEqual(self.joint_positions_goal[6], self.joint_positions[6], ACCURACY)
+        self.assertAlmostEqual(
+            self.joint_positions_goal[0], self.joint_positions[0], ACCURACY
+        )
+        self.assertAlmostEqual(
+            self.joint_positions_goal[1], self.joint_positions[1], ACCURACY
+        )
+        self.assertAlmostEqual(
+            self.joint_positions_goal[2], self.joint_positions[2], ACCURACY
+        )
+        self.assertAlmostEqual(
+            self.joint_positions_goal[3], self.joint_positions[3], ACCURACY
+        )
+        self.assertAlmostEqual(
+            self.joint_positions_goal[4], self.joint_positions[4], ACCURACY
+        )
+        self.assertAlmostEqual(
+            self.joint_positions_goal[5], self.joint_positions[5], ACCURACY
+        )
+        self.assertAlmostEqual(
+            self.joint_positions_goal[6], self.joint_positions[6], ACCURACY
+        )

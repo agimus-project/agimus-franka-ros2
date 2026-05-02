@@ -21,7 +21,8 @@ namespace {
 template <class T, size_t N>
 std::ostream& operator<<(std::ostream& ostream, const std::array<T, N>& array) {
   ostream << "[";
-  std::copy(array.cbegin(), array.cend() - 1, std::ostream_iterator<T>(ostream, ","));
+  std::copy(array.cbegin(), array.cend() - 1,
+            std::ostream_iterator<T>(ostream, ","));
   std::copy(array.cend() - 1, array.cend(), std::ostream_iterator<T>(ostream));
   ostream << "]";
   return ostream;
@@ -38,7 +39,8 @@ controller_interface::CallbackReturn ModelExampleController::on_init() {
       return CallbackReturn::ERROR;
     }
   } catch (const std::exception& e) {
-    fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+    fprintf(stderr, "Exception thrown during init stage with message: %s \n",
+            e.what());
     return CallbackReturn::ERROR;
   }
   return CallbackReturn::SUCCESS;
@@ -50,11 +52,13 @@ ModelExampleController::command_interface_configuration() const {
       controller_interface::interface_configuration_type::NONE};
 }
 
-controller_interface::InterfaceConfiguration ModelExampleController::state_interface_configuration()
-    const {
+controller_interface::InterfaceConfiguration
+ModelExampleController::state_interface_configuration() const {
   controller_interface::InterfaceConfiguration state_interfaces_config;
-  state_interfaces_config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-  for (const auto& agimus_franka_robot_model_name : agimus_franka_robot_model_->get_state_interface_names()) {
+  state_interfaces_config.type =
+      controller_interface::interface_configuration_type::INDIVIDUAL;
+  for (const auto& agimus_franka_robot_model_name :
+       agimus_franka_robot_model_->get_state_interface_names()) {
     state_interfaces_config.names.push_back(agimus_franka_robot_model_name);
   }
   return state_interfaces_config;
@@ -62,9 +66,11 @@ controller_interface::InterfaceConfiguration ModelExampleController::state_inter
 
 controller_interface::CallbackReturn ModelExampleController::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  agimus_franka_robot_model_ = std::make_unique<agimus_franka_semantic_components::AgimusFrankaRobotModel>(
-      agimus_franka_semantic_components::AgimusFrankaRobotModel(arm_id_ + "/" + k_robot_model_interface_name,
-                                                   arm_id_ + "/" + k_robot_state_interface_name));
+  agimus_franka_robot_model_ = std::make_unique<
+      agimus_franka_semantic_components::AgimusFrankaRobotModel>(
+      agimus_franka_semantic_components::AgimusFrankaRobotModel(
+          arm_id_ + "/" + k_robot_model_interface_name,
+          arm_id_ + "/" + k_robot_state_interface_name));
 
   RCLCPP_DEBUG(get_node()->get_logger(), "configured successfully");
   return CallbackReturn::SUCCESS;
@@ -83,35 +89,45 @@ controller_interface::CallbackReturn ModelExampleController::on_deactivate(
 }
 
 controller_interface::return_type ModelExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& /*period*/) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   std::array<double, 49> mass = agimus_franka_robot_model_->getMassMatrix();
-  std::array<double, 7> coriolis = agimus_franka_robot_model_->getCoriolisForceVector();
-  std::array<double, 7> gravity = agimus_franka_robot_model_->getGravityForceVector();
-  std::array<double, 16> pose = agimus_franka_robot_model_->getPoseMatrix(agimus_franka::Frame::kJoint4);
+  std::array<double, 7> coriolis =
+      agimus_franka_robot_model_->getCoriolisForceVector();
+  std::array<double, 7> gravity =
+      agimus_franka_robot_model_->getGravityForceVector();
+  std::array<double, 16> pose =
+      agimus_franka_robot_model_->getPoseMatrix(agimus_franka::Frame::kJoint4);
   std::array<double, 42> joint4_body_jacobian_wrt_joint4 =
-      agimus_franka_robot_model_->getBodyJacobian(agimus_franka::Frame::kJoint4);
+      agimus_franka_robot_model_->getBodyJacobian(
+          agimus_franka::Frame::kJoint4);
   std::array<double, 42> endeffector_jacobian_wrt_base =
-      agimus_franka_robot_model_->getZeroJacobian(agimus_franka::Frame::kEndEffector);
+      agimus_franka_robot_model_->getZeroJacobian(
+          agimus_franka::Frame::kEndEffector);
 
-  RCLCPP_INFO_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                       "-------------------------------------------------------------");
-  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                              "mass :" << mass);
-  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                              "coriolis :" << coriolis);
-  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                              "gravity :" << gravity);
-  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                              "joint_pose :" << pose);
-  RCLCPP_INFO_STREAM_THROTTLE(
+  RCLCPP_INFO_THROTTLE(
       get_node()->get_logger(), *get_node()->get_clock(), 1000,
-      "joint4_body_jacobian in joint4 frame :" << joint4_body_jacobian_wrt_joint4);
+      "-------------------------------------------------------------");
+  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(),
+                              *get_node()->get_clock(), 1000, "mass :" << mass);
+  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(),
+                              *get_node()->get_clock(), 1000,
+                              "coriolis :" << coriolis);
+  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(),
+                              *get_node()->get_clock(), 1000,
+                              "gravity :" << gravity);
+  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(),
+                              *get_node()->get_clock(), 1000,
+                              "joint_pose :" << pose);
+  RCLCPP_INFO_STREAM_THROTTLE(get_node()->get_logger(),
+                              *get_node()->get_clock(), 1000,
+                              "joint4_body_jacobian in joint4 frame :"
+                                  << joint4_body_jacobian_wrt_joint4);
   RCLCPP_INFO_STREAM_THROTTLE(
       get_node()->get_logger(), *get_node()->get_clock(), 1000,
       "end_effector_jacobian in base frame :" << endeffector_jacobian_wrt_base);
-  RCLCPP_INFO_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                       "-------------------------------------------------------------");
+  RCLCPP_INFO_THROTTLE(
+      get_node()->get_logger(), *get_node()->get_clock(), 1000,
+      "-------------------------------------------------------------");
 
   return controller_interface::return_type::OK;
 }
@@ -120,5 +136,6 @@ controller_interface::return_type ModelExampleController::update(
 
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::ModelExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::ModelExampleController,
+    controller_interface::ControllerInterface)

@@ -14,34 +14,38 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #include <hardware_interface/hardware_info.hpp>
 #include <hardware_interface/system_interface.hpp>
 #include <hardware_interface/types/hardware_interface_return_values.hpp>
+#include <memory>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/macros.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/state.hpp>
+#include <string>
+#include <vector>
 
 #include "agimus_franka_action_server.hpp"
 #include "agimus_franka_hardware/agimus_franka_executor.hpp"
 #include "agimus_franka_hardware/agimus_franka_param_service_server.hpp"
 #include "agimus_franka_hardware/robot.hpp"
 
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+using CallbackReturn =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
 namespace agimus_franka_hardware {
 
-class AgimusFrankaHardwareInterface : public hardware_interface::SystemInterface {
+class AgimusFrankaHardwareInterface
+    : public hardware_interface::SystemInterface {
  public:
-  explicit AgimusFrankaHardwareInterface(std::shared_ptr<Robot> robot, const std::string& arm_id);
+  explicit AgimusFrankaHardwareInterface(std::shared_ptr<Robot> robot,
+                                         const std::string& arm_id);
   AgimusFrankaHardwareInterface();
   AgimusFrankaHardwareInterface(const AgimusFrankaHardwareInterface&) = delete;
-  AgimusFrankaHardwareInterface& operator=(const AgimusFrankaHardwareInterface& other) = delete;
-  AgimusFrankaHardwareInterface& operator=(AgimusFrankaHardwareInterface&& other) = delete;
+  AgimusFrankaHardwareInterface& operator=(
+      const AgimusFrankaHardwareInterface& other) = delete;
+  AgimusFrankaHardwareInterface& operator=(
+      AgimusFrankaHardwareInterface&& other) = delete;
   AgimusFrankaHardwareInterface(AgimusFrankaHardwareInterface&& other) = delete;
   ~AgimusFrankaHardwareInterface() override = default;
 
@@ -51,14 +55,18 @@ class AgimusFrankaHardwareInterface : public hardware_interface::SystemInterface
   hardware_interface::return_type perform_command_mode_switch(
       const std::vector<std::string>& start_interfaces,
       const std::vector<std::string>& stop_interfaces) override;
-  std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-  std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
-  CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  std::vector<hardware_interface::StateInterface> export_state_interfaces()
+      override;
+  std::vector<hardware_interface::CommandInterface> export_command_interfaces()
+      override;
+  CallbackReturn on_activate(
+      const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_deactivate(
+      const rclcpp_lifecycle::State& previous_state) override;
   hardware_interface::return_type read(const rclcpp::Time& time,
                                        const rclcpp::Duration& period) override;
-  hardware_interface::return_type write(const rclcpp::Time& time,
-                                        const rclcpp::Duration& period) override;
+  hardware_interface::return_type write(
+      const rclcpp::Time& time, const rclcpp::Duration& period) override;
   CallbackReturn on_init(const hardware_interface::HardwareInfo& info) override;
   static const size_t kNumberOfJoints = 7;
 
@@ -86,16 +94,19 @@ class AgimusFrankaHardwareInterface : public hardware_interface::SystemInterface
   // Torque joint commands for the effort command interface
   std::array<double, kNumberOfJoints> hw_effort_commands_{0, 0, 0, 0, 0, 0, 0};
   // Position joint commands for the position command interface
-  std::array<double, kNumberOfJoints> hw_position_commands_{0, 0, 0, 0, 0, 0, 0};
+  std::array<double, kNumberOfJoints> hw_position_commands_{0, 0, 0, 0,
+                                                            0, 0, 0};
   // Velocity joint commands for the position command interface
-  std::array<double, kNumberOfJoints> hw_velocity_commands_{0, 0, 0, 0, 0, 0, 0};
+  std::array<double, kNumberOfJoints> hw_velocity_commands_{0, 0, 0, 0,
+                                                            0, 0, 0};
 
   // Robot joint states
   std::array<double, kNumberOfJoints> hw_positions_{0, 0, 0, 0, 0, 0, 0};
   std::array<double, kNumberOfJoints> hw_velocities_{0, 0, 0, 0, 0, 0, 0};
   std::array<double, kNumberOfJoints> hw_efforts_{0, 0, 0, 0, 0, 0, 0};
   // Cartesian States
-  std::array<double, 16> cartesian_pose_state_{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+  std::array<double, 16> cartesian_pose_state_{1, 0, 0, 0, 0, 1, 0, 0,
+                                               0, 0, 1, 0, 0, 0, 0, 1};
   std::array<double, 2> elbow_state_{0, 0};
 
   /**
@@ -103,7 +114,8 @@ class AgimusFrankaHardwareInterface : public hardware_interface::SystemInterface
    * "base frame O" with (vx, vy, vz)\ in [m/s] and
    * (wx, wy, wz) in [rad/s].
    */
-  std::array<std::string, 6> hw_cartesian_velocities_names_{"vx", "vy", "vz", "wx", "wy", "wz"};
+  std::array<std::string, 6> hw_cartesian_velocities_names_{"vx", "vy", "vz",
+                                                            "wx", "wy", "wz"};
   std::array<double, 6> hw_cartesian_velocities_{0, 0, 0, 0, 0, 0};
 
   // Pose is represented as a column-major homogeneous transformation matrix.
@@ -122,10 +134,12 @@ class AgimusFrankaHardwareInterface : public hardware_interface::SystemInterface
    *    .
    *    with \f$\alpha = -0.467002423653011\f$ \f$rad\f$
    */
-  std::array<std::string, 2> hw_elbow_command_names_{"joint_3_position", "joint_4_sign"};
+  std::array<std::string, 2> hw_elbow_command_names_{"joint_3_position",
+                                                     "joint_4_sign"};
   std::array<double, 2> hw_elbow_command_{0, 0};
 
-  std::array<std::string, 2> elbow_state_names_{"joint_3_position", "joint_4_sign"};
+  std::array<std::string, 2> elbow_state_names_{"joint_3_position",
+                                                "joint_4_sign"};
 
   const std::string k_HW_IF_CARTESIAN_VELOCITY = "cartesian_velocity";
   const std::string k_HW_IF_CARTESIAN_POSE_COMMAND = "cartesian_pose_command";
@@ -137,7 +151,8 @@ class AgimusFrankaHardwareInterface : public hardware_interface::SystemInterface
   const std::vector<InterfaceInfo> command_interfaces_info_;
 
   agimus_franka::RobotState hw_franka_robot_state_;
-  agimus_franka::RobotState* hw_franka_robot_state_addr_ = &hw_franka_robot_state_;
+  agimus_franka::RobotState* hw_franka_robot_state_addr_ =
+      &hw_franka_robot_state_;
   Model* hw_franka_model_ptr_ = nullptr;
   agimus_franka::Duration robot_time_;
 

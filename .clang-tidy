@@ -66,5 +66,3 @@ CheckOptions:
     value:  lower_case
   - key:    readability-identifier-naming.ConstantParameterPrefix
     value:  ''
-
-

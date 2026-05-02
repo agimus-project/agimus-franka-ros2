@@ -30,9 +30,11 @@ const size_t kFlangeLinkIndex = 8;
 const size_t kLoadLinkIndex = 8;
 const std::string kTCPFrameName = "_hand_tcp";
 
-// Example implementation of bit_cast: https://en.cppreference.com/w/cpp/numeric/bit_cast
+// Example implementation of bit_cast:
+// https://en.cppreference.com/w/cpp/numeric/bit_cast
 template <class To, class From>
-std::enable_if_t<sizeof(To) == sizeof(From) && std::is_trivially_copyable<From>::value &&
+std::enable_if_t<sizeof(To) == sizeof(From) &&
+                     std::is_trivially_copyable<From>::value &&
                      std::is_trivially_copyable<To>::value,
                  To>
 bit_cast(const From& src) noexcept {
@@ -49,8 +51,10 @@ bit_cast(const From& src) noexcept {
 
 namespace agimus_franka_semantic_components {
 
-AgimusFrankaRobotState::AgimusFrankaRobotState(const std::string& name, const std::string& robot_description)
-    : SemanticComponentInterface(name, 1), model_(std::make_shared<urdf::Model>()) {
+AgimusFrankaRobotState::AgimusFrankaRobotState(
+    const std::string& name, const std::string& robot_description)
+    : SemanticComponentInterface(name, 1),
+      model_(std::make_shared<urdf::Model>()) {
   robot_description_ = robot_description;
   if (!model_->initString(robot_description_)) {
     throw std::runtime_error("Failed to parse URDF.");
@@ -73,8 +77,10 @@ AgimusFrankaRobotState::AgimusFrankaRobotState(const std::string& name, const st
   }
 }
 
-auto AgimusFrankaRobotState::get_link_index(const std::string& link_name) -> size_t {
-  auto link_index = std::find(link_names.cbegin(), link_names.cend(), link_name);
+auto AgimusFrankaRobotState::get_link_index(const std::string& link_name)
+    -> size_t {
+  auto link_index =
+      std::find(link_names.cbegin(), link_names.cend(), link_name);
   if (link_index != link_names.end()) {
     return std::distance(link_names.cbegin(), link_index);
   } else {
@@ -93,7 +99,8 @@ auto AgimusFrankaRobotState::get_robot_name_from_urdf() -> std::string {
   return model_->name_;
 }
 
-void AgimusFrankaRobotState::set_child_links(const std::shared_ptr<const urdf::Link>& link) {
+void AgimusFrankaRobotState::set_child_links(
+    const std::shared_ptr<const urdf::Link>& link) {
   // Create a stack and push the root node
   std::stack<std::shared_ptr<const urdf::Link>> stack;
   stack.push(link);
@@ -127,9 +134,10 @@ auto AgimusFrankaRobotState::set_joints_from_urdf() -> void {
   }
 }
 
-auto AgimusFrankaRobotState::initialize_robot_state_msg(agimus_franka_msgs::msg::AgimusFrankaRobotState& message)
-    -> void {
-  // The joint state - joint 1 is the first joint while joint 7 is the last revolute joint
+auto AgimusFrankaRobotState::initialize_robot_state_msg(
+    agimus_franka_msgs::msg::AgimusFrankaRobotState& message) -> void {
+  // The joint state - joint 1 is the first joint while joint 7 is the last
+  // revolute joint
   message.measured_joint_state.name =
       std::vector<std::string>(joint_names.cbegin(), joint_names.cend());
   message.desired_joint_state.name =
@@ -141,7 +149,8 @@ auto AgimusFrankaRobotState::initialize_robot_state_msg(agimus_franka_msgs::msg:
 
   message.measured_joint_state.header.frame_id = link_names[kBaseLinkIndex];
   message.desired_joint_state.header.frame_id = link_names[kBaseLinkIndex];
-  message.measured_joint_motor_state.header.frame_id = link_names[kBaseLinkIndex];
+  message.measured_joint_motor_state.header.frame_id =
+      link_names[kBaseLinkIndex];
   message.tau_ext_hat_filtered.header.frame_id = link_names[kBaseLinkIndex];
 
   // Active wrenches
@@ -169,8 +178,10 @@ auto AgimusFrankaRobotState::initialize_robot_state_msg(agimus_franka_msgs::msg:
   message.inertia_total.header.frame_id = link_names[kEndEffectorLinkIndex];
 }
 
-auto AgimusFrankaRobotState::get_values_as_message(agimus_franka_msgs::msg::AgimusFrankaRobotState& message) -> bool {
-  const std::string full_interface_name = robot_name_ + "/" + state_interface_name_;
+auto AgimusFrankaRobotState::get_values_as_message(
+    agimus_franka_msgs::msg::AgimusFrankaRobotState& message) -> bool {
+  const std::string full_interface_name =
+      robot_name_ + "/" + state_interface_name_;
 
   auto agimus_franka_state_interface =
       std::find_if(state_interfaces_.cbegin(), state_interfaces_.cend(),
@@ -179,10 +190,12 @@ auto AgimusFrankaRobotState::get_values_as_message(agimus_franka_msgs::msg::Agim
                    });
 
   if (agimus_franka_state_interface != state_interfaces_.end()) {
-    robot_state_ptr = bit_cast<agimus_franka::RobotState*>((*agimus_franka_state_interface).get().get_value());
+    robot_state_ptr = bit_cast<agimus_franka::RobotState*>(
+        (*agimus_franka_state_interface).get().get_value());
   } else {
     RCLCPP_ERROR(rclcpp::get_logger("agimus_franka_state_semantic_component"),
-                 "Franka state interface does not exist! Did you assign the loaned state in the "
+                 "Franka state interface does not exist! Did you assign the "
+                 "loaned state in the "
                  "controller?");
     return false;
   }
@@ -196,13 +209,19 @@ auto AgimusFrankaRobotState::get_values_as_message(agimus_franka_msgs::msg::Agim
       robot_state_ptr->joint_collision, robot_state_ptr->joint_contact);
 
   // The joint states
-  message.measured_joint_state.position = translation::toJointStateVector(robot_state_ptr->q);
-  message.measured_joint_state.velocity = translation::toJointStateVector(robot_state_ptr->dq);
-  message.measured_joint_state.effort = translation::toJointStateVector(robot_state_ptr->tau_J);
+  message.measured_joint_state.position =
+      translation::toJointStateVector(robot_state_ptr->q);
+  message.measured_joint_state.velocity =
+      translation::toJointStateVector(robot_state_ptr->dq);
+  message.measured_joint_state.effort =
+      translation::toJointStateVector(robot_state_ptr->tau_J);
 
-  message.desired_joint_state.position = translation::toJointStateVector(robot_state_ptr->q_d);
-  message.desired_joint_state.velocity = translation::toJointStateVector(robot_state_ptr->dq_d);
-  message.desired_joint_state.effort = translation::toJointStateVector(robot_state_ptr->tau_J_d);
+  message.desired_joint_state.position =
+      translation::toJointStateVector(robot_state_ptr->q_d);
+  message.desired_joint_state.velocity =
+      translation::toJointStateVector(robot_state_ptr->dq_d);
+  message.desired_joint_state.effort =
+      translation::toJointStateVector(robot_state_ptr->tau_J_d);
 
   message.measured_joint_motor_state.position =
       translation::toJointStateVector(robot_state_ptr->theta);
@@ -216,13 +235,16 @@ auto AgimusFrankaRobotState::get_values_as_message(agimus_franka_msgs::msg::Agim
   message.dtau_j = robot_state_ptr->dtau_J;
 
   // Output for the elbow
-  message.elbow = translation::toElbow(robot_state_ptr->elbow, robot_state_ptr->elbow_d,
-                                       robot_state_ptr->elbow_c, robot_state_ptr->delbow_c,
-                                       robot_state_ptr->ddelbow_c);
+  message.elbow =
+      translation::toElbow(robot_state_ptr->elbow, robot_state_ptr->elbow_d,
+                           robot_state_ptr->elbow_c, robot_state_ptr->delbow_c,
+                           robot_state_ptr->ddelbow_c);
 
   // Active wrenches on the stiffness frame
-  message.k_f_ext_hat_k.wrench = translation::toWrench(robot_state_ptr->K_F_ext_hat_K);
-  message.o_f_ext_hat_k.wrench = translation::toWrench(robot_state_ptr->O_F_ext_hat_K);
+  message.k_f_ext_hat_k.wrench =
+      translation::toWrench(robot_state_ptr->K_F_ext_hat_K);
+  message.o_f_ext_hat_k.wrench =
+      translation::toWrench(robot_state_ptr->O_F_ext_hat_K);
 
   // The transformations between different frames
   message.o_t_ee.pose = translation::toPose(robot_state_ptr->O_T_EE);
@@ -240,43 +262,55 @@ auto AgimusFrankaRobotState::get_values_as_message(agimus_franka_msgs::msg::Agim
   message.inertia_ee.inertia = translation::toInertia(
       robot_state_ptr->m_ee, robot_state_ptr->F_x_Cee, robot_state_ptr->I_ee);
   message.inertia_load.inertia = translation::toInertia(
-      robot_state_ptr->m_load, robot_state_ptr->F_x_Cload, robot_state_ptr->I_load);
+      robot_state_ptr->m_load, robot_state_ptr->F_x_Cload,
+      robot_state_ptr->I_load);
   message.inertia_total.inertia = translation::toInertia(
-      robot_state_ptr->m_total, robot_state_ptr->F_x_Ctotal, robot_state_ptr->I_total);
+      robot_state_ptr->m_total, robot_state_ptr->F_x_Ctotal,
+      robot_state_ptr->I_total);
 
   // Errors and more
   message.time = robot_state_ptr->time.toSec();
-  message.control_command_success_rate = robot_state_ptr->control_command_success_rate;
-  message.current_errors = translation::errorsToMessage(robot_state_ptr->current_errors);
-  message.last_motion_errors = translation::errorsToMessage(robot_state_ptr->last_motion_errors);
+  message.control_command_success_rate =
+      robot_state_ptr->control_command_success_rate;
+  message.current_errors =
+      translation::errorsToMessage(robot_state_ptr->current_errors);
+  message.last_motion_errors =
+      translation::errorsToMessage(robot_state_ptr->last_motion_errors);
 
   switch (robot_state_ptr->robot_mode) {
     case agimus_franka::RobotMode::kOther:
-      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_OTHER;
+      message.robot_mode =
+          agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_OTHER;
       break;
 
     case agimus_franka::RobotMode::kIdle:
-      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_IDLE;
+      message.robot_mode =
+          agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_IDLE;
       break;
 
     case agimus_franka::RobotMode::kMove:
-      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_MOVE;
+      message.robot_mode =
+          agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_MOVE;
       break;
 
     case agimus_franka::RobotMode::kGuiding:
-      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_GUIDING;
+      message.robot_mode =
+          agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_GUIDING;
       break;
 
     case agimus_franka::RobotMode::kReflex:
-      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_REFLEX;
+      message.robot_mode =
+          agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_REFLEX;
       break;
 
     case agimus_franka::RobotMode::kUserStopped:
-      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_USER_STOPPED;
+      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::
+          ROBOT_MODE_USER_STOPPED;
       break;
 
     case agimus_franka::RobotMode::kAutomaticErrorRecovery:
-      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::ROBOT_MODE_AUTOMATIC_ERROR_RECOVERY;
+      message.robot_mode = agimus_franka_msgs::msg::AgimusFrankaRobotState::
+          ROBOT_MODE_AUTOMATIC_ERROR_RECOVERY;
       break;
   }
   return true;

@@ -14,42 +14,48 @@
 
 #pragma once
 
-#include <string>
-
-#include <controller_interface/controller_interface.hpp>
-#include <rclcpp/rclcpp.hpp>
-
 #include <agimus_franka_example_controllers/robot_utils.hpp>
 #include <agimus_franka_semantic_components/agimus_franka_cartesian_pose_interface.hpp>
+#include <controller_interface/controller_interface.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <string>
 
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+using CallbackReturn =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
 namespace agimus_franka_example_controllers {
 
 /**
  * The elbow example controller through cartesian pose command interface
  */
-class CartesianElbowExampleController : public controller_interface::ControllerInterface {
+class CartesianElbowExampleController
+    : public controller_interface::ControllerInterface {
  public:
-  [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
-      const override;
-  [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
-      const override;
-  controller_interface::return_type update(const rclcpp::Time& time,
-                                           const rclcpp::Duration& period) override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  command_interface_configuration() const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  state_interface_configuration() const override;
+  controller_interface::return_type update(
+      const rclcpp::Time& time, const rclcpp::Duration& period) override;
   CallbackReturn on_init() override;
-  CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_configure(
+      const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_activate(
+      const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_deactivate(
+      const rclcpp_lifecycle::State& previous_state) override;
 
  private:
-  std::unique_ptr<agimus_franka_semantic_components::FrankaCartesianPoseInterface> agimus_franka_cartesian_pose_;
+  std::unique_ptr<
+      agimus_franka_semantic_components::FrankaCartesianPoseInterface>
+      agimus_franka_cartesian_pose_;
   const bool k_elbow_activated_{true};
   std::vector<double> initial_cartesian_pose_and_elbow;
   bool initialization_flag_{true};
   std::array<double, 2> initial_elbow_configuration_{0.0, 0.0};
-  std::array<double, 16> initial_pose_configuration_{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                                     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  std::array<double, 16> initial_pose_configuration_{
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   double elapsed_time_{0.0};
   double initial_robot_time_{0.0};
   double robot_time_{0.0};

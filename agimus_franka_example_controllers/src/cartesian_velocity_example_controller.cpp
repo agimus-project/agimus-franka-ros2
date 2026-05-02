@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <Eigen/Eigen>
 #include <agimus_franka_example_controllers/cartesian_velocity_example_controller.hpp>
 #include <agimus_franka_example_controllers/default_robot_behavior_utils.hpp>
 #include <agimus_franka_example_controllers/robot_utils.hpp>
-
 #include <cassert>
 #include <cmath>
 #include <exception>
 #include <string>
-
-#include <Eigen/Eigen>
 
 namespace agimus_franka_example_controllers {
 
@@ -29,7 +27,8 @@ controller_interface::InterfaceConfiguration
 CartesianVelocityExampleController::command_interface_configuration() const {
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-  config.names = agimus_franka_cartesian_velocity_->get_command_interface_names();
+  config.names =
+      agimus_franka_cartesian_velocity_->get_command_interface_names();
 
   return config;
 }
@@ -41,27 +40,29 @@ CartesianVelocityExampleController::state_interface_configuration() const {
 }
 
 controller_interface::return_type CartesianVelocityExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& period) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& period) {
   elapsed_time_ = elapsed_time_ + period;
 
-  double cycle = std::floor(pow(
-      -1.0,
-      (elapsed_time_.seconds() - std::fmod(elapsed_time_.seconds(), k_time_max_)) / k_time_max_));
+  double cycle =
+      std::floor(pow(-1.0, (elapsed_time_.seconds() -
+                            std::fmod(elapsed_time_.seconds(), k_time_max_)) /
+                               k_time_max_));
   double v =
-      cycle * k_v_max_ / 2.0 * (1.0 - std::cos(2.0 * M_PI / k_time_max_ * elapsed_time_.seconds()));
+      cycle * k_v_max_ / 2.0 *
+      (1.0 - std::cos(2.0 * M_PI / k_time_max_ * elapsed_time_.seconds()));
   double v_x = std::cos(k_angle_) * v;
   double v_z = -std::sin(k_angle_) * v;
 
   Eigen::Vector3d cartesian_linear_velocity(v_x, 0.0, v_z);
   Eigen::Vector3d cartesian_angular_velocity(0.0, 0.0, 0.0);
 
-  if (agimus_franka_cartesian_velocity_->setCommand(cartesian_linear_velocity,
-                                             cartesian_angular_velocity)) {
+  if (agimus_franka_cartesian_velocity_->setCommand(
+          cartesian_linear_velocity, cartesian_angular_velocity)) {
     return controller_interface::return_type::OK;
   } else {
-    RCLCPP_FATAL(get_node()->get_logger(),
-                 "Set command failed. Did you activate the elbow command interface?");
+    RCLCPP_FATAL(
+        get_node()->get_logger(),
+        "Set command failed. Did you activate the elbow command interface?");
     return controller_interface::return_type::ERROR;
   }
 }
@@ -72,12 +73,15 @@ CallbackReturn CartesianVelocityExampleController::on_init() {
 
 CallbackReturn CartesianVelocityExampleController::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  agimus_franka_cartesian_velocity_ =
-      std::make_unique<agimus_franka_semantic_components::FrankaCartesianVelocityInterface>(
-          agimus_franka_semantic_components::FrankaCartesianVelocityInterface(k_elbow_activated_));
+  agimus_franka_cartesian_velocity_ = std::make_unique<
+      agimus_franka_semantic_components::FrankaCartesianVelocityInterface>(
+      agimus_franka_semantic_components::FrankaCartesianVelocityInterface(
+          k_elbow_activated_));
 
-  auto client = get_node()->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
-      "service_server/set_full_collision_behavior");
+  auto client =
+      get_node()
+          ->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
+              "service_server/set_full_collision_behavior");
   auto request = DefaultRobotBehavior::getDefaultCollisionBehaviorRequest();
 
   auto future_result = client->async_send_request(request);
@@ -85,7 +89,8 @@ CallbackReturn CartesianVelocityExampleController::on_configure(
 
   auto success = future_result.get();
   if (!success) {
-    RCLCPP_FATAL(get_node()->get_logger(), "Failed to set default collision behavior.");
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "Failed to set default collision behavior.");
     return CallbackReturn::ERROR;
   } else {
     RCLCPP_INFO(get_node()->get_logger(), "Default collision behavior set.");
@@ -96,12 +101,14 @@ CallbackReturn CartesianVelocityExampleController::on_configure(
 
 CallbackReturn CartesianVelocityExampleController::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  agimus_franka_cartesian_velocity_->assign_loaned_command_interfaces(command_interfaces_);
+  agimus_franka_cartesian_velocity_->assign_loaned_command_interfaces(
+      command_interfaces_);
   elapsed_time_ = rclcpp::Duration(0, 0);
   return CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn CartesianVelocityExampleController::on_deactivate(
+controller_interface::CallbackReturn
+CartesianVelocityExampleController::on_deactivate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   agimus_franka_cartesian_velocity_->release_interfaces();
   return CallbackReturn::SUCCESS;
@@ -110,5 +117,6 @@ controller_interface::CallbackReturn CartesianVelocityExampleController::on_deac
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::CartesianVelocityExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::CartesianVelocityExampleController,
+    controller_interface::ControllerInterface)

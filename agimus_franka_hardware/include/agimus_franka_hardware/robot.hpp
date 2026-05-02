@@ -14,23 +14,14 @@
 
 #pragma once
 
-#include <array>
-#include <atomic>
-#include <iostream>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <thread>
-
 #include <agimus_franka/active_control.h>
 #include <agimus_franka/active_control_base.h>
 #include <agimus_franka/active_motion_generator.h>
 #include <agimus_franka/active_torque_control.h>
-
 #include <agimus_franka/model.h>
 #include <agimus_franka/robot.h>
-#include <agimus_franka_hardware/model.hpp>
 
+#include <agimus_franka_hardware/model.hpp>
 #include <agimus_franka_msgs/srv/set_cartesian_stiffness.hpp>
 #include <agimus_franka_msgs/srv/set_force_torque_collision_behavior.hpp>
 #include <agimus_franka_msgs/srv/set_full_collision_behavior.hpp>
@@ -38,8 +29,14 @@
 #include <agimus_franka_msgs/srv/set_load.hpp>
 #include <agimus_franka_msgs/srv/set_stiffness_frame.hpp>
 #include <agimus_franka_msgs/srv/set_tcp_frame.hpp>
-
+#include <array>
+#include <atomic>
+#include <iostream>
+#include <memory>
+#include <mutex>
 #include <rclcpp/logger.hpp>
+#include <string>
+#include <thread>
 
 namespace agimus_franka_hardware {
 
@@ -51,10 +48,12 @@ class Robot {
    * @param robot mocked libfranka robot
    * @param model mocked model object
    */
-  explicit Robot(std::unique_ptr<agimus_franka::Robot> robot, std::unique_ptr<Model> model);
+  explicit Robot(std::unique_ptr<agimus_franka::Robot> robot,
+                 std::unique_ptr<Model> model);
   /**
-   * Connects to the robot. This method can block for up to one minute if the robot is not
-   * responding. An exception will be thrown if the connection cannot be established.
+   * Connects to the robot. This method can block for up to one minute if the
+   * robot is not responding. An exception will be thrown if the connection
+   * cannot be established.
    *
    * @param[in] robot_ip IP address or hostname of the robot.
    * @param[im] logger ROS Logger to print eventual warnings.
@@ -99,40 +98,45 @@ class Robot {
   virtual agimus_franka_hardware::Model* getModel();
 
   /**
-   * This function will automatically propagate the received hardware active command
-   * interface
-   * @param[in] joint_hardware_command joint hardware command either efforts or velocities
+   * This function will automatically propagate the received hardware active
+   * command interface
+   * @param[in] joint_hardware_command joint hardware command either efforts or
+   * velocities
    */
   virtual void writeOnce(const std::array<double, 7>& joint_hardware_command);
 
   /**
    * Cartesian velocity command
-   * @param[in] cartesian_velocity_command cartesian level velocity command in format
-   *  [vx, vy, vz, wx, wy, wz]
+   * @param[in] cartesian_velocity_command cartesian level velocity command in
+   * format [vx, vy, vz, wx, wy, wz]
    */
-  virtual void writeOnce(const std::array<double, 6>& cartesian_velocity_command);
+  virtual void writeOnce(
+      const std::array<double, 6>& cartesian_velocity_command);
 
   /**
    * Cartesian velocity command with elbow command
-   * @param[in] cartesian_velocity_command cartesian level velocity command in format
-   *  [vx, vy, vz, wx, wy, wz]
-   * @param[in] elbow_command elbow command representing joint3_position in rad and joint4 sign
+   * @param[in] cartesian_velocity_command cartesian level velocity command in
+   * format [vx, vy, vz, wx, wy, wz]
+   * @param[in] elbow_command elbow command representing joint3_position in rad
+   * and joint4 sign
    */
-  virtual void writeOnce(const std::array<double, 6>& cartesian_velocity_command,
-                         const std::array<double, 2>& elbow_command);
+  virtual void writeOnce(
+      const std::array<double, 6>& cartesian_velocity_command,
+      const std::array<double, 2>& elbow_command);
 
   /**
    * Cartesian pose command
-   * @param[in] cartesian_pose_command cartesian level pose command in column major format [4x4]
-   * homogeneous transformation matrix
+   * @param[in] cartesian_pose_command cartesian level pose command in column
+   * major format [4x4] homogeneous transformation matrix
    */
   virtual void writeOnce(const std::array<double, 16>& cartesian_pose_command);
 
   /**
    * Cartesian pose command with elbow command
-   * @param[in] cartesian_pose_command cartesian level pose command in column major format [4x4]
-   * homogeneous transformation matrix
-   * @param[in] elbow_command elbow command representing joint3_position in rad and joint4 sign
+   * @param[in] cartesian_pose_command cartesian level pose command in column
+   * major format [4x4] homogeneous transformation matrix
+   * @param[in] elbow_command elbow command representing joint3_position in rad
+   * and joint4 sign
    */
   virtual void writeOnce(const std::array<double, 16>& cartesian_pose_command,
                          const std::array<double, 2>& elbow_command);
@@ -142,106 +146,123 @@ class Robot {
    *
    * User-provided torques are not affected by this setting.
    *
-   * @param[in] agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr requests with JointStiffness
-   * values
+   * @param[in] agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr
+   * requests with JointStiffness values
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
   virtual void setJointStiffness(
-      const agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetJointStiffness::Request::SharedPtr&
+          req);
 
   /**
-   * Sets the Cartesian stiffness (for x, y, z, roll, pitch, yaw) in the internal
-   * controller.
+   * Sets the Cartesian stiffness (for x, y, z, roll, pitch, yaw) in the
+   * internal controller.
    *
-   * The values set using Robot::SetCartesianStiffness are used in the direction of the
-   * stiffness frame, which can be set with Robot::setK.
+   * The values set using Robot::SetCartesianStiffness are used in the direction
+   * of the stiffness frame, which can be set with Robot::setK.
    *
    * Inputs received by the torque controller are not affected by this setting.
    *
-   * @param[in] agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr request
+   * @param[in]
+   * agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr request
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
   virtual void setCartesianStiffness(
-      const agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetCartesianStiffness::Request::SharedPtr&
+          req);
 
   /**
    * Sets dynamic parameters of a payload.
    *
    * @note
-   * This is not for setting end effector parameters, which have to be set in the administrator's
-   * interface.
+   * This is not for setting end effector parameters, which have to be set in
+   * the administrator's interface.
    *
    * @param[in] agimus_franka_msgs::srv::SetLoad::Request::SharedPtr request
    *
    * @throw CommandException if the Control reports an error.
    * @throw
    */
-  virtual void setLoad(const agimus_franka_msgs::srv::SetLoad::Request::SharedPtr& req);
+  virtual void setLoad(
+      const agimus_franka_msgs::srv::SetLoad::Request::SharedPtr& req);
 
   /**
-   * Sets the transformation \f$^{NE}T_{EE}\f$ from nominal end effector to end effector frame.
+   * Sets the transformation \f$^{NE}T_{EE}\f$ from nominal end effector to end
+   * effector frame.
    *
-   * The transformation matrix is represented as a vectorized 4x4 matrix in column-major format.
+   * The transformation matrix is represented as a vectorized 4x4 matrix in
+   * column-major format.
    *
    * @param[in] agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr req
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
-  virtual void setTCPFrame(const agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr& req);
+  virtual void setTCPFrame(
+      const agimus_franka_msgs::srv::SetTCPFrame::Request::SharedPtr& req);
 
   /**
-   * Sets the transformation \f$^{EE}T_K\f$ from end effector frame to stiffness frame.
+   * Sets the transformation \f$^{EE}T_K\f$ from end effector frame to stiffness
+   * frame.
    *
-   * The transformation matrix is represented as a vectorized 4x4 matrix in column-major format.
+   * The transformation matrix is represented as a vectorized 4x4 matrix in
+   * column-major format.
    *
-   * @param[in] agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr req.
+   * @param[in] agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr
+   * req.
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    *
    */
   virtual void setStiffnessFrame(
-      const agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetStiffnessFrame::Request::SharedPtr&
+          req);
 
   /**
    * Changes the collision behavior.
    *
-   * Set common torque and force boundaries for acceleration/deceleration and constant velocity
-   * movement phases.
+   * Set common torque and force boundaries for acceleration/deceleration and
+   * constant velocity movement phases.
    *
-   * Forces or torques between lower and upper threshold are shown as contacts in the RobotState.
-   * Forces or torques above the upper threshold are registered as collision and cause the robot to
-   * stop moving.
+   * Forces or torques between lower and upper threshold are shown as contacts
+   * in the RobotState. Forces or torques above the upper threshold are
+   * registered as collision and cause the robot to stop moving.
    *
-   * @param[in] agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr req
+   * @param[in]
+   * agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr
+   * req
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
   virtual void setForceTorqueCollisionBehavior(
-      const agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetForceTorqueCollisionBehavior::Request::
+          SharedPtr& req);
 
   /**
    * Changes the collision behavior.
    *
-   * Set separate torque and force boundaries for acceleration/deceleration and constant velocity
-   * movement phases.
+   * Set separate torque and force boundaries for acceleration/deceleration and
+   * constant velocity movement phases.
    *
-   * Forces or torques between lower and upper threshold are shown as contacts in the RobotState.
-   * Forces or torques above the upper threshold are registered as collision and cause the robot to
-   * stop moving.
+   * Forces or torques between lower and upper threshold are shown as contacts
+   * in the RobotState. Forces or torques above the upper threshold are
+   * registered as collision and cause the robot to stop moving.
    *
-   * @param[in] agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr request msg
+   * @param[in]
+   * agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr
+   * request msg
    *
    * @throw CommandException if the Control reports an error.
    * @throw NetworkException if the connection is lost, e.g. after a timeout.
    */
   virtual void setFullCollisionBehavior(
-      const agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::SharedPtr& req);
+      const agimus_franka_msgs::srv::SetFullCollisionBehavior::Request::
+          SharedPtr& req);
 
   /**
    * Starts an automatic recovery process.
@@ -262,29 +283,35 @@ class Robot {
   virtual agimus_franka::RobotState readOnceActiveControl();
 
   /**
-   * The robot will use set of torques until a different set of torques are commanded.
+   * The robot will use set of torques until a different set of torques are
+   * commanded.
    * @param[in] efforts torque command for each joint.
    */
   virtual void writeOnceEfforts(const std::array<double, 7>& efforts);
 
   /**
-   * The robot will use set of velocities until a different set of velocities are commanded.
+   * The robot will use set of velocities until a different set of velocities
+   * are commanded.
    * @param[in] joint_velocities joint velocity command.
    */
-  virtual void writeOnceJointVelocities(const std::array<double, 7>& joint_velocities);
+  virtual void writeOnceJointVelocities(
+      const std::array<double, 7>& joint_velocities);
 
   /**
-   * The robot will use set of positions until a different set of position are commanded.
+   * The robot will use set of positions until a different set of position are
+   * commanded.
    * @param[in] joint_position joint position command.
    */
   virtual void writeOnceJointPositions(const std::array<double, 7>& positions);
 
   /**
-   * @brief Preprocessing includes rate limiting and low pass filtering, if activated
+   * @brief Preprocessing includes rate limiting and low pass filtering, if
+   * activated
    *
    * @param cartesian_velocities cartesian velocity in libfranka format
    *
-   * @return agimus_franka::CartesianVelocities filtered and limit-rated cartesian_velocities
+   * @return agimus_franka::CartesianVelocities filtered and limit-rated
+   * cartesian_velocities
    */
   agimus_franka::CartesianVelocities preProcessCartesianVelocities(
       const agimus_franka::CartesianVelocities& cartesian_velocities);
@@ -294,9 +321,11 @@ class Robot {
    *
    * @param cartesian_pose cartesian pose in libfranka format
    *
-   * @return agimus_franka::CartesianPose filtered and limit-rated cartesian_pose
+   * @return agimus_franka::CartesianPose filtered and limit-rated
+   * cartesian_pose
    */
-  agimus_franka::CartesianPose preProcessCartesianPose(const agimus_franka::CartesianPose& cartesian_pose);
+  agimus_franka::CartesianPose preProcessCartesianPose(
+      const agimus_franka::CartesianPose& cartesian_pose);
 
   std::mutex write_mutex_;
   std::mutex control_mutex_;

@@ -13,11 +13,12 @@
 // limitations under the License.
 
 #include "agimus_franka_cartesian_velocity_interface_test.hpp"
-#include "../src/translation_utils.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "../src/translation_utils.hpp"
 
 void FrankaCartesianVelocityTest::TearDown() {
   agimus_franka_cartesian_command_friend.reset(nullptr);
@@ -36,52 +37,62 @@ void FrankaCartesianVelocityTest::setUpHWStateInterfaces(bool elbow_activate) {
   if (elbow_activate) {
     for (auto i = 0U; i < hw_elbow_command_names_.size(); i++) {
       elbow_state_interfaces_container.push_back(
-          std::make_shared<hardware_interface::StateInterface>(hardware_interface::StateInterface{
-              elbow_state_names_[i], elbow_state_interface_name_, &current_elbow_state_.at(i)}));
+          std::make_shared<hardware_interface::StateInterface>(
+              hardware_interface::StateInterface{elbow_state_names_[i],
+                                                 elbow_state_interface_name_,
+                                                 &current_elbow_state_.at(i)}));
     }
 
     for (auto& elbow_state_interface : elbow_state_interfaces_container) {
       temp_state_interfaces.emplace_back(*elbow_state_interface.get());
     }
 
-    agimus_franka_cartesian_command_friend->assign_loaned_state_interfaces(temp_state_interfaces);
+    agimus_franka_cartesian_command_friend->assign_loaned_state_interfaces(
+        temp_state_interfaces);
   }
 }
 
-void FrankaCartesianVelocityTest::setUpHWCommandInterfaces(bool elbow_activate) {
+void FrankaCartesianVelocityTest::setUpHWCommandInterfaces(
+    bool elbow_activate) {
   temp_command_interfaces.clear();
 
   for (auto i = 0U; i < hw_cartesian_velocities_names_.size(); i++) {
     velocity_command_interfaces_container.push_back(
-        std::make_shared<hardware_interface::CommandInterface>(hardware_interface::CommandInterface{
-            hw_cartesian_velocities_names_[i], cartesian_velocity_command_interface_name_,
-            &hw_cartesian_velocities_.at(i)}));
+        std::make_shared<hardware_interface::CommandInterface>(
+            hardware_interface::CommandInterface{
+                hw_cartesian_velocities_names_[i],
+                cartesian_velocity_command_interface_name_,
+                &hw_cartesian_velocities_.at(i)}));
   }
 
   if (elbow_activate) {
     for (auto i = 0U; i < hw_elbow_command_names_.size(); i++) {
       elbow_command_interfaces_container.push_back(
           std::make_shared<hardware_interface::CommandInterface>(
-              hardware_interface::CommandInterface{hw_elbow_command_names_[i],
-                                                   elbow_command_interface_name_,
-                                                   &hw_elbow_command_.at(i)}));
+              hardware_interface::CommandInterface{
+                  hw_elbow_command_names_[i], elbow_command_interface_name_,
+                  &hw_elbow_command_.at(i)}));
     }
     for (auto& elbow_command_interface : elbow_command_interfaces_container) {
       temp_command_interfaces.emplace_back(*elbow_command_interface.get());
     }
   }
 
-  for (auto& velocity_command_interface : velocity_command_interfaces_container) {
+  for (auto& velocity_command_interface :
+       velocity_command_interfaces_container) {
     temp_command_interfaces.emplace_back(*velocity_command_interface.get());
   }
 
-  agimus_franka_cartesian_command_friend->assign_loaned_command_interfaces(temp_command_interfaces);
+  agimus_franka_cartesian_command_friend->assign_loaned_command_interfaces(
+      temp_command_interfaces);
 }
 
-TEST_F(FrankaCartesianVelocityTest,
-       given_correct_interfaces_set_velocity_with_elbow_command_expect_successful) {
+TEST_F(
+    FrankaCartesianVelocityTest,
+    given_correct_interfaces_set_velocity_with_elbow_command_expect_successful) {
   setUpInterfaces(true);
-  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0, 6.0, 8.0, 10.0};
+  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0,
+                                                    6.0, 8.0, 10.0};
   Eigen::Vector3d cartesian_linear_velocity(new_hw_cartesian_velocities[0],
                                             new_hw_cartesian_velocities[1],
                                             new_hw_cartesian_velocities[2]);
@@ -101,10 +112,12 @@ TEST_F(FrankaCartesianVelocityTest,
   agimus_franka_cartesian_command_friend->release_interfaces();
 }
 
-TEST_F(FrankaCartesianVelocityTest,
-       given_correct_interfaces_when_get_elbow_command_values_called_expect_successful) {
+TEST_F(
+    FrankaCartesianVelocityTest,
+    given_correct_interfaces_when_get_elbow_command_values_called_expect_successful) {
   setUpInterfaces(true);
-  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0, 6.0, 8.0, 10.0};
+  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0,
+                                                    6.0, 8.0, 10.0};
   Eigen::Vector3d cartesian_linear_velocity(new_hw_cartesian_velocities[0],
                                             new_hw_cartesian_velocities[1],
                                             new_hw_cartesian_velocities[2]);
@@ -122,17 +135,20 @@ TEST_F(FrankaCartesianVelocityTest,
   ASSERT_EQ(hw_elbow_command_, new_elbow_command);
 
   std::array<double, 2> elbow_configuration;
-  elbow_configuration = agimus_franka_cartesian_command_friend->getCommandedElbowConfiguration();
+  elbow_configuration =
+      agimus_franka_cartesian_command_friend->getCommandedElbowConfiguration();
 
   ASSERT_EQ(new_elbow_command, elbow_configuration);
 
   agimus_franka_cartesian_command_friend->release_interfaces();
 }
 
-TEST_F(FrankaCartesianVelocityTest,
-       given_elbow_is_not_activated_when_elbow_command_get_value_is_called_expect_throw) {
+TEST_F(
+    FrankaCartesianVelocityTest,
+    given_elbow_is_not_activated_when_elbow_command_get_value_is_called_expect_throw) {
   setUpInterfaces(false);
-  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0, 6.0, 8.0, 10.0};
+  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0,
+                                                    6.0, 8.0, 10.0};
   Eigen::Vector3d cartesian_linear_velocity(new_hw_cartesian_velocities[0],
                                             new_hw_cartesian_velocities[1],
                                             new_hw_cartesian_velocities[2]);
@@ -147,8 +163,9 @@ TEST_F(FrankaCartesianVelocityTest,
 
   ASSERT_EQ(hw_cartesian_velocities_, new_hw_cartesian_velocities);
 
-  ASSERT_THROW(agimus_franka_cartesian_command_friend->getCommandedElbowConfiguration(),
-               std::runtime_error);
+  ASSERT_THROW(
+      agimus_franka_cartesian_command_friend->getCommandedElbowConfiguration(),
+      std::runtime_error);
 
   agimus_franka_cartesian_command_friend->release_interfaces();
 }
@@ -157,7 +174,8 @@ TEST_F(
     FrankaCartesianVelocityTest,
     given_elbow_and_cartesian_velocity_claimed_when_set_velocity_command_without_elbow_expect_failure) {
   setUpInterfaces(true);
-  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0, 6.0, 8.0, 10.0};
+  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0,
+                                                    6.0, 8.0, 10.0};
   Eigen::Vector3d cartesian_linear_velocity(new_hw_cartesian_velocities[0],
                                             new_hw_cartesian_velocities[1],
                                             new_hw_cartesian_velocities[2]);
@@ -165,8 +183,8 @@ TEST_F(
                                              new_hw_cartesian_velocities[4],
                                              new_hw_cartesian_velocities[5]);
 
-  auto success = agimus_franka_cartesian_command_friend->setCommand(cartesian_linear_velocity,
-                                                             cartesian_angular_velocity);
+  auto success = agimus_franka_cartesian_command_friend->setCommand(
+      cartesian_linear_velocity, cartesian_angular_velocity);
 
   ASSERT_FALSE(success);
 
@@ -177,7 +195,8 @@ TEST_F(
     FrankaCartesianVelocityTest,
     given_only_cartesian_velocity_claimed_without_elbow_when_set_velocity_command_cartesian_vel_expect_successful) {
   setUpInterfaces(false);
-  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0, 6.0, 8.0, 10.0};
+  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0,
+                                                    6.0, 8.0, 10.0};
   Eigen::Vector3d cartesian_linear_velocity(new_hw_cartesian_velocities[0],
                                             new_hw_cartesian_velocities[1],
                                             new_hw_cartesian_velocities[2]);
@@ -187,7 +206,8 @@ TEST_F(
   std::array<double, 2> default_zero_elbow_command{0.0, 0.0};
 
   auto success = agimus_franka_cartesian_command_friend->setCommand(
-      cartesian_linear_velocity, cartesian_angular_velocity, default_zero_elbow_command);
+      cartesian_linear_velocity, cartesian_angular_velocity,
+      default_zero_elbow_command);
 
   ASSERT_FALSE(success);
 
@@ -196,10 +216,12 @@ TEST_F(
 
 TEST_F(FrankaCartesianVelocityTest,
        given_incorrect_command_interfaces_set_velocity_expect_unsuccesful) {
-  agimus_franka_cartesian_command_friend = std::make_unique<FrankaCartesianVelocityTestFriend>(true);
-  hardware_interface::CommandInterface dummy_command_interface{"dummy", "dummy_cartesian_velocity",
-                                                               &hw_elbow_command_.at(0)};
-  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0, 6.0, 8.0, 10.0};
+  agimus_franka_cartesian_command_friend =
+      std::make_unique<FrankaCartesianVelocityTestFriend>(true);
+  hardware_interface::CommandInterface dummy_command_interface{
+      "dummy", "dummy_cartesian_velocity", &hw_elbow_command_.at(0)};
+  std::array<double, 6> new_hw_cartesian_velocities{0.0, 2.0, 4.0,
+                                                    6.0, 8.0, 10.0};
   Eigen::Vector3d cartesian_linear_velocity(new_hw_cartesian_velocities[0],
                                             new_hw_cartesian_velocities[1],
                                             new_hw_cartesian_velocities[2]);
@@ -208,27 +230,33 @@ TEST_F(FrankaCartesianVelocityTest,
                                              new_hw_cartesian_velocities[5]);
 
   temp_command_interfaces.emplace_back(dummy_command_interface);
-  agimus_franka_cartesian_command_friend->assign_loaned_command_interfaces(temp_command_interfaces);
+  agimus_franka_cartesian_command_friend->assign_loaned_command_interfaces(
+      temp_command_interfaces);
 
-  auto success = agimus_franka_cartesian_command_friend->setCommand(cartesian_linear_velocity,
-                                                             cartesian_angular_velocity);
+  auto success = agimus_franka_cartesian_command_friend->setCommand(
+      cartesian_linear_velocity, cartesian_angular_velocity);
 
   ASSERT_FALSE(success);
 
   agimus_franka_cartesian_command_friend->release_interfaces();
 }
 
-TEST_F(FrankaCartesianVelocityTest,
-       given_correct_interface_when_current_elbow_state_requested_expect_correct) {
+TEST_F(
+    FrankaCartesianVelocityTest,
+    given_correct_interface_when_current_elbow_state_requested_expect_correct) {
   setUpInterfaces(true);
 
-  auto received_elbow_state = agimus_franka_cartesian_command_friend->getCurrentElbowConfiguration();
+  auto received_elbow_state =
+      agimus_franka_cartesian_command_friend->getCurrentElbowConfiguration();
   ASSERT_EQ(received_elbow_state, current_elbow_state_);
 }
 
-TEST_F(FrankaCartesianVelocityTest,
-       given_correct_interface_when_current_elbow_state_requested_expect_throw) {
+TEST_F(
+    FrankaCartesianVelocityTest,
+    given_correct_interface_when_current_elbow_state_requested_expect_throw) {
   setUpInterfaces(false);
 
-  ASSERT_THROW(agimus_franka_cartesian_command_friend->getCurrentElbowConfiguration(), std::runtime_error);
+  ASSERT_THROW(
+      agimus_franka_cartesian_command_friend->getCurrentElbowConfiguration(),
+      std::runtime_error);
 }

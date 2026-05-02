@@ -17,17 +17,18 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "hardware_interface/loaned_command_interface.hpp"
-#include "hardware_interface/loaned_state_interface.hpp"
 
 #include "agimus_franka_semantic_components/agimus_franka_cartesian_pose_interface.hpp"
 #include "gmock/gmock.h"
+#include "hardware_interface/loaned_command_interface.hpp"
+#include "hardware_interface/loaned_state_interface.hpp"
 
 class FrankaCartesianPoseTestFriend
     : public agimus_franka_semantic_components::FrankaCartesianPoseInterface {
  public:
   explicit FrankaCartesianPoseTestFriend(const bool elbow_activate)
-      : agimus_franka_semantic_components::FrankaCartesianPoseInterface(elbow_activate) {}
+      : agimus_franka_semantic_components::FrankaCartesianPoseInterface(
+            elbow_activate) {}
 
   virtual ~FrankaCartesianPoseTestFriend() = default;
 };
@@ -44,24 +45,31 @@ class FrankaCartesianPoseTest : public ::testing::Test {
  protected:
   std::vector<std::shared_ptr<hardware_interface::CommandInterface>>
       pose_command_interfaces_container, elbow_command_interfaces_container;
-  std::vector<std::shared_ptr<hardware_interface::StateInterface>> pose_state_interfaces_container,
-      elbow_state_interfaces_container;
-  std::array<std::string, 2> hw_elbow_command_names_{"joint_3_position", "joint_4_sign"};
+  std::vector<std::shared_ptr<hardware_interface::StateInterface>>
+      pose_state_interfaces_container, elbow_state_interfaces_container;
+  std::array<std::string, 2> hw_elbow_command_names_{"joint_3_position",
+                                                     "joint_4_sign"};
 
-  std::array<double, 16> hw_cartesian_pose_command_{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0,
-                                                    0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
+  std::array<double, 16> hw_cartesian_pose_command_{
+      0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0,
+      0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
   std::array<double, 2> hw_elbow_command_{0.0, 0.0};
 
-  std::array<double, 16> cartesian_pose_state_{1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-                                               0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+  std::array<double, 16> cartesian_pose_state_{1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+                                               0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+                                               0.0, 0.0, 0.0, 1.0};
   std::array<double, 2> elbow_state_{1.0, 1.0};
 
-  std::unique_ptr<FrankaCartesianPoseTestFriend> agimus_franka_cartesian_command_friend;
-  std::vector<hardware_interface::LoanedCommandInterface> temp_command_interfaces;
+  std::unique_ptr<FrankaCartesianPoseTestFriend>
+      agimus_franka_cartesian_command_friend;
+  std::vector<hardware_interface::LoanedCommandInterface>
+      temp_command_interfaces;
   std::vector<hardware_interface::LoanedStateInterface> temp_state_interfaces;
 
-  const std::string cartesian_pose_command_interface_name_{"cartesian_pose_command"};
+  const std::string cartesian_pose_command_interface_name_{
+      "cartesian_pose_command"};
   const std::string elbow_command_interface_name_{"elbow_command"};
-  const std::string cartesian_pose_state_interface_name_{"cartesian_pose_state"};
+  const std::string cartesian_pose_state_interface_name_{
+      "cartesian_pose_state"};
   const std::string elbow_state_interface_name_{"elbow_state"};
 };

@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <Eigen/Eigen>
 #include <agimus_franka_example_controllers/joint_position_example_controller.hpp>
 #include <agimus_franka_example_controllers/robot_utils.hpp>
-
 #include <cassert>
 #include <cmath>
 #include <exception>
 #include <string>
-
-#include <Eigen/Eigen>
 
 namespace agimus_franka_example_controllers {
 
@@ -29,7 +27,8 @@ JointPositionExampleController::command_interface_configuration() const {
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
   for (int i = 1; i <= num_joints; ++i) {
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/position");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/position");
   }
   return config;
 }
@@ -40,7 +39,8 @@ JointPositionExampleController::state_interface_configuration() const {
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
   for (int i = 1; i <= num_joints; ++i) {
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/position");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/position");
   }
 
   // add the robot time interface
@@ -52,8 +52,7 @@ JointPositionExampleController::state_interface_configuration() const {
 }
 
 controller_interface::return_type JointPositionExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& /*period*/) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   if (initialization_flag_) {
     for (int i = 0; i < num_joints; ++i) {
       initial_q_.at(i) = state_interfaces_[i].get_value();
@@ -72,7 +71,8 @@ controller_interface::return_type JointPositionExampleController::update(
     }
   }
 
-  double delta_angle = M_PI / 16 * (1 - std::cos(M_PI / 5.0 * elapsed_time_)) * 0.2;
+  double delta_angle =
+      M_PI / 16 * (1 - std::cos(M_PI / 5.0 * elapsed_time_)) * 0.2;
 
   for (int i = 0; i < num_joints; ++i) {
     if (i == 4) {
@@ -90,7 +90,8 @@ CallbackReturn JointPositionExampleController::on_init() {
     auto_declare<bool>("gazebo", false);
     auto_declare<std::string>("robot_description", "");
   } catch (const std::exception& e) {
-    fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+    fprintf(stderr, "Exception thrown during init stage with message: %s \n",
+            e.what());
     return CallbackReturn::ERROR;
   }
   return CallbackReturn::SUCCESS;
@@ -100,8 +101,8 @@ CallbackReturn JointPositionExampleController::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   is_gazebo_ = get_node()->get_parameter("gazebo").as_bool();
 
-  auto parameters_client =
-      std::make_shared<rclcpp::AsyncParametersClient>(get_node(), "/robot_state_publisher");
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+      get_node(), "/robot_state_publisher");
   parameters_client->wait_for_service();
 
   auto future = parameters_client->get_parameters({"robot_description"});
@@ -109,10 +110,12 @@ CallbackReturn JointPositionExampleController::on_configure(
   if (!result.empty()) {
     robot_description_ = result[0].value_to_string();
   } else {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter.");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Failed to get robot_description parameter.");
   }
 
-  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_, get_node()->get_logger());
+  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_,
+                                                     get_node()->get_logger());
 
   return CallbackReturn::SUCCESS;
 }
@@ -127,5 +130,6 @@ CallbackReturn JointPositionExampleController::on_activate(
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::JointPositionExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::JointPositionExampleController,
+    controller_interface::ControllerInterface)

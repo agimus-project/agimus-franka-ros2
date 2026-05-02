@@ -14,13 +14,11 @@
 
 #include <agimus_franka_example_controllers/default_robot_behavior_utils.hpp>
 #include <agimus_franka_example_controllers/joint_impedance_with_ik_example_controller.hpp>
-
 #include <cassert>
+#include <chrono>
 #include <cmath>
 #include <exception>
 #include <string>
-
-#include <chrono>
 
 using namespace std::chrono_literals;
 using Vector7d = Eigen::Matrix<double, 7, 1>;
@@ -43,15 +41,18 @@ JointImpedanceWithIKExampleController::state_interface_configuration() const {
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
   config.names = agimus_franka_cartesian_pose_->get_state_interface_names();
   for (int i = 1; i <= num_joints_; ++i) {
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/position");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/position");
   }
   for (int i = 1; i <= num_joints_; ++i) {
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/velocity");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/velocity");
   }
   for (int i = 1; i <= num_joints_; ++i) {
     config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/effort");
   }
-  for (const auto& agimus_franka_robot_model_name : agimus_franka_robot_model_->get_state_interface_names()) {
+  for (const auto& agimus_franka_robot_model_name :
+       agimus_franka_robot_model_->get_state_interface_names()) {
     config.names.push_back(agimus_franka_robot_model_name);
   }
 
@@ -87,12 +88,12 @@ Eigen::Vector3d JointImpedanceWithIKExampleController::compute_new_position() {
 
 std::shared_ptr<moveit_msgs::srv::GetPositionIK::Request>
 JointImpedanceWithIKExampleController::create_ik_service_request(
-    const Eigen::Vector3d& position,
-    const Eigen::Quaterniond& orientation,
+    const Eigen::Vector3d& position, const Eigen::Quaterniond& orientation,
     const std::vector<double>& joint_positions_current,
     const std::vector<double>& joint_velocities_current,
     const std::vector<double>& joint_efforts_current) {
-  auto service_request = std::make_shared<moveit_msgs::srv::GetPositionIK::Request>();
+  auto service_request =
+      std::make_shared<moveit_msgs::srv::GetPositionIK::Request>();
 
   service_request->ik_request.group_name = arm_id_ + "_arm";
   service_request->ik_request.pose_stamped.header.frame_id = arm_id_ + "_link0";
@@ -104,11 +105,15 @@ JointImpedanceWithIKExampleController::create_ik_service_request(
   service_request->ik_request.pose_stamped.pose.orientation.z = orientation.z();
   service_request->ik_request.pose_stamped.pose.orientation.w = orientation.w();
   service_request->ik_request.robot_state.joint_state.name = {
-      arm_id_ + "_joint1", arm_id_ + "_joint2", arm_id_ + "_joint3", arm_id_ + "_joint4",
-      arm_id_ + "_joint5", arm_id_ + "_joint6", arm_id_ + "_joint7"};
-  service_request->ik_request.robot_state.joint_state.position = joint_positions_current;
-  service_request->ik_request.robot_state.joint_state.velocity = joint_velocities_current;
-  service_request->ik_request.robot_state.joint_state.effort = joint_efforts_current;
+      arm_id_ + "_joint1", arm_id_ + "_joint2", arm_id_ + "_joint3",
+      arm_id_ + "_joint4", arm_id_ + "_joint5", arm_id_ + "_joint6",
+      arm_id_ + "_joint7"};
+  service_request->ik_request.robot_state.joint_state.position =
+      joint_positions_current;
+  service_request->ik_request.robot_state.joint_state.velocity =
+      joint_velocities_current;
+  service_request->ik_request.robot_state.joint_state.effort =
+      joint_efforts_current;
 
   if (is_gripper_loaded_) {
     service_request->ik_request.ik_link_name = arm_id_ + "_hand_tcp";
@@ -120,20 +125,21 @@ Vector7d JointImpedanceWithIKExampleController::compute_torque_command(
     const Vector7d& joint_positions_desired,
     const Vector7d& joint_positions_current,
     const Vector7d& joint_velocities_current) {
-  std::array<double, 7> coriolis_array = agimus_franka_robot_model_->getCoriolisForceVector();
+  std::array<double, 7> coriolis_array =
+      agimus_franka_robot_model_->getCoriolisForceVector();
   Vector7d coriolis(coriolis_array.data());
   const double kAlpha = 0.99;
-  dq_filtered_ = (1 - kAlpha) * dq_filtered_ + kAlpha * joint_velocities_current;
+  dq_filtered_ =
+      (1 - kAlpha) * dq_filtered_ + kAlpha * joint_velocities_current;
   Vector7d q_error = joint_positions_desired - joint_positions_current;
-  Vector7d tau_d_calculated =
-      k_gains_.cwiseProduct(q_error) - d_gains_.cwiseProduct(dq_filtered_) + coriolis;
+  Vector7d tau_d_calculated = k_gains_.cwiseProduct(q_error) -
+                              d_gains_.cwiseProduct(dq_filtered_) + coriolis;
 
   return tau_d_calculated;
 }
 
 controller_interface::return_type JointImpedanceWithIKExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& /*period*/) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   if (initialization_flag_) {
     std::tie(orientation_, position_) =
         agimus_franka_cartesian_pose_->getCurrentOrientationAndTranslation();
@@ -149,23 +155,26 @@ controller_interface::return_type JointImpedanceWithIKExampleController::update(
 
   Eigen::Vector3d new_position = compute_new_position();
 
-  auto service_request =
-      create_ik_service_request(new_position, orientation_, joint_positions_current_,
-                                joint_velocities_current_, joint_efforts_current_);
+  auto service_request = create_ik_service_request(
+      new_position, orientation_, joint_positions_current_,
+      joint_velocities_current_, joint_efforts_current_);
 
-  using ServiceResponseFuture = rclcpp::Client<moveit_msgs::srv::GetPositionIK>::SharedFuture;
+  using ServiceResponseFuture =
+      rclcpp::Client<moveit_msgs::srv::GetPositionIK>::SharedFuture;
   auto response_received_callback =
-      [&](ServiceResponseFuture future) {  // NOLINT(performance-unnecessary-value-param)
+      [&](ServiceResponseFuture
+              future) {  // NOLINT(performance-unnecessary-value-param)
         const auto& response = future.get();
 
         if (response->error_code.val == response->error_code.SUCCESS) {
           joint_positions_desired_ = response->solution.joint_state.position;
         } else {
-          RCLCPP_INFO(get_node()->get_logger(), "Inverse kinematics solution failed.");
+          RCLCPP_INFO(get_node()->get_logger(),
+                      "Inverse kinematics solution failed.");
         }
       };
-  auto result_future_ =
-      compute_ik_client_->async_send_request(service_request, response_received_callback);
+  auto result_future_ = compute_ik_client_->async_send_request(
+      service_request, response_received_callback);
 
   if (joint_positions_desired_.empty()) {
     return controller_interface::return_type::OK;
@@ -176,7 +185,8 @@ controller_interface::return_type JointImpedanceWithIKExampleController::update(
   Vector7d joint_velocities_current_eigen(joint_velocities_current_.data());
 
   auto tau_d_calculated = compute_torque_command(
-      joint_positions_desired_eigen, joint_positions_current_eigen, joint_velocities_current_eigen);
+      joint_positions_desired_eigen, joint_positions_current_eigen,
+      joint_velocities_current_eigen);
 
   for (int i = 0; i < num_joints_; i++) {
     command_interfaces_[i].set_value(tau_d_calculated(i));
@@ -186,9 +196,10 @@ controller_interface::return_type JointImpedanceWithIKExampleController::update(
 }
 
 CallbackReturn JointImpedanceWithIKExampleController::on_init() {
-  agimus_franka_cartesian_pose_ =
-      std::make_unique<agimus_franka_semantic_components::FrankaCartesianPoseInterface>(
-          agimus_franka_semantic_components::FrankaCartesianPoseInterface(k_elbow_activated_));
+  agimus_franka_cartesian_pose_ = std::make_unique<
+      agimus_franka_semantic_components::FrankaCartesianPoseInterface>(
+      agimus_franka_semantic_components::FrankaCartesianPoseInterface(
+          k_elbow_activated_));
 
   return CallbackReturn::SUCCESS;
 }
@@ -204,8 +215,9 @@ bool JointImpedanceWithIKExampleController::assign_parameters() {
     return false;
   }
   if (k_gains.size() != static_cast<uint>(num_joints_)) {
-    RCLCPP_FATAL(get_node()->get_logger(), "k_gains should be of size %d but is of size %ld",
-                 num_joints_, k_gains.size());
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "k_gains should be of size %d but is of size %ld", num_joints_,
+                 k_gains.size());
     return false;
   }
   if (d_gains.empty()) {
@@ -213,8 +225,9 @@ bool JointImpedanceWithIKExampleController::assign_parameters() {
     return false;
   }
   if (d_gains.size() != static_cast<uint>(num_joints_)) {
-    RCLCPP_FATAL(get_node()->get_logger(), "d_gains should be of size %d but is of size %ld",
-                 num_joints_, d_gains.size());
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "d_gains should be of size %d but is of size %ld", num_joints_,
+                 d_gains.size());
     return false;
   }
   for (int i = 0; i < num_joints_; ++i) {
@@ -230,20 +243,28 @@ CallbackReturn JointImpedanceWithIKExampleController::on_configure(
     return CallbackReturn::FAILURE;
   }
 
-  agimus_franka_robot_model_ = std::make_unique<agimus_franka_semantic_components::AgimusFrankaRobotModel>(
-      agimus_franka_semantic_components::AgimusFrankaRobotModel(arm_id_ + "/" + k_robot_model_interface_name,
-                                                   arm_id_ + "/" + k_robot_state_interface_name));
+  agimus_franka_robot_model_ = std::make_unique<
+      agimus_franka_semantic_components::AgimusFrankaRobotModel>(
+      agimus_franka_semantic_components::AgimusFrankaRobotModel(
+          arm_id_ + "/" + k_robot_model_interface_name,
+          arm_id_ + "/" + k_robot_state_interface_name));
 
-  auto collision_client = get_node()->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
-      "/service_server/set_full_collision_behavior");
-  compute_ik_client_ = get_node()->create_client<moveit_msgs::srv::GetPositionIK>("/compute_ik");
+  auto collision_client =
+      get_node()
+          ->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
+              "/service_server/set_full_collision_behavior");
+  compute_ik_client_ =
+      get_node()->create_client<moveit_msgs::srv::GetPositionIK>("/compute_ik");
 
-  while (!compute_ik_client_->wait_for_service(1s) || !collision_client->wait_for_service(1s)) {
+  while (!compute_ik_client_->wait_for_service(1s) ||
+         !collision_client->wait_for_service(1s)) {
     if (!rclcpp::ok()) {
-      RCLCPP_ERROR(get_node()->get_logger(), "Interrupted while waiting for the service. Exiting.");
+      RCLCPP_ERROR(get_node()->get_logger(),
+                   "Interrupted while waiting for the service. Exiting.");
       return CallbackReturn::ERROR;
     }
-    RCLCPP_INFO(get_node()->get_logger(), "service not available, waiting again...");
+    RCLCPP_INFO(get_node()->get_logger(),
+                "service not available, waiting again...");
   }
 
   auto request = DefaultRobotBehavior::getDefaultCollisionBehaviorRequest();
@@ -252,14 +273,15 @@ CallbackReturn JointImpedanceWithIKExampleController::on_configure(
   auto success = future_result.get();
 
   if (!success->success) {
-    RCLCPP_FATAL(get_node()->get_logger(), "Failed to set default collision behavior.");
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "Failed to set default collision behavior.");
     return CallbackReturn::ERROR;
   } else {
     RCLCPP_INFO(get_node()->get_logger(), "Default collision behavior set.");
   }
 
-  auto parameters_client =
-      std::make_shared<rclcpp::AsyncParametersClient>(get_node(), "/robot_state_publisher");
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+      get_node(), "/robot_state_publisher");
   parameters_client->wait_for_service();
 
   auto future = parameters_client->get_parameters({"robot_description"});
@@ -267,10 +289,12 @@ CallbackReturn JointImpedanceWithIKExampleController::on_configure(
   if (!result.empty()) {
     robot_description_ = result[0].value_to_string();
   } else {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter.");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Failed to get robot_description parameter.");
   }
 
-  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_, get_node()->get_logger());
+  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_,
+                                                     get_node()->get_logger());
 
   return CallbackReturn::SUCCESS;
 }
@@ -285,13 +309,15 @@ CallbackReturn JointImpedanceWithIKExampleController::on_activate(
   joint_velocities_current_.reserve(num_joints_);
   joint_efforts_current_.reserve(num_joints_);
 
-  agimus_franka_cartesian_pose_->assign_loaned_state_interfaces(state_interfaces_);
+  agimus_franka_cartesian_pose_->assign_loaned_state_interfaces(
+      state_interfaces_);
   agimus_franka_robot_model_->assign_loaned_state_interfaces(state_interfaces_);
 
   return CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn JointImpedanceWithIKExampleController::on_deactivate(
+controller_interface::CallbackReturn
+JointImpedanceWithIKExampleController::on_deactivate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   agimus_franka_cartesian_pose_->release_interfaces();
   return CallbackReturn::SUCCESS;
@@ -300,5 +326,6 @@ controller_interface::CallbackReturn JointImpedanceWithIKExampleController::on_d
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::JointImpedanceWithIKExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::JointImpedanceWithIKExampleController,
+    controller_interface::ControllerInterface)

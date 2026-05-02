@@ -14,28 +14,30 @@
 
 #pragma once
 
+#include <controller_interface/controller_interface.hpp>
 #include <memory>
+#include <rclcpp/rclcpp.hpp>
 #include <string>
 
-#include <controller_interface/controller_interface.hpp>
-#include <rclcpp/rclcpp.hpp>
 #include "agimus_franka_semantic_components/agimus_franka_robot_model.hpp"
 
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+using CallbackReturn =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
 namespace agimus_franka_example_controllers {
 
 /// The model example controller prints robot model parameters.
-class ModelExampleController : public controller_interface::ControllerInterface {
+class ModelExampleController
+    : public controller_interface::ControllerInterface {
  public:
-  [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
-      const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  command_interface_configuration() const override;
 
-  [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
-      const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  state_interface_configuration() const override;
 
-  controller_interface::return_type update(const rclcpp::Time& time,
-                                           const rclcpp::Duration& period) override;
+  controller_interface::return_type update(
+      const rclcpp::Time& time, const rclcpp::Duration& period) override;
   controller_interface::CallbackReturn on_init() override;
 
   controller_interface::CallbackReturn on_configure(
@@ -49,7 +51,8 @@ class ModelExampleController : public controller_interface::ControllerInterface 
 
  private:
   std::string arm_id_;
-  std::unique_ptr<agimus_franka_semantic_components::AgimusFrankaRobotModel> agimus_franka_robot_model_;
+  std::unique_ptr<agimus_franka_semantic_components::AgimusFrankaRobotModel>
+      agimus_franka_robot_model_;
 
   const std::string k_robot_state_interface_name{"robot_state"};
   const std::string k_robot_model_interface_name{"robot_model"};

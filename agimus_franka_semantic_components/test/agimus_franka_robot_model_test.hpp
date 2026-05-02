@@ -28,40 +28,48 @@ class AgimusFrankaRobotModelTest;
 
 class MockModel : public agimus_franka_hardware::Model {
  public:
-  MOCK_METHOD((std::array<double, 7>), gravity, (const agimus_franka::RobotState&), (const, override));
-  MOCK_METHOD((std::array<double, 7>), coriolis, (const agimus_franka::RobotState&), (const, override));
-  MOCK_METHOD((std::array<double, 16>),
-              pose,
+  MOCK_METHOD((std::array<double, 7>), gravity,
+              (const agimus_franka::RobotState&), (const, override));
+  MOCK_METHOD((std::array<double, 7>), coriolis,
+              (const agimus_franka::RobotState&), (const, override));
+  MOCK_METHOD((std::array<double, 16>), pose,
               (agimus_franka::Frame, const agimus_franka::RobotState&),
               (const, override));
-  MOCK_METHOD((std::array<double, 42>),
-              bodyJacobian,
+  MOCK_METHOD((std::array<double, 42>), bodyJacobian,
               (agimus_franka::Frame, const agimus_franka::RobotState&),
               (const, override));
-  MOCK_METHOD((std::array<double, 42>),
-              zeroJacobian,
+  MOCK_METHOD((std::array<double, 42>), zeroJacobian,
               (agimus_franka::Frame, const agimus_franka::RobotState&),
               (const, override));
-  MOCK_METHOD((std::array<double, 49>), mass, (const agimus_franka::RobotState&), (const, override));
+  MOCK_METHOD((std::array<double, 49>), mass,
+              (const agimus_franka::RobotState&), (const, override));
 };
 
-class AgimusFrankaRobotModelTestFriend : public agimus_franka_semantic_components::AgimusFrankaRobotModel {
+class AgimusFrankaRobotModelTestFriend
+    : public agimus_franka_semantic_components::AgimusFrankaRobotModel {
   FRIEND_TEST(AgimusFrankaRobotModelTest, validate_state_names_and_size);
-  FRIEND_TEST(AgimusFrankaRobotModelTest,
-              given_franka_semantic_model_initialized_when_get_coriolis_expect_one);
-  FRIEND_TEST(AgimusFrankaRobotModelTest,
-              given_franka_semantic_model_initialized_when_get_gravity_expect_one);
+  FRIEND_TEST(
+      AgimusFrankaRobotModelTest,
+      given_franka_semantic_model_initialized_when_get_coriolis_expect_one);
+  FRIEND_TEST(
+      AgimusFrankaRobotModelTest,
+      given_franka_semantic_model_initialized_when_get_gravity_expect_one);
   FRIEND_TEST(AgimusFrankaRobotModelTest,
               given_franka_semantic_model_initialized_when_get_pose_expect_one);
+  FRIEND_TEST(
+      AgimusFrankaRobotModelTest,
+      given_franka_semantic_model_initialized_when_get_mass_expect_correct);
   FRIEND_TEST(AgimusFrankaRobotModelTest,
-              given_franka_semantic_model_initialized_when_get_mass_expect_correct);
-  FRIEND_TEST(AgimusFrankaRobotModelTest, given_franka_semantic_model_not_initialized_expect_exception);
-  FRIEND_TEST(AgimusFrankaRobotModelTest,
-              given_franka_semantic_model_not_initialized_when_get_gravity_called_expect_exception);
-  FRIEND_TEST(AgimusFrankaRobotModelTest,
-              given_franka_semantic_model_not_initialized_when_get_pose_called_expect_exception);
-  FRIEND_TEST(AgimusFrankaRobotModelTest,
-              given_franka_semantic_model_not_initialized_when_get_pose_called_expect_exception);
+              given_franka_semantic_model_not_initialized_expect_exception);
+  FRIEND_TEST(
+      AgimusFrankaRobotModelTest,
+      given_franka_semantic_model_not_initialized_when_get_gravity_called_expect_exception);
+  FRIEND_TEST(
+      AgimusFrankaRobotModelTest,
+      given_franka_semantic_model_not_initialized_when_get_pose_called_expect_exception);
+  FRIEND_TEST(
+      AgimusFrankaRobotModelTest,
+      given_franka_semantic_model_not_initialized_when_get_pose_called_expect_exception);
   FRIEND_TEST(
       AgimusFrankaRobotModelTest,
       given_franka_semantic_model_not_initialized_when_get_body_jacobian_called_expect_exception);
@@ -71,8 +79,9 @@ class AgimusFrankaRobotModelTestFriend : public agimus_franka_semantic_component
 
  public:
   AgimusFrankaRobotModelTestFriend(const std::string& model_interface_name,
-                             const std::string& model_state_name)
-      : agimus_franka_semantic_components::AgimusFrankaRobotModel(model_interface_name, model_state_name) {}
+                                   const std::string& model_state_name)
+      : agimus_franka_semantic_components::AgimusFrankaRobotModel(
+            model_interface_name, model_state_name) {}
   AgimusFrankaRobotModelTestFriend() = delete;
 
   virtual ~AgimusFrankaRobotModelTestFriend() = default;
@@ -95,7 +104,8 @@ class AgimusFrankaRobotModelTest : public ::testing::Test {
   agimus_franka::RobotState robot_state;
   agimus_franka::RobotState* robot_state_address = &robot_state;
 
-  std::unique_ptr<AgimusFrankaRobotModelTestFriend> agimus_franka_robot_model_friend;
+  std::unique_ptr<AgimusFrankaRobotModelTestFriend>
+      agimus_franka_robot_model_friend;
 
   std::vector<std::string> full_interface_names;
 };

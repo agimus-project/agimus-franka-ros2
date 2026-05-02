@@ -5,10 +5,7 @@ project(agimus_${BASE_NAME})
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
-install(
-  DIRECTORY test
-  DESTINATION share/${BASE_NAME}
-)
+install(DIRECTORY test DESTINATION share/${BASE_NAME})
 
 if(BUILD_TESTING)
     find_package(ament_cmake_copyright REQUIRED)

@@ -13,15 +13,15 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
+
 #include <memory>
 #include <vector>
 
 #include "agimus_franka_example_controllers/gravity_compensation_example_controller.hpp"
-#include "rclcpp/rclcpp.hpp"
-
 #include "controller_interface/version.h"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include "rclcpp/rclcpp.hpp"
 #include "rclcpp/utilities.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 
@@ -40,43 +40,49 @@ class TestGravityCompensationExample : public ::testing::Test {
   void SetUpController();
 
  protected:
-  std::unique_ptr<agimus_franka_example_controllers::GravityCompensationExampleController> controller_;
+  std::unique_ptr<
+      agimus_franka_example_controllers::GravityCompensationExampleController>
+      controller_;
 
   // dummy joint state values used for tests
-  const std::vector<std::string> joint_names_ = {"joint1", "joint2", "joint3", "joint4",
-                                                 "joint5", "joint6", "joint7"};
+  const std::vector<std::string> joint_names_ = {
+      "joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "joint7"};
   std::vector<double> joint_commands_ = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
-  CommandInterface joint_1_pos_cmd_{joint_names_[0], HW_IF_EFFORT, &joint_commands_[0]};
-  CommandInterface joint_2_pos_cmd_{joint_names_[1], HW_IF_EFFORT, &joint_commands_[1]};
-  CommandInterface joint_3_pos_cmd_{joint_names_[2], HW_IF_EFFORT, &joint_commands_[2]};
-  CommandInterface joint_4_pos_cmd_{joint_names_[3], HW_IF_EFFORT, &joint_commands_[3]};
-  CommandInterface joint_5_pos_cmd_{joint_names_[4], HW_IF_EFFORT, &joint_commands_[4]};
-  CommandInterface joint_6_pos_cmd_{joint_names_[5], HW_IF_EFFORT, &joint_commands_[5]};
-  CommandInterface joint_7_pos_cmd_{joint_names_[6], HW_IF_EFFORT, &joint_commands_[6]};
+  CommandInterface joint_1_pos_cmd_{joint_names_[0], HW_IF_EFFORT,
+                                    &joint_commands_[0]};
+  CommandInterface joint_2_pos_cmd_{joint_names_[1], HW_IF_EFFORT,
+                                    &joint_commands_[1]};
+  CommandInterface joint_3_pos_cmd_{joint_names_[2], HW_IF_EFFORT,
+                                    &joint_commands_[2]};
+  CommandInterface joint_4_pos_cmd_{joint_names_[3], HW_IF_EFFORT,
+                                    &joint_commands_[3]};
+  CommandInterface joint_5_pos_cmd_{joint_names_[4], HW_IF_EFFORT,
+                                    &joint_commands_[4]};
+  CommandInterface joint_6_pos_cmd_{joint_names_[5], HW_IF_EFFORT,
+                                    &joint_commands_[5]};
+  CommandInterface joint_7_pos_cmd_{joint_names_[6], HW_IF_EFFORT,
+                                    &joint_commands_[6]};
 };
 
 void TestGravityCompensationExample::SetUpTestSuite() {
   rclcpp::init(0, nullptr);
 }
 
-void TestGravityCompensationExample::TearDownTestSuite() {
-  rclcpp::shutdown();
-}
+void TestGravityCompensationExample::TearDownTestSuite() { rclcpp::shutdown(); }
 
 void TestGravityCompensationExample::SetUp() {
-  controller_ =
-      std::make_unique<agimus_franka_example_controllers::GravityCompensationExampleController>();
+  controller_ = std::make_unique<agimus_franka_example_controllers::
+                                     GravityCompensationExampleController>();
 }
 
-void TestGravityCompensationExample::TearDown() {
-  controller_.reset(nullptr);
-}
+void TestGravityCompensationExample::TearDown() { controller_.reset(nullptr); }
 
 void TestGravityCompensationExample::SetUpController() {
 #if CONTROLLER_INTERFACE_VERSION_GTE(4, 0, 0)
   const auto node_options = controller_->define_custom_node_options();
-  const auto result = controller_->init("test_gravitiy_compensation_example" , "", 50.0, "", node_options);
+  const auto result = controller_->init("test_gravitiy_compensation_example",
+                                        "", 50.0, "", node_options);
 #else
   const auto result = controller_->init("test_gravitiy_compensation_example");
 #endif
@@ -98,37 +104,47 @@ TEST_F(TestGravityCompensationExample, JointsParameterNotSet) {
   SetUpController();
 
   // TODO(baris) configure must fail, 'joints' parameter not set
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::ERROR);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::ERROR);
 }
 
 TEST_F(TestGravityCompensationExample, JointsParameterIsEmpty) {
   GTEST_SKIP() << "Skipping joints parameter is empty test";
   SetUpController();
-  controller_->get_node()->set_parameter({"joints", std::vector<std::string>()});
+  controller_->get_node()->set_parameter(
+      {"joints", std::vector<std::string>()});
 
   // Should return ERROR!!
   // TODO(baris) params_.joints can't be empty add a check
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::ERROR);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::ERROR);
 }
 
-TEST_F(TestGravityCompensationExample, given_correct_number_of_joints_configure_returns_success) {
+TEST_F(TestGravityCompensationExample,
+       given_correct_number_of_joints_configure_returns_success) {
   SetUpController();
   controller_->get_node()->set_parameter({"joints", joint_names_});
 
   // configure successful
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
-  ASSERT_EQ(controller_->on_activate(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_activate(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
 }
 
-TEST_F(TestGravityCompensationExample, given_joints_and_interface_when_update_expect_zero_values) {
+TEST_F(TestGravityCompensationExample,
+       given_joints_and_interface_when_update_expect_zero_values) {
   SetUpController();
   controller_->get_node()->set_parameter({"joints", joint_names_});
 
   // configure successful
-  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
-  ASSERT_EQ(controller_->on_activate(rclcpp_lifecycle::State()), CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
+  ASSERT_EQ(controller_->on_activate(rclcpp_lifecycle::State()),
+            CallbackReturn::SUCCESS);
   // update successful though no command has been send yet
-  ASSERT_EQ(controller_->update(rclcpp::Time(0), rclcpp::Duration::from_seconds(0.01)),
+  ASSERT_EQ(controller_->update(rclcpp::Time(0),
+                                rclcpp::Duration::from_seconds(0.01)),
             controller_interface::return_type::OK);
 
   // check joint commands are updated to zero torque value

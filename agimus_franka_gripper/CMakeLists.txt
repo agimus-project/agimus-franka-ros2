@@ -13,12 +13,14 @@ find_package(control_msgs REQUIRED)
 
 find_package(agimus_libfranka 0.9.3 REQUIRED)
 
-add_library(gripper_server SHARED
-        src/gripper_action_server.cpp)
+add_library(gripper_server SHARED src/gripper_action_server.cpp)
 target_link_libraries(gripper_server agimus_libfranka::agimus_libfranka)
-target_include_directories(gripper_server PRIVATE
+target_include_directories(
+    gripper_server
+    PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>)
+        $<INSTALL_INTERFACE:include>
+)
 
 ament_target_dependencies(gripper_server
         agimus_franka_msgs
@@ -28,23 +30,24 @@ ament_target_dependencies(gripper_server
         agimus_libfranka
         sensor_msgs
         std_srvs
-        control_msgs)
+        control_msgs
+)
 rclcpp_components_register_node(gripper_server PLUGIN "agimus_franka_gripper::GripperActionServer" EXECUTABLE agimus_franka_gripper_node)
-install(TARGETS
-        gripper_server
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin)
+install(
+    TARGETS gripper_server
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
 
-install(DIRECTORY
-        launch config
-        DESTINATION share/${PROJECT_NAME}/)
+install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME}/)
 
-      ament_python_install_package(${PROJECT_NAME})
+ament_python_install_package(${PROJECT_NAME})
 
-install(PROGRAMS
-        scripts/fake_gripper_state_publisher.py
-        DESTINATION lib/${PROJECT_NAME})
+install(
+    PROGRAMS scripts/fake_gripper_state_publisher.py
+    DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
     find_package(ament_cmake_copyright REQUIRED)

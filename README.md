@@ -37,23 +37,23 @@ This package is in rapid development. Users should expect breaking changes and a
 ## Local Machine Installation
 1. **Install ROS2 Development environment**
 
-    _**agimus_franka_ros2**_ is built upon _**ROS 2 Humble**_.  
+    _**agimus_franka_ros2**_ is built upon _**ROS 2 Humble**_.
 
-    To set up your ROS 2 environment, follow the official _**humble**_ installation instructions provided [**here**](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html). 
+    To set up your ROS 2 environment, follow the official _**humble**_ installation instructions provided [**here**](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html).
     The guide discusses two main installation options: **Desktop** and **Bare Bones**.
 
     #### Choose **one** of the following:
-    - **ROS 2 "Desktop Install"** (`ros-humble-desktop`)  
-      Includes a full ROS 2 installation with GUI tools and visualization packages (e.g., Rviz and Gazebo).  
+    - **ROS 2 "Desktop Install"** (`ros-humble-desktop`)
+      Includes a full ROS 2 installation with GUI tools and visualization packages (e.g., Rviz and Gazebo).
       **Recommended** for users who need simulation or visualization capabilities.
 
-    - **"ROS-Base Install (Bare Bones)"** (`ros-humble-ros-base`)  
-      A minimal installation that includes only the core ROS 2 libraries.  
+    - **"ROS-Base Install (Bare Bones)"** (`ros-humble-ros-base`)
+      A minimal installation that includes only the core ROS 2 libraries.
       Suitable for resource-constrained environments or headless systems.
 
     ```bash
     # replace <YOUR CHOICE> with either ros-humble-desktop or ros-humble-ros-base
-    sudo apt install <YOUR CHOICE>  
+    sudo apt install <YOUR CHOICE>
     ```
     ---
     Also install the **Development Tools** package:
@@ -73,7 +73,7 @@ This package is in rapid development. Users should expect breaking changes and a
 3. **Clone the Repositories:**
    ```bash
     git clone https://github.com/agimus_frankaemika/agimus_franka_ros2.git src
-    ``` 
+    ```
 4. **Detect and install project dependencies**
    ```bash
    rosdep install --from-paths src --ignore-src --rosdistro humble -y
@@ -141,7 +141,7 @@ For detailed instructions, on preparing VSCode to use the `.devcontainer` follow
 #### Option B: using Dev Containers in Visual Studio Code
 
   2. **Open Visual Studio Code ...**
-  
+
         Then, open folder  `franka_ros2`
 
   3. **Choose `Reopen in container` when prompted.**
@@ -162,8 +162,8 @@ For detailed instructions, on preparing VSCode to use the `.devcontainer` follow
    ```bash
    colcon test
    ```
-> Remember, agimus_franka_ros2 is under development.  
-> Warnings can be expected.  
+> Remember, agimus_franka_ros2 is under development.
+> Warnings can be expected.
 > Errors? Well, they’re just undocumented features !".
 
 # Run a sample ROS2 application
@@ -190,7 +190,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/agimu
 
 All packages of agimus_franka_ros2 are licensed under the Apache 2.0 license.
 
-## Contact 
+## Contact
 
 For questions or support, please open an issue on the [GitHub Issues](https://github.com/agimus_frankaemika/agimus_franka_ros2/issues) page.
 

@@ -12,34 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <functional>
-#include <future>
-#include <memory>
-#include <string>
-#include <thread>
-
 #include <agimus_franka/exception.h>
 #include <agimus_franka/gripper.h>
 #include <agimus_franka/gripper_state.h>
+
+#include <agimus_franka_gripper/gripper_action_server.hpp>
 #include <control_msgs/action/gripper_command.hpp>
+#include <functional>
+#include <future>
+#include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_srvs/srv/trigger.hpp>
-
-#include <agimus_franka_gripper/gripper_action_server.hpp>
+#include <string>
+#include <thread>
 
 namespace agimus_franka_gripper {
 GripperActionServer::GripperActionServer(const rclcpp::NodeOptions& options)
     : Node("agimus_franka_gripper_node", options) {
   this->declare_parameter("robot_ip", std::string());
-  this->declare_parameter("default_grasp_epsilon.inner", k_default_grasp_epsilon);
-  this->declare_parameter("default_grasp_epsilon.outer", k_default_grasp_epsilon);
+  this->declare_parameter("default_grasp_epsilon.inner",
+                          k_default_grasp_epsilon);
+  this->declare_parameter("default_grasp_epsilon.outer",
+                          k_default_grasp_epsilon);
   this->declare_parameter("default_speed", k_default_speed);
   this->declare_parameter("joint_names", std::vector<std::string>());
   this->declare_parameter("state_publish_rate", k_default_state_publish_rate);
-  this->declare_parameter("feedback_publish_rate", k_default_feedback_publish_rate);
+  this->declare_parameter("feedback_publish_rate",
+                          k_default_feedback_publish_rate);
   std::string robot_ip;
   if (!this->get_parameter<std::string>("robot_ip", robot_ip)) {
     RCLCPP_FATAL(this->get_logger(), "Parameter 'robot_ip' not set");
@@ -47,27 +49,32 @@ GripperActionServer::GripperActionServer(const rclcpp::NodeOptions& options)
   }
 
   this->default_speed_ = this->get_parameter("default_speed").as_double();
-  this->default_epsilon_inner_ = this->get_parameter("default_grasp_epsilon.inner").as_double();
-  this->default_epsilon_outer_ = this->get_parameter("default_grasp_epsilon.outer").as_double();
+  this->default_epsilon_inner_ =
+      this->get_parameter("default_grasp_epsilon.inner").as_double();
+  this->default_epsilon_outer_ =
+      this->get_parameter("default_grasp_epsilon.outer").as_double();
   if (!this->get_parameter("joint_names", this->joint_names_)) {
     RCLCPP_WARN(this->get_logger(), "Parameter 'joint_names' not set");
     this->joint_names_ = {"", ""};
   }
 
   if (this->joint_names_.size() != 2) {
-    RCLCPP_FATAL(this->get_logger(),
-                 "Parameter 'joint_names' needs exactly two arguments, got %ld instead",
-                 this->joint_names_.size());
-    throw std::invalid_argument("Parameter 'joint_names' has wrong number of arguments");
+    RCLCPP_FATAL(
+        this->get_logger(),
+        "Parameter 'joint_names' needs exactly two arguments, got %ld instead",
+        this->joint_names_.size());
+    throw std::invalid_argument(
+        "Parameter 'joint_names' has wrong number of arguments");
   }
 
   const double kStatePublishRate =
       static_cast<double>(this->get_parameter("state_publish_rate").as_int());
-  const double kFeedbackPublishRate =
-      static_cast<double>(this->get_parameter("feedback_publish_rate").as_int());
+  const double kFeedbackPublishRate = static_cast<double>(
+      this->get_parameter("feedback_publish_rate").as_int());
   this->future_wait_timeout_ = rclcpp::WallRate(kFeedbackPublishRate).period();
 
-  RCLCPP_INFO(this->get_logger(), "Trying to establish a connection with the gripper");
+  RCLCPP_INFO(this->get_logger(),
+              "Trying to establish a connection with the gripper");
   try {
     this->gripper_ = std::make_unique<agimus_franka::Gripper>(robot_ip);
   } catch (const agimus_franka::Exception& exception) {
@@ -78,35 +85,52 @@ GripperActionServer::GripperActionServer(const rclcpp::NodeOptions& options)
   current_gripper_state_ = gripper_->readOnce();
   const auto kHomingTask = Task::kHoming;
   this->stop_service_ =  // NOLINTNEXTLINE
-      create_service<Trigger>("~/stop",
-                              [this](std::shared_ptr<Trigger::Request> /*request*/,  // NOLINT
-                                     std::shared_ptr<Trigger::Response> response) {  // NOLINT
-                                return stopServiceCallback(std::move(response));     // NOLINT
-                              });
+      create_service<Trigger>(
+          "~/stop",
+          [this](std::shared_ptr<Trigger::Request> /*request*/,  // NOLINT
+                 std::shared_ptr<Trigger::Response> response) {  // NOLINT
+            return stopServiceCallback(std::move(response));     // NOLINT
+          });
 
   this->homing_server_ = rclcpp_action::create_server<Homing>(
       this, "~/homing",
-      [this, kHomingTask](auto /*uuid*/, auto /*goal*/) { return handleGoal(kHomingTask); },
-      [this, kHomingTask](const auto& /*goal_handle*/) { return handleCancel(kHomingTask); },
+      [this, kHomingTask](auto /*uuid*/, auto /*goal*/) {
+        return handleGoal(kHomingTask);
+      },
+      [this, kHomingTask](const auto& /*goal_handle*/) {
+        return handleCancel(kHomingTask);
+      },
       [this](const auto& goal_handle) {
-        return std::thread{[goal_handle, this]() { executeHoming(goal_handle); }}.detach();
+        return std::thread{
+            [goal_handle, this]() { executeHoming(goal_handle); }}
+            .detach();
       });
   const auto kMoveTask = Task::kMove;
   this->move_server_ = rclcpp_action::create_server<Move>(
       this, "~/move",
-      [this, kMoveTask](auto /*uuid*/, auto /*goal*/) { return handleGoal(kMoveTask); },
-      [this, kMoveTask](const auto& /*goal_handle*/) { return handleCancel(kMoveTask); },
+      [this, kMoveTask](auto /*uuid*/, auto /*goal*/) {
+        return handleGoal(kMoveTask);
+      },
+      [this, kMoveTask](const auto& /*goal_handle*/) {
+        return handleCancel(kMoveTask);
+      },
       [this](const auto& goal_handle) {
-        return std::thread{[goal_handle, this]() { executeMove(goal_handle); }}.detach();
+        return std::thread{[goal_handle, this]() { executeMove(goal_handle); }}
+            .detach();
       });
 
   const auto kGraspTask = Task::kGrasp;
   this->grasp_server_ = rclcpp_action::create_server<Grasp>(
       this, "~/grasp",
-      [this, kGraspTask](auto /*uuid*/, auto /*goal*/) { return handleGoal(kGraspTask); },
-      [this, kGraspTask](const auto& /*goal_handle*/) { return handleCancel(kGraspTask); },
+      [this, kGraspTask](auto /*uuid*/, auto /*goal*/) {
+        return handleGoal(kGraspTask);
+      },
+      [this, kGraspTask](const auto& /*goal_handle*/) {
+        return handleCancel(kGraspTask);
+      },
       [this](const auto& goal_handle) {
-        return std::thread{[goal_handle, this]() { executeGrasp(goal_handle); }}.detach();
+        return std::thread{[goal_handle, this]() { executeGrasp(goal_handle); }}
+            .detach();
       });
 
   const auto kGripperCommandTask = Task::kGripperCommand;
@@ -119,32 +143,38 @@ GripperActionServer::GripperActionServer(const rclcpp::NodeOptions& options)
         return handleCancel(kGripperCommandTask);
       },
       [this](const auto& goal_handle) {
-        return std::thread{[goal_handle, this]() { onExecuteGripperCommand(goal_handle); }}
+        return std::thread{
+            [goal_handle, this]() { onExecuteGripperCommand(goal_handle); }}
             .detach();
       });
 
   this->joint_states_publisher_ =
       this->create_publisher<sensor_msgs::msg::JointState>("~/joint_states", 1);
-  this->timer_ = this->create_wall_timer(rclcpp::WallRate(kStatePublishRate).period(),
-                                         [this]() { return publishGripperState(); });
+  this->timer_ =
+      this->create_wall_timer(rclcpp::WallRate(kStatePublishRate).period(),
+                              [this]() { return publishGripperState(); });
 }
 
 rclcpp_action::CancelResponse GripperActionServer::handleCancel(Task task) {
-  RCLCPP_INFO(this->get_logger(), "Received request to handleCancel %s", getTaskName(task).c_str());
+  RCLCPP_INFO(this->get_logger(), "Received request to handleCancel %s",
+              getTaskName(task).c_str());
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 
 rclcpp_action::GoalResponse GripperActionServer::handleGoal(Task task) {
-  RCLCPP_INFO(this->get_logger(), "Received %s request", getTaskName(task).c_str());
+  RCLCPP_INFO(this->get_logger(), "Received %s request",
+              getTaskName(task).c_str());
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
-void GripperActionServer::executeHoming(const std::shared_ptr<GoalHandleHoming>& goal_handle) {
+void GripperActionServer::executeHoming(
+    const std::shared_ptr<GoalHandleHoming>& goal_handle) {
   const auto kCommand = [this]() { return gripper_->homing(); };
   executeCommand(goal_handle, Task::kHoming, kCommand);
 }
 
-void GripperActionServer::executeMove(const std::shared_ptr<GoalHandleMove>& goal_handle) {
+void GripperActionServer::executeMove(
+    const std::shared_ptr<GoalHandleMove>& goal_handle) {
   auto command = [goal_handle, this]() {
     const auto kGoal = goal_handle->get_goal();
     return gripper_->move(kGoal->width, kGoal->speed);
@@ -152,11 +182,12 @@ void GripperActionServer::executeMove(const std::shared_ptr<GoalHandleMove>& goa
   executeCommand(goal_handle, Task::kMove, command);
 }
 
-void GripperActionServer::executeGrasp(const std::shared_ptr<GoalHandleGrasp>& goal_handle) {
+void GripperActionServer::executeGrasp(
+    const std::shared_ptr<GoalHandleGrasp>& goal_handle) {
   auto command = [goal_handle, this]() {
     const auto kGoal = goal_handle->get_goal();
-    return gripper_->grasp(kGoal->width, kGoal->speed, kGoal->force, kGoal->epsilon.inner,
-                           kGoal->epsilon.outer);
+    return gripper_->grasp(kGoal->width, kGoal->speed, kGoal->force,
+                           kGoal->epsilon.inner, kGoal->epsilon.outer);
   };
   executeCommand(goal_handle, Task::kGrasp, command);
 }
@@ -168,11 +199,13 @@ void GripperActionServer::onExecuteGripperCommand(
 
   std::unique_lock<std::mutex> guard(gripper_state_mutex_);
   constexpr double kSamePositionThreshold = 1e-4;
-  auto result = std::make_shared<control_msgs::action::GripperCommand::Result>();
+  auto result =
+      std::make_shared<control_msgs::action::GripperCommand::Result>();
   const double kCurrentWidth = current_gripper_state_.width;
   if (kTargetWidth > current_gripper_state_.max_width || kTargetWidth < 0) {
     RCLCPP_ERROR(this->get_logger(),
-                 "GripperServer: Commanding out of range width! max_width = %f command = %f",
+                 "GripperServer: Commanding out of range width! max_width = %f "
+                 "command = %f",
                  current_gripper_state_.max_width, kTargetWidth);
     goal_handle->abort(result);
     return;
@@ -190,8 +223,9 @@ void GripperActionServer::onExecuteGripperCommand(
     if (kTargetWidth >= kCurrentWidth) {
       return gripper_->move(kTargetWidth, default_speed_);
     }
-    return gripper_->grasp(kTargetWidth, default_speed_, kGoal->command.max_effort,
-                           default_epsilon_inner_, default_epsilon_outer_);
+    return gripper_->grasp(kTargetWidth, default_speed_,
+                           kGoal->command.max_effort, default_epsilon_inner_,
+                           default_epsilon_outer_);
   };
 
   executeGripperCommand(goal_handle, command);
@@ -242,9 +276,11 @@ void GripperActionServer::executeGripperCommand(
   }
 }
 
-void GripperActionServer::stopServiceCallback(const std::shared_ptr<Trigger::Response>& response) {
+void GripperActionServer::stopServiceCallback(
+    const std::shared_ptr<Trigger::Response>& response) {
   RCLCPP_INFO(this->get_logger(), "Stopping gripper_...");
-  auto action_result = withResultGenerator<Homing>([this]() { return gripper_->stop(); })();
+  auto action_result =
+      withResultGenerator<Homing>([this]() { return gripper_->stop(); })();
   response->success = action_result->success;
   response->message = action_result->error;
   if (response->success) {
@@ -278,7 +314,8 @@ void GripperActionServer::publishGripperState() {
 }
 
 void GripperActionServer::publishGripperCommandFeedback(
-    const std::shared_ptr<rclcpp_action::ServerGoalHandle<GripperCommand>>& goal_handle) {
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<GripperCommand>>&
+        goal_handle) {
   auto gripper_feedback = std::make_shared<GripperCommand::Feedback>();
   std::lock_guard<std::mutex> guard(gripper_state_mutex_);
   gripper_feedback->position = current_gripper_state_.width;
@@ -287,4 +324,5 @@ void GripperActionServer::publishGripperCommandFeedback(
 }
 }  // namespace agimus_franka_gripper
 
-RCLCPP_COMPONENTS_REGISTER_NODE(agimus_franka_gripper::GripperActionServer)  // NOLINT
+RCLCPP_COMPONENTS_REGISTER_NODE(
+    agimus_franka_gripper::GripperActionServer)  // NOLINT

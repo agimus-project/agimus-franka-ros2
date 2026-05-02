@@ -10,13 +10,13 @@ Requires libfranka >= 0.15.0 and agimus_franka_description >= 0.3.0 requires ROS
 * fix: reduced acceleration discontinuities by adding new robot_time state to agimus_franka_hardware
 *      that allows to update controllers with same time that robot uses
 * refactor: Improved Docker image for development with VSCode
-* BREAKING_CHANGE: initial_joint_position state removed from agimus_franka_hardware. 
+* BREAKING_CHANGE: initial_joint_position state removed from agimus_franka_hardware.
 *                  rename/replace functions in agimus_franka_semantic_components as follows:
 * -  initial_cartesian_pose, initial_elbow_state
 * +  cartesian_pose_state,   elbow_state.
 *
 * - getInitialElbowConfiguration, getInitialOrientationAndTranslation, getInitialPoseMatrix
-* + getCurrentElbowConfiguration, getCurrentOrientationAndTranslation, getCurrentPoseMatrix 
+* + getCurrentElbowConfiguration, getCurrentOrientationAndTranslation, getCurrentPoseMatrix
 *
 
 
