@@ -8,6 +8,11 @@
     inputs.gepetto.lib.mkFlakoboros inputs (
       { lib, ... }:
       {
+        rosDistros = [
+          "humble"
+          "jazzy"
+        ];
+        rosShellDistro = "jazzy";
         rosOverrideAttrs = {
           agimus-franka-bringup = {
             src = lib.fileset.toSource {
