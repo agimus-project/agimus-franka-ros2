@@ -14,7 +14,6 @@
 
 #include <agimus_franka_example_controllers/cartesian_elbow_example_controller.hpp>
 #include <agimus_franka_example_controllers/default_robot_behavior_utils.hpp>
-
 #include <cassert>
 #include <cmath>
 #include <exception>
@@ -42,13 +41,14 @@ CartesianElbowExampleController::state_interface_configuration() const {
 }
 
 controller_interface::return_type CartesianElbowExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& /*period*/) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   if (initialization_flag_) {
     // Get initial elbow configuration values
-    initial_elbow_configuration_ = agimus_franka_cartesian_pose_->getCurrentElbowConfiguration();
+    initial_elbow_configuration_ =
+        agimus_franka_cartesian_pose_->getCurrentElbowConfiguration();
     // Get the initial pose
-    initial_pose_configuration_ = agimus_franka_cartesian_pose_->getCurrentPoseMatrix();
+    initial_pose_configuration_ =
+        agimus_franka_cartesian_pose_->getCurrentPoseMatrix();
 
     initial_robot_time_ = state_interfaces_.back().get_value();
     elapsed_time_ = 0.0;
@@ -62,13 +62,15 @@ controller_interface::return_type CartesianElbowExampleController::update(
   double angle = M_PI / 15.0 * (1.0 - std::cos(M_PI / 5.0 * elapsed_time_));
   std::array<double, 16> pose_command = initial_pose_configuration_;
   std::array<double, 2> elbow_command = {
-      {initial_elbow_configuration_[0] + angle, initial_elbow_configuration_[1]}};
+      {initial_elbow_configuration_[0] + angle,
+       initial_elbow_configuration_[1]}};
 
   if (agimus_franka_cartesian_pose_->setCommand(pose_command, elbow_command)) {
     return controller_interface::return_type::OK;
   } else {
-    RCLCPP_FATAL(get_node()->get_logger(),
-                 "Set command failed. Did you activate the elbow command interface?");
+    RCLCPP_FATAL(
+        get_node()->get_logger(),
+        "Set command failed. Did you activate the elbow command interface?");
     return controller_interface::return_type::ERROR;
   }
 }
@@ -79,26 +81,30 @@ CallbackReturn CartesianElbowExampleController::on_init() {
 
 CallbackReturn CartesianElbowExampleController::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  agimus_franka_cartesian_pose_ =
-      std::make_unique<agimus_franka_semantic_components::FrankaCartesianPoseInterface>(
-          agimus_franka_semantic_components::FrankaCartesianPoseInterface(k_elbow_activated_));
+  agimus_franka_cartesian_pose_ = std::make_unique<
+      agimus_franka_semantic_components::FrankaCartesianPoseInterface>(
+      agimus_franka_semantic_components::FrankaCartesianPoseInterface(
+          k_elbow_activated_));
 
   auto request = DefaultRobotBehavior::getDefaultCollisionBehaviorRequest();
-  auto client = get_node()->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
-      "service_server/set_full_collision_behavior");
+  auto client =
+      get_node()
+          ->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
+              "service_server/set_full_collision_behavior");
 
   auto future_result = client->async_send_request(request);
   future_result.wait_for(robot_utils::time_out);
   auto success = future_result.get();
   if (!success) {
-    RCLCPP_FATAL(get_node()->get_logger(), "Failed to set default collision behavior.");
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "Failed to set default collision behavior.");
     return CallbackReturn::ERROR;
   } else {
     RCLCPP_INFO(get_node()->get_logger(), "Default collision behavior set.");
   }
 
-  auto parameters_client =
-      std::make_shared<rclcpp::AsyncParametersClient>(get_node(), "/robot_state_publisher");
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+      get_node(), "/robot_state_publisher");
   parameters_client->wait_for_service();
 
   auto future = parameters_client->get_parameters({"robot_description"});
@@ -106,10 +112,12 @@ CallbackReturn CartesianElbowExampleController::on_configure(
   if (!result.empty()) {
     robot_description_ = result[0].value_to_string();
   } else {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter.");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Failed to get robot_description parameter.");
   }
 
-  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_, get_node()->get_logger());
+  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_,
+                                                     get_node()->get_logger());
 
   return CallbackReturn::SUCCESS;
 }
@@ -118,13 +126,16 @@ CallbackReturn CartesianElbowExampleController::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   initialization_flag_ = true;
   elapsed_time_ = 0.0;
-  agimus_franka_cartesian_pose_->assign_loaned_command_interfaces(command_interfaces_);
-  agimus_franka_cartesian_pose_->assign_loaned_state_interfaces(state_interfaces_);
+  agimus_franka_cartesian_pose_->assign_loaned_command_interfaces(
+      command_interfaces_);
+  agimus_franka_cartesian_pose_->assign_loaned_state_interfaces(
+      state_interfaces_);
 
   return CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn CartesianElbowExampleController::on_deactivate(
+controller_interface::CallbackReturn
+CartesianElbowExampleController::on_deactivate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   agimus_franka_cartesian_pose_->release_interfaces();
   return CallbackReturn::SUCCESS;
@@ -133,5 +144,6 @@ controller_interface::CallbackReturn CartesianElbowExampleController::on_deactiv
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::CartesianElbowExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::CartesianElbowExampleController,
+    controller_interface::ControllerInterface)

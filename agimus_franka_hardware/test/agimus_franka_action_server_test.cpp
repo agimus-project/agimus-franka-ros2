@@ -15,20 +15,21 @@ class FrankaActionServerTests
 template <typename action_client_type>
 void get_action_service_response(
     std::function<void(std::shared_ptr<MockRobot> mock_robot)> mock_function,
-    const std::string& action_name,
-    rclcpp_action::ResultCode result_code) {
+    const std::string& action_name, rclcpp_action::ResultCode result_code) {
   auto mock_robot = std::make_shared<MockRobot>();
   mock_function(mock_robot);
 
   std::string arm_id{"fr3"};
-  agimus_franka_hardware::AgimusFrankaHardwareInterface agimus_franka_hardware_interface(mock_robot, arm_id);
+  agimus_franka_hardware::AgimusFrankaHardwareInterface
+      agimus_franka_hardware_interface(mock_robot, arm_id);
 
   const auto hardware_info = createHardwareInfo();
   agimus_franka_hardware_interface.on_init(hardware_info);
 
   auto node = rclcpp::Node::make_shared("test_node");
 
-  auto client = rclcpp_action::create_client<action_client_type>(node, action_name);
+  auto client =
+      rclcpp_action::create_client<action_client_type>(node, action_name);
   if (!client->wait_for_action_server(20s)) {
     ASSERT_TRUE(false) << "Action not available after waiting";
   }
@@ -37,7 +38,8 @@ void get_action_service_response(
 
   bool is_finished = false;
   auto goal_msg = typename action_client_type::Goal();
-  auto send_goal_options = typename rclcpp_action::Client<action_client_type>::SendGoalOptions();
+  auto send_goal_options =
+      typename rclcpp_action::Client<action_client_type>::SendGoalOptions();
   send_goal_options.goal_response_callback = [&](const auto& future_result) {
     auto goal_handle = future_result.get();
     ASSERT_TRUE(goal_handle);
@@ -58,7 +60,8 @@ void get_action_service_response(
   }
   auto goal_handle = action_accepted.get();
 
-  auto result = client->async_get_result(goal_handle, send_goal_options.result_callback);
+  auto result =
+      client->async_get_result(goal_handle, send_goal_options.result_callback);
   start_point = std::chrono::system_clock::now();
   end_point = start_point + 5s;
   while (!is_finished || result.wait_for(0s) != std::future_status::ready) {
@@ -79,24 +82,26 @@ TEST_P(FrankaActionServerTests,
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    FrankaActionServerTestsInstantiation,
-    FrankaActionServerTests,
-    ::testing::Values(std::make_pair(
-                          [](std::shared_ptr<MockRobot> mock_robot) {
-                            EXPECT_CALL(*mock_robot, automaticErrorRecovery()).Times(1);
-                          },
-                          rclcpp_action::ResultCode::SUCCEEDED),
-                      std::make_pair(
-                          [](std::shared_ptr<MockRobot> mock_robot) {
-                            EXPECT_CALL(*mock_robot, automaticErrorRecovery())
-                                .Times(1)
-                                .WillRepeatedly(testing::Throw(agimus_franka::CommandException("")));
-                          },
-                          rclcpp_action::ResultCode::ABORTED),
-                      std::make_pair(
-                          [](std::shared_ptr<MockRobot> mock_robot) {
-                            EXPECT_CALL(*mock_robot, automaticErrorRecovery())
-                                .Times(1)
-                                .WillRepeatedly(testing::Throw(agimus_franka::NetworkException("")));
-                          },
-                          rclcpp_action::ResultCode::ABORTED)));
+    FrankaActionServerTestsInstantiation, FrankaActionServerTests,
+    ::testing::Values(
+        std::make_pair(
+            [](std::shared_ptr<MockRobot> mock_robot) {
+              EXPECT_CALL(*mock_robot, automaticErrorRecovery()).Times(1);
+            },
+            rclcpp_action::ResultCode::SUCCEEDED),
+        std::make_pair(
+            [](std::shared_ptr<MockRobot> mock_robot) {
+              EXPECT_CALL(*mock_robot, automaticErrorRecovery())
+                  .Times(1)
+                  .WillRepeatedly(
+                      testing::Throw(agimus_franka::CommandException("")));
+            },
+            rclcpp_action::ResultCode::ABORTED),
+        std::make_pair(
+            [](std::shared_ptr<MockRobot> mock_robot) {
+              EXPECT_CALL(*mock_robot, automaticErrorRecovery())
+                  .Times(1)
+                  .WillRepeatedly(
+                      testing::Throw(agimus_franka::NetworkException("")));
+            },
+            rclcpp_action::ResultCode::ABORTED)));

@@ -4,4 +4,3 @@ Changelog for package agimus_franka_bringup
 
 1.0.0 (2025-01-22)
 ------------------
-

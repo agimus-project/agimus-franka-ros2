@@ -19,27 +19,29 @@
 #include <limits>
 #include <string>
 #include <vector>
+
 #include "agimus_franka/robot_state.h"
 #include "agimus_franka_hardware/model.hpp"
-
 #include "semantic_components/semantic_component_interface.hpp"
 
 namespace agimus_franka_semantic_components {
 class AgimusFrankaRobotModel
-    : public semantic_components::SemanticComponentInterface<agimus_franka_hardware::Model> {
+    : public semantic_components::SemanticComponentInterface<
+          agimus_franka_hardware::Model> {
  public:
   /**
    * Creates an instance of a AgimusFrankaRobotModel.
    * @param[in] name The name of robot model state interface.
    */
   AgimusFrankaRobotModel(const std::string& agimus_franka_model_interface_name,
-                   const std::string& agimus_franka_state_interface_name);
+                         const std::string& agimus_franka_state_interface_name);
   AgimusFrankaRobotModel() = delete;
 
   virtual ~AgimusFrankaRobotModel() = default;
 
   /**
-   * Calculates the 7x7 mass matrix from the current robot state. Unit: \f$[kg \times m^2]\f$.
+   * Calculates the 7x7 mass matrix from the current robot state. Unit: \f$[kg
+   * \times m^2]\f$.
    *
    * @return Vectorized 7x7 mass matrix, column-major.
    *
@@ -55,7 +57,8 @@ class AgimusFrankaRobotModel
   }
 
   /**
-   * Calculates the Coriolis force vector (state-space equation) from the current robot state:
+   * Calculates the Coriolis force vector (state-space equation) from the
+   * current robot state:
    * \f$ c= C \times dq\f$, in \f$[Nm]\f$.
    *
    * @return Coriolis force vector.
@@ -72,7 +75,8 @@ class AgimusFrankaRobotModel
   }
 
   /**
-   * Calculates the gravity vector from the current robot state. Unit: \f$[Nm]\f$.
+   * Calculates the gravity vector from the current robot state. Unit:
+   * \f$[Nm]\f$.
    *
    * @return Gravity vector.
    *
@@ -87,8 +91,8 @@ class AgimusFrankaRobotModel
   }
 
   /**
-   * Gets the 4x4 pose matrix for the given frame in base frame, calculated from the current
-   * robot state.
+   * Gets the 4x4 pose matrix for the given frame in base frame, calculated from
+   * the current robot state.
    *
    * The pose is represented as a 4x4 matrix in column-major format.
    *
@@ -109,11 +113,11 @@ class AgimusFrankaRobotModel
   /**
    * Gets the 6x7 Jacobian for the given frame, relative to the given frame.
    *
-   * BodyJacobian relates joint velocities to the end-effoctor twist expressed in the the given
-   * frame.
+   * BodyJacobian relates joint velocities to the end-effoctor twist expressed
+   * in the the given frame.
    *
-   * The Jacobian is represented as a 6x7 matrix in column-major format and calculated from
-   * the current robot state.
+   * The Jacobian is represented as a 6x7 matrix in column-major format and
+   * calculated from the current robot state.
    *
    * Jacobian matrix is in the form | linear components  |
    *                                | angular components |
@@ -124,13 +128,14 @@ class AgimusFrankaRobotModel
    *
    * getBodyJacobian: (frame = kJoint1) will return kJoint1_J_kJoint1(6x7)
    *
-   * kJoint1_J_kJoint1 can be used to calculate the twist in the Joint1 by multiplying
-   * with the joint velocities.
+   * kJoint1_J_kJoint1 can be used to calculate the twist in the Joint1 by
+   * multiplying with the joint velocities.
    *
    * \f$^{1}{\mathcal{V}_{1}} = \, ^{1}{\mathcal{J}_{1}} * dq\f$
    *
-   * Similarly, given desired joint twist in the kJoint1 frame, pseudoinverse of body jacobian can
-   * be used to retrieve the desired joint velocity to command.
+   * Similarly, given desired joint twist in the kJoint1 frame, pseudoinverse of
+   * body jacobian can be used to retrieve the desired joint velocity to
+   * command.
    *
    * \f$ dq = \ ^{1}{\mathcal{J}^{\dagger}_{1}} * \, ^{1}{\mathcal{V}_{1}}\f$
    *
@@ -151,8 +156,8 @@ class AgimusFrankaRobotModel
   /**
    * Gets the 6x7 Jacobian for the given joint relative to the base(zero) frame.
    *
-   * The Jacobian is represented as a 6x7 matrix in column-major format and calculated from
-   * the current robot state.
+   * The Jacobian is represented as a 6x7 matrix in column-major format and
+   * calculated from the current robot state.
    *
    * Jacobian matrix is in the form | linear components  |
    *                                | angular components |
@@ -163,13 +168,14 @@ class AgimusFrankaRobotModel
    *
    * getZeroJacobian: (frame: kJoint1) will return base_J_kJoint1(6x7)
    *
-   * base_J_kJoint1 can be used to calculate the twist in the Joint1 by multiplying
-   * with the joint velocities.
+   * base_J_kJoint1 can be used to calculate the twist in the Joint1 by
+   * multiplying with the joint velocities.
    *
    * \f$^{O}{\mathcal{V}_{1}} = \, ^{O}{\mathcal{J}_{1}} * dq\f$
    *
-   * Similarly, given desired joint twist in the base frame, pseudoinverse of zero jacobian can be
-   *used to retrieve the desired joint velocity to command.
+   * Similarly, given desired joint twist in the base frame, pseudoinverse of
+   * zero jacobian can be used to retrieve the desired joint velocity to
+   * command.
    *
    *
    *\f$ dq = \, ^{O}{\mathcal{J}^{\dagger}_{1}} * \, ^{O}{\mathcal{V}_{1}}\f$
@@ -190,7 +196,8 @@ class AgimusFrankaRobotModel
 
  protected:
   /**
-   * Retrieve the robot state and robot model pointers from the hardware state interface
+   * Retrieve the robot state and robot model pointers from the hardware state
+   * interface
    *
    * @throws Runtime error when state interfaces are not available.
    */

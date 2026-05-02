@@ -19,31 +19,33 @@
 #include <unordered_map>
 #include <vector>
 
-#include "controller_interface/controller_interface.hpp"
 #include "agimus_franka_msgs/msg/agimus_franka_robot_state.hpp"
 #include "agimus_franka_robot_state_broadcaster_parameters.hpp"
 #include "agimus_franka_semantic_components/agimus_franka_robot_state.hpp"
+#include "controller_interface/controller_interface.hpp"
 #include "rclcpp_lifecycle/lifecycle_publisher.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "realtime_tools/realtime_publisher.h"
 
 namespace agimus_franka_robot_state_broadcaster {
-class AgimusFrankaRobotStateBroadcaster : public controller_interface::ControllerInterface {
+class AgimusFrankaRobotStateBroadcaster
+    : public controller_interface::ControllerInterface {
  public:
   // NOLINTBEGIN
   explicit AgimusFrankaRobotStateBroadcaster(
-      std::unique_ptr<agimus_franka_semantic_components::AgimusFrankaRobotState> agimus_franka_robot_state = nullptr)
-      : agimus_franka_robot_state_(std::move(agimus_franka_robot_state)){};
+      std::unique_ptr<agimus_franka_semantic_components::AgimusFrankaRobotState>
+          agimus_franka_robot_state = nullptr)
+      : agimus_franka_robot_state_(std::move(agimus_franka_robot_state)) {};
   // NOLINTEND
 
-  [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
-      const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  command_interface_configuration() const override;
 
-  [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
-      const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  state_interface_configuration() const override;
 
-  controller_interface::return_type update(const rclcpp::Time& time,
-                                           const rclcpp::Duration& period) override;
+  controller_interface::return_type update(
+      const rclcpp::Time& time, const rclcpp::Duration& period) override;
   controller_interface::CallbackReturn on_init() override;
 
   controller_interface::CallbackReturn on_configure(
@@ -60,8 +62,11 @@ class AgimusFrankaRobotStateBroadcaster : public controller_interface::Controlle
   Params params;
 
   std::string state_interface_name{"robot_state"};
-  std::shared_ptr<rclcpp::Publisher<agimus_franka_msgs::msg::AgimusFrankaRobotState>> agimus_franka_state_publisher;
-  std::shared_ptr<realtime_tools::RealtimePublisher<agimus_franka_msgs::msg::AgimusFrankaRobotState>>
+  std::shared_ptr<
+      rclcpp::Publisher<agimus_franka_msgs::msg::AgimusFrankaRobotState>>
+      agimus_franka_state_publisher;
+  std::shared_ptr<realtime_tools::RealtimePublisher<
+      agimus_franka_msgs::msg::AgimusFrankaRobotState>>
       realtime_franka_state_publisher;
   std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::PoseStamped>>
       current_pose_stamped_publisher_;
@@ -76,20 +81,26 @@ class AgimusFrankaRobotStateBroadcaster : public controller_interface::Controlle
   std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::JointState>>
       external_joint_torques_publisher_;
 
-  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::JointState>> measured_joint_states_publisher_;
-  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::JointState>> desired_joint_states_publisher_;
+  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::JointState>>
+      measured_joint_states_publisher_;
+  std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::JointState>>
+      desired_joint_states_publisher_;
 
   const std::string kCurrentPoseTopic = "~/current_pose";
   const std::string kLastDesiredPoseTopic = "~/last_desired_pose";
   const std::string kDesiredEETwist = "~/desired_end_effector_twist";
   const std::string kMeasuredJointStates = "~/measured_joint_states";
-  const std::string kExternalWrenchInStiffnessFrame = "~/external_wrench_in_stiffness_frame";
-  const std::string kExternalWrenchInBaseFrame = "~/external_wrench_in_base_frame";
+  const std::string kExternalWrenchInStiffnessFrame =
+      "~/external_wrench_in_stiffness_frame";
+  const std::string kExternalWrenchInBaseFrame =
+      "~/external_wrench_in_base_frame";
   const std::string kExternalJointTorques = "~/external_joint_torques";
   const std::string kDesiredJointStates = "~/desired_joint_states";
 
-  agimus_franka_msgs::msg::AgimusFrankaRobotState agimus_franka_robot_state_msg_;
-  std::unique_ptr<agimus_franka_semantic_components::AgimusFrankaRobotState> agimus_franka_robot_state_;
+  agimus_franka_msgs::msg::AgimusFrankaRobotState
+      agimus_franka_robot_state_msg_;
+  std::unique_ptr<agimus_franka_semantic_components::AgimusFrankaRobotState>
+      agimus_franka_robot_state_;
 };
 
 }  // namespace agimus_franka_robot_state_broadcaster

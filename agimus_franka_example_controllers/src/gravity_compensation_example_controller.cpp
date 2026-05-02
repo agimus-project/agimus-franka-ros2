@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <agimus_franka_example_controllers/gravity_compensation_example_controller.hpp>
-
 #include <exception>
 #include <string>
 
@@ -36,8 +35,7 @@ GravityCompensationExampleController::state_interface_configuration() const {
 }
 
 controller_interface::return_type GravityCompensationExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& /*period*/) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
   for (auto& command_interface : command_interfaces_) {
     command_interface.set_value(0.0);
   }
@@ -55,7 +53,8 @@ CallbackReturn GravityCompensationExampleController::on_init() {
     auto_declare<std::string>("arm_id", "fr3");
     auto_declare<std::vector<std::string>>("joints", {});
   } catch (const std::exception& e) {
-    fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+    fprintf(stderr, "Exception thrown during init stage with message: %s \n",
+            e.what());
     return CallbackReturn::ERROR;
   }
   return CallbackReturn::SUCCESS;
@@ -63,5 +62,6 @@ CallbackReturn GravityCompensationExampleController::on_init() {
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::GravityCompensationExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::GravityCompensationExampleController,
+    controller_interface::ControllerInterface)

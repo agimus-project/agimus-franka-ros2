@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <Eigen/Eigen>
 #include <agimus_franka_example_controllers/default_robot_behavior_utils.hpp>
 #include <agimus_franka_example_controllers/joint_velocity_example_controller.hpp>
 #include <agimus_franka_example_controllers/robot_utils.hpp>
-
 #include <cassert>
 #include <cmath>
 #include <exception>
 #include <string>
-
-#include <Eigen/Eigen>
 
 namespace agimus_franka_example_controllers {
 
@@ -31,7 +29,8 @@ JointVelocityExampleController::command_interface_configuration() const {
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
   for (int i = 1; i <= num_joints; ++i) {
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/velocity");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/velocity");
   }
   return config;
 }
@@ -41,23 +40,26 @@ JointVelocityExampleController::state_interface_configuration() const {
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
   for (int i = 1; i <= num_joints; ++i) {
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/position");
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/velocity");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/position");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/velocity");
   }
   return config;
 }
 
 controller_interface::return_type JointVelocityExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& period) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& period) {
   elapsed_time_ = elapsed_time_ + period;
   rclcpp::Duration time_max(8.0, 0.0);
   double omega_max = 0.1;
-  double cycle = std::floor(std::pow(
-      -1.0, (elapsed_time_.seconds() - std::fmod(elapsed_time_.seconds(), time_max.seconds())) /
-                time_max.seconds()));
+  double cycle = std::floor(
+      std::pow(-1.0, (elapsed_time_.seconds() -
+                      std::fmod(elapsed_time_.seconds(), time_max.seconds())) /
+                         time_max.seconds()));
   double omega = cycle * omega_max / 2.0 *
-                 (1.0 - std::cos(2.0 * M_PI / time_max.seconds() * elapsed_time_.seconds()));
+                 (1.0 - std::cos(2.0 * M_PI / time_max.seconds() *
+                                 elapsed_time_.seconds()));
 
   for (int i = 0; i < num_joints; i++) {
     if (i == 3 || i == 4) {
@@ -74,7 +76,8 @@ CallbackReturn JointVelocityExampleController::on_init() {
     auto_declare<bool>("gazebo", false);
     auto_declare<std::string>("robot_description", "");
   } catch (const std::exception& e) {
-    fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+    fprintf(stderr, "Exception thrown during init stage with message: %s \n",
+            e.what());
     return CallbackReturn::ERROR;
   }
   return CallbackReturn::SUCCESS;
@@ -84,8 +87,8 @@ CallbackReturn JointVelocityExampleController::on_configure(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   is_gazebo = get_node()->get_parameter("gazebo").as_bool();
 
-  auto parameters_client =
-      std::make_shared<rclcpp::AsyncParametersClient>(get_node(), "/robot_state_publisher");
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+      get_node(), "/robot_state_publisher");
   parameters_client->wait_for_service();
 
   auto future = parameters_client->get_parameters({"robot_description"});
@@ -93,14 +96,18 @@ CallbackReturn JointVelocityExampleController::on_configure(
   if (!result.empty()) {
     robot_description_ = result[0].value_to_string();
   } else {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter.");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Failed to get robot_description parameter.");
   }
 
-  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_, get_node()->get_logger());
+  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_,
+                                                     get_node()->get_logger());
 
   if (!is_gazebo) {
-    auto client = get_node()->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
-        "service_server/set_full_collision_behavior");
+    auto client =
+        get_node()
+            ->create_client<agimus_franka_msgs::srv::SetFullCollisionBehavior>(
+                "service_server/set_full_collision_behavior");
     auto request = DefaultRobotBehavior::getDefaultCollisionBehaviorRequest();
 
     auto future_result = client->async_send_request(request);
@@ -108,7 +115,8 @@ CallbackReturn JointVelocityExampleController::on_configure(
 
     auto success = future_result.get();
     if (!success) {
-      RCLCPP_FATAL(get_node()->get_logger(), "Failed to set default collision behavior.");
+      RCLCPP_FATAL(get_node()->get_logger(),
+                   "Failed to set default collision behavior.");
       return CallbackReturn::ERROR;
     } else {
       RCLCPP_INFO(get_node()->get_logger(), "Default collision behavior set.");
@@ -127,5 +135,6 @@ CallbackReturn JointVelocityExampleController::on_activate(
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::JointVelocityExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::JointVelocityExampleController,
+    controller_interface::ControllerInterface)

@@ -15,38 +15,44 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include <string>
-
-#include <controller_interface/controller_interface.hpp>
 #include <agimus_franka_example_controllers/robot_utils.hpp>
+#include <controller_interface/controller_interface.hpp>
 #include <moveit_msgs/srv/get_position_ik.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
+
 #include "agimus_franka_semantic_components/agimus_franka_cartesian_pose_interface.hpp"
 #include "agimus_franka_semantic_components/agimus_franka_robot_model.hpp"
 
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+using CallbackReturn =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
 namespace agimus_franka_example_controllers {
 
 /**
- * joint impedance example controller get desired pose and use inverse kinematics LMA
- * (Levenberg-Marquardt) from Orocos KDL. IK returns the desired joint positions from the desired
- * pose. Desired joint positions are fed to the impedance control law together with the current
- * joint velocities to calculate the desired joint torques.
+ * joint impedance example controller get desired pose and use inverse
+ * kinematics LMA (Levenberg-Marquardt) from Orocos KDL. IK returns the desired
+ * joint positions from the desired pose. Desired joint positions are fed to the
+ * impedance control law together with the current joint velocities to calculate
+ * the desired joint torques.
  */
-class JointImpedanceWithIKExampleController : public controller_interface::ControllerInterface {
+class JointImpedanceWithIKExampleController
+    : public controller_interface::ControllerInterface {
  public:
   using Vector7d = Eigen::Matrix<double, 7, 1>;
-  [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
-      const override;
-  [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
-      const override;
-  controller_interface::return_type update(const rclcpp::Time& time,
-                                           const rclcpp::Duration& period) override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  command_interface_configuration() const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  state_interface_configuration() const override;
+  controller_interface::return_type update(
+      const rclcpp::Time& time, const rclcpp::Duration& period) override;
   CallbackReturn on_init() override;
-  CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_configure(
+      const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_activate(
+      const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_deactivate(
+      const rclcpp_lifecycle::State& previous_state) override;
 
  private:
   void update_joint_states();
@@ -54,26 +60,28 @@ class JointImpedanceWithIKExampleController : public controller_interface::Contr
   /**
    * @brief Calculates the new pose based on the initial pose.
    *
-   * @return  Eigen::Vector3d calculated sinosuidal period for the x,z position of the pose.
+   * @return  Eigen::Vector3d calculated sinosuidal period for the x,z position
+   * of the pose.
    */
   Eigen::Vector3d compute_new_position();
 
   /**
-   * @brief creates the ik service request for ik service from moveit. Assigns the move-group,
-   * desired pose of the desired link.
+   * @brief creates the ik service request for ik service from moveit. Assigns
+   * the move-group, desired pose of the desired link.
    *
-   * @return std::shared_ptr<moveit_msgs::srv::GetPositionIK::Request> request service message
+   * @return std::shared_ptr<moveit_msgs::srv::GetPositionIK::Request> request
+   * service message
    */
-  std::shared_ptr<moveit_msgs::srv::GetPositionIK::Request> create_ik_service_request(
-      const Eigen::Vector3d& new_position,
-      const Eigen::Quaterniond& new_orientation,
-      const std::vector<double>& joint_positions_desired,
-      const std::vector<double>& joint_positions_current,
-      const std::vector<double>& joint_efforts_current);
+  std::shared_ptr<moveit_msgs::srv::GetPositionIK::Request>
+  create_ik_service_request(const Eigen::Vector3d& new_position,
+                            const Eigen::Quaterniond& new_orientation,
+                            const std::vector<double>& joint_positions_desired,
+                            const std::vector<double>& joint_positions_current,
+                            const std::vector<double>& joint_efforts_current);
 
   /**
-   * @brief computes the torque commands based on impedance control law with compensated coriolis
-   * terms
+   * @brief computes the torque commands based on impedance control law with
+   * compensated coriolis terms
    *
    * @return Eigen::Vector7d torque for each joint of the robot
    */
@@ -84,11 +92,14 @@ class JointImpedanceWithIKExampleController : public controller_interface::Contr
   /**
    * @brief assigns the Kp, Kd and arm_id parameters
    *
-   * @return true when parameters are present, false when parameters are not available
+   * @return true when parameters are present, false when parameters are not
+   * available
    */
   bool assign_parameters();
 
-  std::unique_ptr<agimus_franka_semantic_components::FrankaCartesianPoseInterface> agimus_franka_cartesian_pose_;
+  std::unique_ptr<
+      agimus_franka_semantic_components::FrankaCartesianPoseInterface>
+      agimus_franka_cartesian_pose_;
 
   Eigen::Quaterniond orientation_;
   Eigen::Vector3d position_;
@@ -104,7 +115,8 @@ class JointImpedanceWithIKExampleController : public controller_interface::Contr
   double elapsed_time_{0.0};
   double initial_robot_time_{0.0};
   double robot_time_{0.0};
-  std::unique_ptr<agimus_franka_semantic_components::AgimusFrankaRobotModel> agimus_franka_robot_model_;
+  std::unique_ptr<agimus_franka_semantic_components::AgimusFrankaRobotModel>
+      agimus_franka_robot_model_;
 
   const std::string k_robot_state_interface_name{"robot_state"};
   const std::string k_robot_model_interface_name{"robot_model"};

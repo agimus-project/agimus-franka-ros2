@@ -19,7 +19,8 @@
 
 namespace agimus_franka_semantic_components::translation {
 
-agimus_franka_msgs::msg::Errors errorsToMessage(const agimus_franka::Errors& error) {
+agimus_franka_msgs::msg::Errors errorsToMessage(
+    const agimus_franka::Errors& error) {
   agimus_franka_msgs::msg::Errors message;
   message.joint_position_limits_violation =
       static_cast<decltype(message.joint_position_limits_violation)>(
@@ -31,14 +32,16 @@ agimus_franka_msgs::msg::Errors errorsToMessage(const agimus_franka::Errors& err
       static_cast<decltype(message.self_collision_avoidance_violation)>(
           error.self_collision_avoidance_violation);
   message.joint_velocity_violation =
-      static_cast<decltype(message.joint_velocity_violation)>(error.joint_velocity_violation);
+      static_cast<decltype(message.joint_velocity_violation)>(
+          error.joint_velocity_violation);
   message.cartesian_velocity_violation =
       static_cast<decltype(message.cartesian_velocity_violation)>(
           error.cartesian_velocity_violation);
   message.force_control_safety_violation =
       static_cast<decltype(message.force_control_safety_violation)>(
           error.force_control_safety_violation);
-  message.joint_reflex = static_cast<decltype(message.joint_reflex)>(error.joint_reflex);
+  message.joint_reflex =
+      static_cast<decltype(message.joint_reflex)>(error.joint_reflex);
   message.cartesian_reflex =
       static_cast<decltype(message.cartesian_reflex)>(error.cartesian_reflex);
   message.max_goal_pose_deviation_violation =
@@ -47,63 +50,70 @@ agimus_franka_msgs::msg::Errors errorsToMessage(const agimus_franka::Errors& err
   message.max_path_pose_deviation_violation =
       static_cast<decltype(message.max_path_pose_deviation_violation)>(
           error.max_path_pose_deviation_violation);
-  message.cartesian_velocity_profile_safety_violation =
-      static_cast<decltype(message.cartesian_velocity_profile_safety_violation)>(
-          error.cartesian_velocity_profile_safety_violation);
-  message.joint_position_motion_generator_start_pose_invalid =
-      static_cast<decltype(message.joint_position_motion_generator_start_pose_invalid)>(
-          error.joint_position_motion_generator_start_pose_invalid);
-  message.joint_motion_generator_position_limits_violation =
-      static_cast<decltype(message.joint_motion_generator_position_limits_violation)>(
-          error.joint_motion_generator_position_limits_violation);
-  message.joint_motion_generator_velocity_limits_violation =
-      static_cast<decltype(message.joint_motion_generator_velocity_limits_violation)>(
-          error.joint_motion_generator_velocity_limits_violation);
-  message.joint_motion_generator_velocity_discontinuity =
-      static_cast<decltype(message.joint_motion_generator_velocity_discontinuity)>(
-          error.joint_motion_generator_velocity_discontinuity);
-  message.joint_motion_generator_acceleration_discontinuity =
-      static_cast<decltype(message.joint_motion_generator_acceleration_discontinuity)>(
-          error.joint_motion_generator_acceleration_discontinuity);
-  message.cartesian_position_motion_generator_start_pose_invalid =
-      static_cast<decltype(message.cartesian_position_motion_generator_start_pose_invalid)>(
-          error.cartesian_position_motion_generator_start_pose_invalid);
-  message.cartesian_motion_generator_elbow_limit_violation =
-      static_cast<decltype(message.cartesian_motion_generator_elbow_limit_violation)>(
-          error.cartesian_motion_generator_elbow_limit_violation);
-  message.cartesian_motion_generator_velocity_limits_violation =
-      static_cast<decltype(message.cartesian_motion_generator_velocity_limits_violation)>(
-          error.cartesian_motion_generator_velocity_limits_violation);
-  message.cartesian_motion_generator_velocity_discontinuity =
-      static_cast<decltype(message.cartesian_motion_generator_velocity_discontinuity)>(
-          error.cartesian_motion_generator_velocity_discontinuity);
-  message.cartesian_motion_generator_acceleration_discontinuity =
-      static_cast<decltype(message.cartesian_motion_generator_acceleration_discontinuity)>(
-          error.cartesian_motion_generator_acceleration_discontinuity);
-  message.cartesian_motion_generator_elbow_sign_inconsistent =
-      static_cast<decltype(message.cartesian_motion_generator_elbow_sign_inconsistent)>(
-          error.cartesian_motion_generator_elbow_sign_inconsistent);
-  message.cartesian_motion_generator_start_elbow_invalid =
-      static_cast<decltype(message.cartesian_motion_generator_start_elbow_invalid)>(
-          error.cartesian_motion_generator_start_elbow_invalid);
-  message.cartesian_motion_generator_joint_position_limits_violation =
-      static_cast<decltype(message.cartesian_motion_generator_joint_position_limits_violation)>(
-          error.cartesian_motion_generator_joint_position_limits_violation);
-  message.cartesian_motion_generator_joint_velocity_limits_violation =
-      static_cast<decltype(message.cartesian_motion_generator_joint_velocity_limits_violation)>(
-          error.cartesian_motion_generator_joint_velocity_limits_violation);
-  message.cartesian_motion_generator_joint_velocity_discontinuity =
-      static_cast<decltype(message.cartesian_motion_generator_joint_velocity_discontinuity)>(
-          error.cartesian_motion_generator_joint_velocity_discontinuity);
-  message.cartesian_motion_generator_joint_acceleration_discontinuity =
-      static_cast<decltype(message.cartesian_motion_generator_joint_acceleration_discontinuity)>(
-          error.cartesian_motion_generator_joint_acceleration_discontinuity);
-  message.cartesian_position_motion_generator_invalid_frame =
-      static_cast<decltype(message.cartesian_position_motion_generator_invalid_frame)>(
-          error.cartesian_position_motion_generator_invalid_frame);
-  message.force_controller_desired_force_tolerance_violation =
-      static_cast<decltype(message.force_controller_desired_force_tolerance_violation)>(
-          error.force_controller_desired_force_tolerance_violation);
+  message.cartesian_velocity_profile_safety_violation = static_cast<
+      decltype(message.cartesian_velocity_profile_safety_violation)>(
+      error.cartesian_velocity_profile_safety_violation);
+  message.joint_position_motion_generator_start_pose_invalid = static_cast<
+      decltype(message.joint_position_motion_generator_start_pose_invalid)>(
+      error.joint_position_motion_generator_start_pose_invalid);
+  message.joint_motion_generator_position_limits_violation = static_cast<
+      decltype(message.joint_motion_generator_position_limits_violation)>(
+      error.joint_motion_generator_position_limits_violation);
+  message.joint_motion_generator_velocity_limits_violation = static_cast<
+      decltype(message.joint_motion_generator_velocity_limits_violation)>(
+      error.joint_motion_generator_velocity_limits_violation);
+  message.joint_motion_generator_velocity_discontinuity = static_cast<
+      decltype(message.joint_motion_generator_velocity_discontinuity)>(
+      error.joint_motion_generator_velocity_discontinuity);
+  message.joint_motion_generator_acceleration_discontinuity = static_cast<
+      decltype(message.joint_motion_generator_acceleration_discontinuity)>(
+      error.joint_motion_generator_acceleration_discontinuity);
+  message.cartesian_position_motion_generator_start_pose_invalid = static_cast<
+      decltype(message.cartesian_position_motion_generator_start_pose_invalid)>(
+      error.cartesian_position_motion_generator_start_pose_invalid);
+  message.cartesian_motion_generator_elbow_limit_violation = static_cast<
+      decltype(message.cartesian_motion_generator_elbow_limit_violation)>(
+      error.cartesian_motion_generator_elbow_limit_violation);
+  message.cartesian_motion_generator_velocity_limits_violation = static_cast<
+      decltype(message.cartesian_motion_generator_velocity_limits_violation)>(
+      error.cartesian_motion_generator_velocity_limits_violation);
+  message.cartesian_motion_generator_velocity_discontinuity = static_cast<
+      decltype(message.cartesian_motion_generator_velocity_discontinuity)>(
+      error.cartesian_motion_generator_velocity_discontinuity);
+  message.cartesian_motion_generator_acceleration_discontinuity = static_cast<
+      decltype(message.cartesian_motion_generator_acceleration_discontinuity)>(
+      error.cartesian_motion_generator_acceleration_discontinuity);
+  message.cartesian_motion_generator_elbow_sign_inconsistent = static_cast<
+      decltype(message.cartesian_motion_generator_elbow_sign_inconsistent)>(
+      error.cartesian_motion_generator_elbow_sign_inconsistent);
+  message.cartesian_motion_generator_start_elbow_invalid = static_cast<
+      decltype(message.cartesian_motion_generator_start_elbow_invalid)>(
+      error.cartesian_motion_generator_start_elbow_invalid);
+  message
+      .cartesian_motion_generator_joint_position_limits_violation = static_cast<
+      decltype(message
+                   .cartesian_motion_generator_joint_position_limits_violation)>(
+      error.cartesian_motion_generator_joint_position_limits_violation);
+  message
+      .cartesian_motion_generator_joint_velocity_limits_violation = static_cast<
+      decltype(message
+                   .cartesian_motion_generator_joint_velocity_limits_violation)>(
+      error.cartesian_motion_generator_joint_velocity_limits_violation);
+  message.cartesian_motion_generator_joint_velocity_discontinuity = static_cast<
+      decltype(message
+                   .cartesian_motion_generator_joint_velocity_discontinuity)>(
+      error.cartesian_motion_generator_joint_velocity_discontinuity);
+  message
+      .cartesian_motion_generator_joint_acceleration_discontinuity = static_cast<
+      decltype(message
+                   .cartesian_motion_generator_joint_acceleration_discontinuity)>(
+      error.cartesian_motion_generator_joint_acceleration_discontinuity);
+  message.cartesian_position_motion_generator_invalid_frame = static_cast<
+      decltype(message.cartesian_position_motion_generator_invalid_frame)>(
+      error.cartesian_position_motion_generator_invalid_frame);
+  message.force_controller_desired_force_tolerance_violation = static_cast<
+      decltype(message.force_controller_desired_force_tolerance_violation)>(
+      error.force_controller_desired_force_tolerance_violation);
   message.controller_torque_discontinuity =
       static_cast<decltype(message.controller_torque_discontinuity)>(
           error.controller_torque_discontinuity);
@@ -114,14 +124,17 @@ agimus_franka_msgs::msg::Errors errorsToMessage(const agimus_franka::Errors& err
       static_cast<decltype(message.communication_constraints_violation)>(
           error.communication_constraints_violation);
   message.power_limit_violation =
-      static_cast<decltype(message.power_limit_violation)>(error.power_limit_violation);
+      static_cast<decltype(message.power_limit_violation)>(
+          error.power_limit_violation);
   message.joint_p2p_insufficient_torque_for_planning =
       static_cast<decltype(message.joint_p2p_insufficient_torque_for_planning)>(
           error.joint_p2p_insufficient_torque_for_planning);
   message.tau_j_range_violation =
-      static_cast<decltype(message.tau_j_range_violation)>(error.tau_j_range_violation);
+      static_cast<decltype(message.tau_j_range_violation)>(
+          error.tau_j_range_violation);
   message.instability_detected =
-      static_cast<decltype(message.instability_detected)>(error.instability_detected);
+      static_cast<decltype(message.instability_detected)>(
+          error.instability_detected);
   return message;
 }
 
@@ -129,7 +142,8 @@ agimus_franka_msgs::msg::Errors errorsToMessage(const agimus_franka::Errors& err
  * @param input_wrench The wrench which should be translated
  * @return geometry_msgs::msg::Wrench The translated wrench
  */
-auto toWrench(const std::array<double, 6>& input_wrench) -> geometry_msgs::msg::Wrench {
+auto toWrench(const std::array<double, 6>& input_wrench)
+    -> geometry_msgs::msg::Wrench {
   geometry_msgs::msg::Wrench output_wrench;
   output_wrench.force = geometry_msgs::build<geometry_msgs::msg::Vector3>()
                             .x(input_wrench[0])
@@ -147,7 +161,8 @@ auto toWrench(const std::array<double, 6>& input_wrench) -> geometry_msgs::msg::
  * @param input_twist The twist which should be translated
  * @return geometry_msgs::msg::Twist The translated twist
  */
-auto toTwist(const std::array<double, 6>& input_twist) -> geometry_msgs::msg::Twist {
+auto toTwist(const std::array<double, 6>& input_twist)
+    -> geometry_msgs::msg::Twist {
   geometry_msgs::msg::Twist output_twist;
   output_twist.linear = geometry_msgs::build<geometry_msgs::msg::Vector3>()
                             .x(input_twist[0])
@@ -165,7 +180,8 @@ auto toTwist(const std::array<double, 6>& input_twist) -> geometry_msgs::msg::Tw
  * @param input_accel The acceleration which should be translated
  * @return geometry_msgs::msg::Accel The translated acceleration
  */
-auto toAccel(const std::array<double, 6>& input_accel) -> geometry_msgs::msg::Accel {
+auto toAccel(const std::array<double, 6>& input_accel)
+    -> geometry_msgs::msg::Accel {
   geometry_msgs::msg::Accel output_accel;
   output_accel.linear = geometry_msgs::build<geometry_msgs::msg::Vector3>()
                             .x(input_accel[0])
@@ -183,21 +199,26 @@ auto toAccel(const std::array<double, 6>& input_accel) -> geometry_msgs::msg::Ac
  * @param input_pose The pose which should be translated
  * @return geometry_msgs::msg::Pose The translated pose
  */
-auto toPose(const std::array<double, 16>& input_pose) -> geometry_msgs::msg::Pose {
-  const Eigen::Map<const Eigen::Matrix4d> transformation_matrix(input_pose.data());
-  const Eigen::Quaterniond quaternion(transformation_matrix.topLeftCorner<3, 3>());
-  const Eigen::Translation3d translation(transformation_matrix.block<3, 1>(0, 3));
+auto toPose(const std::array<double, 16>& input_pose)
+    -> geometry_msgs::msg::Pose {
+  const Eigen::Map<const Eigen::Matrix4d> transformation_matrix(
+      input_pose.data());
+  const Eigen::Quaterniond quaternion(
+      transformation_matrix.topLeftCorner<3, 3>());
+  const Eigen::Translation3d translation(
+      transformation_matrix.block<3, 1>(0, 3));
 
   geometry_msgs::msg::Pose output_pose;
   output_pose.position = geometry_msgs::build<geometry_msgs::msg::Point>()
                              .x(translation.x())
                              .y(translation.y())
                              .z(translation.z());
-  output_pose.orientation = geometry_msgs::build<geometry_msgs::msg::Quaternion>()
-                                .x(quaternion.x())
-                                .y(quaternion.y())
-                                .z(quaternion.z())
-                                .w(quaternion.w());
+  output_pose.orientation =
+      geometry_msgs::build<geometry_msgs::msg::Quaternion>()
+          .x(quaternion.x())
+          .y(quaternion.y())
+          .z(quaternion.z())
+          .w(quaternion.w());
 
   return output_pose;
 }
@@ -208,9 +229,9 @@ auto toPose(const std::array<double, 16>& input_pose) -> geometry_msgs::msg::Pos
  * @param inertia_matrix The inertia matrix
  * @return geometry_msgs::msg::Inertia The translated inertia
  */
-auto toInertia(double mass,
-               const std::array<double, 3>& center_of_mass,
-               const std::array<double, 9>& inertia_matrix) -> geometry_msgs::msg::Inertia {
+auto toInertia(double mass, const std::array<double, 3>& center_of_mass,
+               const std::array<double, 9>& inertia_matrix)
+    -> geometry_msgs::msg::Inertia {
   geometry_msgs::msg::Inertia output_inertia =
       geometry_msgs::build<geometry_msgs::msg::Inertia>()
           .m(mass)
@@ -231,13 +252,14 @@ auto toInertia(double mass,
 }
 
 /**
- * The indicators within this message represent if a collision/contact is active for Cartesian/joint
- * space
+ * The indicators within this message represent if a collision/contact is active
+ * for Cartesian/joint space
  * @param cartesian_collision The Cartesian collision flags
  * @param cartesian_contact The Cartesian contact flags
  * @param joint_collision The joint collision flags
  * @param joint_contact The joint contact flags
- * @return agimus_franka_msgs::msg::CollisionIndicators The translated CollisionIndicator message
+ * @return agimus_franka_msgs::msg::CollisionIndicators The translated
+ * CollisionIndicator message
  */
 auto toCollisionIndicators(const std::array<double, 6>& cartesian_collision,
                            const std::array<double, 6>& cartesian_contact,
@@ -287,7 +309,8 @@ auto toElbow(const std::array<double, 2>& elbow,
              const std::array<double, 2>& elbow_d,
              const std::array<double, 2>& elbow_c,
              const std::array<double, 2>& delbow_c,
-             const std::array<double, 2>& ddelbow_c) -> agimus_franka_msgs::msg::Elbow {
+             const std::array<double, 2>& ddelbow_c)
+    -> agimus_franka_msgs::msg::Elbow {
   agimus_franka_msgs::msg::Elbow elbow_message;
 
   for (size_t i = 0; i < elbow.size(); i++) {
@@ -301,12 +324,14 @@ auto toElbow(const std::array<double, 2>& elbow,
   return elbow_message;
 }
 
-auto toJointStateVector(const std::array<double, 7>& data_vector) -> std::vector<double> {
+auto toJointStateVector(const std::array<double, 7>& data_vector)
+    -> std::vector<double> {
   return {data_vector.cbegin(), data_vector.cend()};
 }
 
-auto updateTimeStamps(const builtin_interfaces::msg::Time& time_stamps,
-                      agimus_franka_msgs::msg::AgimusFrankaRobotState& robot_state) -> void {
+auto updateTimeStamps(
+    const builtin_interfaces::msg::Time& time_stamps,
+    agimus_franka_msgs::msg::AgimusFrankaRobotState& robot_state) -> void {
   // The joint states
   robot_state.measured_joint_state.header.stamp = time_stamps;
   robot_state.desired_joint_state.header.stamp = time_stamps;

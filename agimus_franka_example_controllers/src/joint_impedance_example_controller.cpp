@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <Eigen/Eigen>
 #include <agimus_franka_example_controllers/joint_impedance_example_controller.hpp>
 #include <agimus_franka_example_controllers/robot_utils.hpp>
-
 #include <cassert>
 #include <cmath>
 #include <exception>
 #include <string>
-
-#include <Eigen/Eigen>
 
 namespace agimus_franka_example_controllers {
 
@@ -40,15 +38,16 @@ JointImpedanceExampleController::state_interface_configuration() const {
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
   for (int i = 1; i <= num_joints; ++i) {
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/position");
-    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) + "/velocity");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/position");
+    config.names.push_back(arm_id_ + "_joint" + std::to_string(i) +
+                           "/velocity");
   }
   return config;
 }
 
 controller_interface::return_type JointImpedanceExampleController::update(
-    const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& period) {
+    const rclcpp::Time& /*time*/, const rclcpp::Duration& period) {
   updateJointStates();
   Vector7d q_goal = initial_q_;
   elapsed_time_ = elapsed_time_ + period.seconds();
@@ -73,7 +72,8 @@ CallbackReturn JointImpedanceExampleController::on_init() {
     auto_declare<std::vector<double>>("k_gains", {});
     auto_declare<std::vector<double>>("d_gains", {});
   } catch (const std::exception& e) {
-    fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+    fprintf(stderr, "Exception thrown during init stage with message: %s \n",
+            e.what());
     return CallbackReturn::ERROR;
   }
   return CallbackReturn::SUCCESS;
@@ -89,8 +89,9 @@ CallbackReturn JointImpedanceExampleController::on_configure(
     return CallbackReturn::FAILURE;
   }
   if (k_gains.size() != static_cast<uint>(num_joints)) {
-    RCLCPP_FATAL(get_node()->get_logger(), "k_gains should be of size %d but is of size %ld",
-                 num_joints, k_gains.size());
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "k_gains should be of size %d but is of size %ld", num_joints,
+                 k_gains.size());
     return CallbackReturn::FAILURE;
   }
   if (d_gains.empty()) {
@@ -98,8 +99,9 @@ CallbackReturn JointImpedanceExampleController::on_configure(
     return CallbackReturn::FAILURE;
   }
   if (d_gains.size() != static_cast<uint>(num_joints)) {
-    RCLCPP_FATAL(get_node()->get_logger(), "d_gains should be of size %d but is of size %ld",
-                 num_joints, d_gains.size());
+    RCLCPP_FATAL(get_node()->get_logger(),
+                 "d_gains should be of size %d but is of size %ld", num_joints,
+                 d_gains.size());
     return CallbackReturn::FAILURE;
   }
   for (int i = 0; i < num_joints; ++i) {
@@ -108,8 +110,8 @@ CallbackReturn JointImpedanceExampleController::on_configure(
   }
   dq_filtered_.setZero();
 
-  auto parameters_client =
-      std::make_shared<rclcpp::AsyncParametersClient>(get_node(), "/robot_state_publisher");
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+      get_node(), "/robot_state_publisher");
   parameters_client->wait_for_service();
 
   auto future = parameters_client->get_parameters({"robot_description"});
@@ -117,10 +119,12 @@ CallbackReturn JointImpedanceExampleController::on_configure(
   if (!result.empty()) {
     robot_description_ = result[0].value_to_string();
   } else {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter.");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Failed to get robot_description parameter.");
   }
 
-  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_, get_node()->get_logger());
+  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_,
+                                                     get_node()->get_logger());
 
   return CallbackReturn::SUCCESS;
 }
@@ -151,5 +155,6 @@ void JointImpedanceExampleController::updateJointStates() {
 }  // namespace agimus_franka_example_controllers
 #include "pluginlib/class_list_macros.hpp"
 // NOLINTNEXTLINE
-PLUGINLIB_EXPORT_CLASS(agimus_franka_example_controllers::JointImpedanceExampleController,
-                       controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(
+    agimus_franka_example_controllers::JointImpedanceExampleController,
+    controller_interface::ControllerInterface)

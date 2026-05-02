@@ -14,20 +14,19 @@
 
 #pragma once
 
+#include <agimus_franka_msgs/action/error_recovery.hpp>
 #include <memory>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
 
 #include "agimus_franka/exception.h"
 #include "agimus_franka_hardware/robot.hpp"
 
-#include <agimus_franka_msgs/action/error_recovery.hpp>
-
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_action/rclcpp_action.hpp>
-
 namespace agimus_franka_hardware {
 
 /**
- * Node implementing the action server for agimus_franka hardware related capabilities.
+ * Node implementing the action server for agimus_franka hardware related
+ * capabilities.
  */
 class ActionServer : public rclcpp::Node {
  public:
@@ -37,7 +36,8 @@ class ActionServer : public rclcpp::Node {
    * @param options rclcpp::NodeOptions Options for the ROS 2 node
    * @param robot std::shared_ptr<Robot> The robot backend
    */
-  ActionServer(const rclcpp::NodeOptions& options, std::shared_ptr<Robot> robot);
+  ActionServer(const rclcpp::NodeOptions& options,
+               std::shared_ptr<Robot> robot);
 
  private:
   std::shared_ptr<Robot> robot_;
@@ -50,8 +50,8 @@ class ActionServer : public rclcpp::Node {
    * @param goal_handle The goal handle for the error recovery action
    */
   auto errorRecoveryAction(
-      const std::shared_ptr<rclcpp_action::ServerGoalHandle<agimus_franka_msgs::action::ErrorRecovery>>&
-          goal_handle) -> void;
+      const std::shared_ptr<rclcpp_action::ServerGoalHandle<
+          agimus_franka_msgs::action::ErrorRecovery>>& goal_handle) -> void;
 };
 
 }  // namespace agimus_franka_hardware

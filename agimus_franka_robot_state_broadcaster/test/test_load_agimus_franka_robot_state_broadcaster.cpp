@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <gmock/gmock.h>
+
 #include <memory>
 
 #include "controller_manager/controller_manager.hpp"
@@ -25,24 +26,25 @@
 
 TEST(TestLoadAgimusFrankaRobotStateBroadcaster, load_controller) {
   rclcpp::init(0, nullptr);
-  rclcpp::Node node_ = rclcpp::Node("TestLoadAgimusFrankaRobotStateBroadcaster");
+  rclcpp::Node node_ =
+      rclcpp::Node("TestLoadAgimusFrankaRobotStateBroadcaster");
 
   std::shared_ptr<rclcpp::Executor> executor =
       std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-  controller_manager::ControllerManager cm(std::make_unique<hardware_interface::ResourceManager>(
-                                               ros2_control_test_assets::minimal_robot_urdf
+  controller_manager::ControllerManager cm(
+      std::make_unique<hardware_interface::ResourceManager>(
+          ros2_control_test_assets::minimal_robot_urdf
 #if HARDWARE_INTERFACE_VERSION_GTE(4, 13, 0)
-  ,
-  node_.get_node_clock_interface(),
-  node_.get_node_logging_interface()
+          ,
+          node_.get_node_clock_interface(), node_.get_node_logging_interface()
 #endif
-                                               ),
-                                           executor, "test_controller_manager");
+              ),
+      executor, "test_controller_manager");
 
-  auto controller =
-      cm.load_controller("test_franka_robot_state_broadcaster",
-                         "agimus_franka_robot_state_broadcaster/AgimusFrankaRobotStateBroadcaster");
+  auto controller = cm.load_controller("test_franka_robot_state_broadcaster",
+                                       "agimus_franka_robot_state_broadcaster/"
+                                       "AgimusFrankaRobotStateBroadcaster");
   ASSERT_NE(controller.get(), nullptr);
   rclcpp::shutdown();
 }

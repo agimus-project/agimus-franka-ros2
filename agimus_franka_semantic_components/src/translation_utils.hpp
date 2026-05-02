@@ -15,14 +15,11 @@
 #pragma once
 
 #include "agimus_franka/robot_state.h"
-
+#include "agimus_franka_msgs/msg/agimus_franka_robot_state.hpp"
 #include "agimus_franka_msgs/msg/collision_indicators.hpp"
 #include "agimus_franka_msgs/msg/elbow.hpp"
 #include "agimus_franka_msgs/msg/errors.hpp"
-#include "agimus_franka_msgs/msg/agimus_franka_robot_state.hpp"
-
 #include "builtin_interfaces/msg/time.hpp"
-
 #include "geometry_msgs/msg/accel.hpp"
 #include "geometry_msgs/msg/inertia.hpp"
 #include "geometry_msgs/msg/point.hpp"
@@ -39,31 +36,36 @@ namespace translation {
  * @param error The internal error buffer
  * @return agimus_franka_msgs::msg::Errors The translated errors
  */
-auto errorsToMessage(const agimus_franka::Errors& error) -> agimus_franka_msgs::msg::Errors;
+auto errorsToMessage(const agimus_franka::Errors& error)
+    -> agimus_franka_msgs::msg::Errors;
 
 /**
  * @param input_wrench The wrench which should be translated
  * @return geometry_msgs::msg::Wrench The translated wrench
  */
-auto toWrench(const std::array<double, 6>& input_wrench) -> geometry_msgs::msg::Wrench;
+auto toWrench(const std::array<double, 6>& input_wrench)
+    -> geometry_msgs::msg::Wrench;
 
 /**
  * @param input_twist The twist which should be translated
  * @return geometry_msgs::msg::Twist The translated twist
  */
-auto toTwist(const std::array<double, 6>& input_twist) -> geometry_msgs::msg::Twist;
+auto toTwist(const std::array<double, 6>& input_twist)
+    -> geometry_msgs::msg::Twist;
 
 /**
  * @param input_accel The acceleration which should be translated
  * @return geometry_msgs::msg::Accel The translated acceleration
  */
-auto toAccel(const std::array<double, 6>& input_accel) -> geometry_msgs::msg::Accel;
+auto toAccel(const std::array<double, 6>& input_accel)
+    -> geometry_msgs::msg::Accel;
 
 /**
  * @param input_pose The pose which should be translated
  * @return geometry_msgs::msg::Pose The translated pose
  */
-auto toPose(const std::array<double, 16>& input_pose) -> geometry_msgs::msg::Pose;
+auto toPose(const std::array<double, 16>& input_pose)
+    -> geometry_msgs::msg::Pose;
 
 /**
  * @param mass The mass for the inertia
@@ -71,18 +73,19 @@ auto toPose(const std::array<double, 16>& input_pose) -> geometry_msgs::msg::Pos
  * @param inertia_matrix The inertia matrix
  * @return geometry_msgs::msg::Inertia The translated inertia
  */
-auto toInertia(double mass,
-               const std::array<double, 3>& center_of_mass,
-               const std::array<double, 9>& inertia_matrix) -> geometry_msgs::msg::Inertia;
+auto toInertia(double mass, const std::array<double, 3>& center_of_mass,
+               const std::array<double, 9>& inertia_matrix)
+    -> geometry_msgs::msg::Inertia;
 
 /**
- * The indicators within this message represent if a collision/contact is active for Cartesian/joint
- * space
+ * The indicators within this message represent if a collision/contact is active
+ * for Cartesian/joint space
  * @param cartesian_collision The Cartesian collision flags
  * @param cartesian_contact The Cartesian contact flags
  * @param joint_collision The joint collision flags
  * @param joint_contact The joint contact flags
- * @return agimus_franka_msgs::msg::CollisionIndicators The translated CollisionIndicator message
+ * @return agimus_franka_msgs::msg::CollisionIndicators The translated
+ * CollisionIndicator message
  */
 auto toCollisionIndicators(const std::array<double, 6>& cartesian_collision,
                            const std::array<double, 6>& cartesian_contact,
@@ -102,19 +105,22 @@ auto toElbow(const std::array<double, 2>& elbow,
              const std::array<double, 2>& elbow_d,
              const std::array<double, 2>& elbow_c,
              const std::array<double, 2>& delbow_c,
-             const std::array<double, 2>& ddelbow_c) -> agimus_franka_msgs::msg::Elbow;
+             const std::array<double, 2>& ddelbow_c)
+    -> agimus_franka_msgs::msg::Elbow;
 
 /**
  * @param data_vector Translates this data vector from an array to a vector
  * @return std::vector<double> The translated vector
  */
-auto toJointStateVector(const std::array<double, 7>& data_vector) -> std::vector<double>;
+auto toJointStateVector(const std::array<double, 7>& data_vector)
+    -> std::vector<double>;
 
 /**
  * @param robot_state Updates the the
  */
-auto updateTimeStamps(const builtin_interfaces::msg::Time& time_stamps,
-                      agimus_franka_msgs::msg::AgimusFrankaRobotState& robot_state) -> void;
+auto updateTimeStamps(
+    const builtin_interfaces::msg::Time& time_stamps,
+    agimus_franka_msgs::msg::AgimusFrankaRobotState& robot_state) -> void;
 
 }  // namespace translation
 }  // namespace agimus_franka_semantic_components

@@ -16,52 +16,38 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
     rcutils
     realtime_tools
     sensor_msgs
-    visualization_msgs)
-
+    visualization_msgs
+)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
-  find_package(${Dependency} REQUIRED)
+    find_package(${Dependency} REQUIRED)
 endforeach()
 
-add_library(${PROJECT_NAME}
-        SHARED
-        src/${PROJECT_NAME}.cpp)
-target_include_directories(
-  ${PROJECT_NAME}
-        PRIVATE
-        include
-)
-
+add_library(${PROJECT_NAME} SHARED src/${PROJECT_NAME}.cpp)
+target_include_directories(${PROJECT_NAME} PRIVATE include)
 
 generate_parameter_library(agimus_franka_robot_state_broadcaster_parameters src/agimus_franka_robot_state_broadcaster_parameters.yaml)
 
-target_link_libraries(${PROJECT_NAME}
-                      PUBLIC agimus_franka_robot_state_broadcaster_parameters)
-                    ament_target_dependencies(${PROJECT_NAME} PUBLIC
-                          ${THIS_PACKAGE_INCLUDE_DEPENDS})
-
-
-                        pluginlib_export_plugin_description_file(controller_interface ${PROJECT_NAME}.xml)
-
-
-install(
-  TARGETS ${PROJECT_NAME}
-        DESTINATION lib
+target_link_libraries(
+    ${PROJECT_NAME}
+    PUBLIC agimus_franka_robot_state_broadcaster_parameters
 )
-install(
-        DIRECTORY include/
-        DESTINATION include
+ament_target_dependencies(${PROJECT_NAME} PUBLIC
+                          ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
+pluginlib_export_plugin_description_file(controller_interface ${PROJECT_NAME}.xml)
+
+install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
 
 if(BUILD_TESTING)
     find_package(ament_cmake_gmock REQUIRED)
     find_package(ament_cmake_copyright REQUIRED)
     find_package(ament_cmake_cppcheck REQUIRED)
-    find_package(ament_cmake_flake8 REQUIRED)
     find_package(ament_cmake_lint_cmake REQUIRED)
     find_package(ament_cmake_pep257 REQUIRED)
     find_package(ament_cmake_xmllint REQUIRED)
@@ -72,7 +58,6 @@ if(BUILD_TESTING)
     ament_copyright(${CPP_DIRECTORIES} package.xml)
     ament_cppcheck(${CPP_DIRECTORIES})
     ament_lint_cmake(CMakeLists.txt)
-    ament_flake8()
     ament_pep257()
     ament_xmllint()
     if(CHECK_TIDY)
@@ -83,19 +68,28 @@ if(BUILD_TESTING)
 
     ament_add_gmock(${PROJECT_NAME}_test
         test/test_agimus_franka_robot_state_broadcaster.cpp
-        APPEND_LIBRARY_DIRS ${CMAKE_BINARY_DIR})
-        # ${CMAKE_CURRENT_SOURCE_DIR}/test/agimus_franka_robot_state_broadcaster_parameters.yaml)
+        APPEND_LIBRARY_DIRS ${CMAKE_BINARY_DIR}
+    )
+    # ${CMAKE_CURRENT_SOURCE_DIR}/test/agimus_franka_robot_state_broadcaster_parameters.yaml)
     target_include_directories(${PROJECT_NAME}_test PRIVATE include)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
     ament_target_dependencies(${PROJECT_NAME}_test controller_manager hardware_interface ros2_control_test_assets)
 
     ament_add_gmock(test_load_agimus_franka_robot_state_broadcaster test/test_load_agimus_franka_robot_state_broadcaster.cpp
-      APPEND_LIBRARY_DIRS ${CMAKE_BINARY_DIR})
-    target_include_directories(test_load_agimus_franka_robot_state_broadcaster PRIVATE include)
-    target_link_libraries(test_load_agimus_franka_robot_state_broadcaster ${PROJECT_NAME})
+      APPEND_LIBRARY_DIRS ${CMAKE_BINARY_DIR}
+    )
+    target_include_directories(
+        test_load_agimus_franka_robot_state_broadcaster
+        PRIVATE include
+    )
+    target_link_libraries(
+        test_load_agimus_franka_robot_state_broadcaster
+        ${PROJECT_NAME}
+    )
     ament_target_dependencies(
       test_load_agimus_franka_robot_state_broadcaster controller_manager hardware_interface
-      ros2_control_test_assets)
+      ros2_control_test_assets
+    )
 endif()
 
 ament_export_include_directories(

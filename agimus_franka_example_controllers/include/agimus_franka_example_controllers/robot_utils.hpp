@@ -15,6 +15,7 @@
 #pragma once
 
 #include <tinyxml2.h>
+
 #include <chrono>
 #include <rclcpp/rclcpp.hpp>
 #include <string>
@@ -22,8 +23,8 @@
 namespace robot_utils {
 using namespace std::chrono_literals;
 
-inline std::string getRobotNameFromDescription(const std::string& robot_description,
-                                               const rclcpp::Logger& logger) {
+inline std::string getRobotNameFromDescription(
+    const std::string& robot_description, const rclcpp::Logger& logger) {
   std::string robot_name;
   tinyxml2::XMLDocument doc;
 

@@ -16,12 +16,15 @@
 
 #include <cstring>
 #include <iostream>
+
 #include "rclcpp/logging.hpp"
 namespace {
 
-// Example implementation of bit_cast: https://en.cppreference.com/w/cpp/numeric/bit_cast
+// Example implementation of bit_cast:
+// https://en.cppreference.com/w/cpp/numeric/bit_cast
 template <class To, class From>
-std::enable_if_t<sizeof(To) == sizeof(From) && std::is_trivially_copyable<From>::value &&
+std::enable_if_t<sizeof(To) == sizeof(From) &&
+                     std::is_trivially_copyable<From>::value &&
                      std::is_trivially_copyable<To>::value,
                  To>
 bit_cast(const From& src) noexcept {
@@ -38,8 +41,9 @@ bit_cast(const From& src) noexcept {
 
 namespace agimus_franka_semantic_components {
 
-AgimusFrankaRobotModel::AgimusFrankaRobotModel(const std::string& agimus_franka_model_interface_name,
-                                   const std::string& agimus_franka_state_interface_name)
+AgimusFrankaRobotModel::AgimusFrankaRobotModel(
+    const std::string& agimus_franka_model_interface_name,
+    const std::string& agimus_franka_state_interface_name)
     : SemanticComponentInterface(agimus_franka_model_interface_name, 2) {
   agimus_franka_model_interface_name_ = agimus_franka_model_interface_name;
   agimus_franka_state_interface_name_ = agimus_franka_state_interface_name;
@@ -49,22 +53,29 @@ AgimusFrankaRobotModel::AgimusFrankaRobotModel(const std::string& agimus_franka_
 
 void AgimusFrankaRobotModel::initialize() {
   auto agimus_franka_state_interface =
-      std::find_if(state_interfaces_.begin(), state_interfaces_.end(), [&](const auto& interface) {
-        return interface.get().get_name() == agimus_franka_state_interface_name_;
-      });
+      std::find_if(state_interfaces_.begin(), state_interfaces_.end(),
+                   [&](const auto& interface) {
+                     return interface.get().get_name() ==
+                            agimus_franka_state_interface_name_;
+                   });
 
   auto agimus_franka_model_interface =
-      std::find_if(state_interfaces_.begin(), state_interfaces_.end(), [&](const auto& interface) {
-        return interface.get().get_name() == agimus_franka_model_interface_name_;
-      });
+      std::find_if(state_interfaces_.begin(), state_interfaces_.end(),
+                   [&](const auto& interface) {
+                     return interface.get().get_name() ==
+                            agimus_franka_model_interface_name_;
+                   });
 
   if (agimus_franka_state_interface != state_interfaces_.end() &&
       agimus_franka_model_interface != state_interfaces_.end()) {
-    robot_model_ = bit_cast<agimus_franka_hardware::Model*>((*agimus_franka_model_interface).get().get_value());
-    robot_state_ = bit_cast<agimus_franka::RobotState*>((*agimus_franka_state_interface).get().get_value());
+    robot_model_ = bit_cast<agimus_franka_hardware::Model*>(
+        (*agimus_franka_model_interface).get().get_value());
+    robot_state_ = bit_cast<agimus_franka::RobotState*>(
+        (*agimus_franka_state_interface).get().get_value());
   } else {
     RCLCPP_ERROR(rclcpp::get_logger("agimus_franka_model_semantic_component"),
-                 "Franka interface does not exist! Did you assign the loaned state in the "
+                 "Franka interface does not exist! Did you assign the loaned "
+                 "state in the "
                  "controller?");
     throw std::runtime_error("Franka state interfaces does not exist");
   }

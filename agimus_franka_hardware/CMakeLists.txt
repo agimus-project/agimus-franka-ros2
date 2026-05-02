@@ -13,19 +13,17 @@ find_package(pluginlib REQUIRED)
 find_package(agimus_libfranka 0.9.3 REQUIRED)
 find_package(rclcpp_components REQUIRED)
 
-add_library(${PROJECT_NAME} SHARED
-        src/agimus_franka_action_server.cpp
-        src/agimus_franka_hardware_interface.cpp
-        src/robot.cpp
-        src/agimus_franka_param_service_server.cpp
-        src/agimus_franka_executor.cpp
+add_library(
+    ${PROJECT_NAME}
+    SHARED
+    src/agimus_franka_action_server.cpp
+    src/agimus_franka_hardware_interface.cpp
+    src/robot.cpp
+    src/agimus_franka_param_service_server.cpp
+    src/agimus_franka_executor.cpp
 )
 
-target_include_directories(
-  ${PROJECT_NAME}
-        PRIVATE
-        include
-)
+target_include_directories(${PROJECT_NAME} PRIVATE include)
 target_link_libraries(${PROJECT_NAME} agimus_libfranka::agimus_libfranka)
 
 ament_target_dependencies(
@@ -40,15 +38,8 @@ ament_target_dependencies(
 
 pluginlib_export_plugin_description_file(hardware_interface ${PROJECT_NAME}.xml)
 
-
-install(
-  TARGETS ${PROJECT_NAME}
-        DESTINATION lib
-)
-install(
-        DIRECTORY include/
-        DESTINATION include
-)
+install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
 
 if(BUILD_TESTING)
     find_package(ament_cmake_gmock REQUIRED)
@@ -57,7 +48,6 @@ if(BUILD_TESTING)
     find_package(${_default_rmw} REQUIRED)
     find_package(ament_cmake_copyright REQUIRED)
     find_package(ament_cmake_cppcheck REQUIRED)
-    find_package(ament_cmake_flake8 REQUIRED)
     find_package(ament_cmake_lint_cmake REQUIRED)
     find_package(ament_cmake_pep257 REQUIRED)
     find_package(ament_cmake_xmllint REQUIRED)
@@ -66,7 +56,6 @@ if(BUILD_TESTING)
     ament_copyright(${CPP_DIRECTORIES} package.xml)
     ament_cppcheck(${CPP_DIRECTORIES})
     ament_lint_cmake(CMakeLists.txt)
-    ament_flake8()
     ament_pep257()
     ament_xmllint()
 

@@ -16,7 +16,7 @@ controller_manager:
 
     cartesian_velocity_example_controller:
       type: agimus_franka_example_controllers/CartesianVelocityExampleController
-    
+
     cartesian_pose_example_controller:
       type: agimus_franka_example_controllers/CartesianPoseExampleController
 
@@ -39,14 +39,14 @@ controller_manager:
       type: agimus_franka_example_controllers/ModelExampleController
 
     gripper_example_controller:
-      type: agimus_franka_example_controllers/GripperExampleController      
+      type: agimus_franka_example_controllers/GripperExampleController
 
     joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
-    
+
     agimus_franka_robot_state_broadcaster:
       type: agimus_franka_robot_state_broadcaster/AgimusFrankaRobotStateBroadcaster
 

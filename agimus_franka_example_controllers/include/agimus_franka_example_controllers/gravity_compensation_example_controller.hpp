@@ -14,36 +14,38 @@
 
 #pragma once
 
-#include <string>
-
 #include <controller_interface/controller_interface.hpp>
-#include "agimus_franka_example_controllers/visibility_control.h"
-
 #include <rclcpp/duration.hpp>
 #include <rclcpp/time.hpp>
+#include <string>
 
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+#include "agimus_franka_example_controllers/visibility_control.h"
+
+using CallbackReturn =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
 namespace agimus_franka_example_controllers {
 
 /**
- * The gravity compensation controller only sends zero torques so that the robot does gravity
- * compensation
+ * The gravity compensation controller only sends zero torques so that the robot
+ * does gravity compensation
  */
-class GravityCompensationExampleController : public controller_interface::ControllerInterface {
+class GravityCompensationExampleController
+    : public controller_interface::ControllerInterface {
  public:
-  CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_configure(
+      const rclcpp_lifecycle::State& previous_state) override;
 
   CallbackReturn on_init() override;
 
-  [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
-      const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  command_interface_configuration() const override;
 
-  [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
-      const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  state_interface_configuration() const override;
 
-  controller_interface::return_type update(const rclcpp::Time& time,
-                                           const rclcpp::Duration& period) override;
+  controller_interface::return_type update(
+      const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
  private:
   std::string arm_id_;

@@ -16,7 +16,8 @@
  * Original authors: Subhas Das, Denis Stogl
  */
 
-// modified ros2 control semantic control interface to add command interface access.
+// modified ros2 control semantic control interface to add command interface
+// access.
 // https://github.com/ros-controls/ros2_control/blob/humble/controller_interface/include/semantic_components/semantic_component_interface.hpp
 
 #pragma once
@@ -29,11 +30,15 @@
 
 // implementing and friending so we can access member variables
 class TestableSemanticComponentInterface
-    : public agimus_franka_semantic_components::FrankaSemanticComponentInterface {
+    : public agimus_franka_semantic_components::
+          FrankaSemanticComponentInterface {
   FRIEND_TEST(SemanticComponentInterfaceTest, validate_default_names);
-  FRIEND_TEST(SemanticComponentInterfaceTest, validate_command_interface_default_names);
-  FRIEND_TEST(SemanticComponentInterfaceTest, validate_custom_state_interface_names);
-  FRIEND_TEST(SemanticComponentInterfaceTest, validate_custom_command_interface_names);
+  FRIEND_TEST(SemanticComponentInterfaceTest,
+              validate_command_interface_default_names);
+  FRIEND_TEST(SemanticComponentInterfaceTest,
+              validate_custom_state_interface_names);
+  FRIEND_TEST(SemanticComponentInterfaceTest,
+              validate_custom_command_interface_names);
   FRIEND_TEST(SemanticComponentInterfaceTest, validate_state_interfaces);
   FRIEND_TEST(SemanticComponentInterfaceTest, validate_command_interfaces);
 
@@ -42,24 +47,25 @@ class TestableSemanticComponentInterface
   explicit TestableSemanticComponentInterface(const std::string& name,
                                               size_t state_interface_size,
                                               size_t command_interface_size)
-      : agimus_franka_semantic_components::FrankaSemanticComponentInterface(name,
-                                                                     state_interface_size,
-                                                                     command_interface_size) {}
+      : agimus_franka_semantic_components::FrankaSemanticComponentInterface(
+            name, state_interface_size, command_interface_size) {}
   // Use custom interface names
   explicit TestableSemanticComponentInterface(size_t state_interface_size,
                                               size_t command_interface_size)
-      : agimus_franka_semantic_components::FrankaSemanticComponentInterface("TestFrankaSemanticComponent",
-                                                                     state_interface_size,
-                                                                     command_interface_size) {
+      : agimus_franka_semantic_components::FrankaSemanticComponentInterface(
+            "TestFrankaSemanticComponent", state_interface_size,
+            command_interface_size) {
     // generate the interface_names_
     for (auto i = 0u; i < state_interface_size; ++i) {
-      state_interface_names_.emplace_back(std::string("TestFrankaSemanticComponent") + "/i" +
-                                          std::to_string(i + 5));
+      state_interface_names_.emplace_back(
+          std::string("TestFrankaSemanticComponent") + "/i" +
+          std::to_string(i + 5));
     }
 
     for (auto i = 0u; i < command_interface_size; ++i) {
-      command_interface_names_.emplace_back(std::string("TestFrankaSemanticComponentCommand") +
-                                            "/i" + std::to_string(i + 5));
+      command_interface_names_.emplace_back(
+          std::string("TestFrankaSemanticComponentCommand") + "/i" +
+          std::to_string(i + 5));
     }
   }
 

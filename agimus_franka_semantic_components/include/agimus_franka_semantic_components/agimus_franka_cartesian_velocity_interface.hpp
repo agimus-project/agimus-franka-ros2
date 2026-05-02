@@ -14,40 +14,43 @@
 
 #pragma once
 
-#include "agimus_franka/control_types.h"
-#include "agimus_franka/robot_state.h"
-#include "agimus_franka_semantic_components/agimus_franka_semantic_component_interface.hpp"
-
-#include "geometry_msgs/msg/twist.hpp"
-
+#include <Eigen/Dense>
 #include <iostream>
 #include <limits>
 #include <string>
 #include <vector>
 
-#include <Eigen/Dense>
+#include "agimus_franka/control_types.h"
+#include "agimus_franka/robot_state.h"
+#include "agimus_franka_semantic_components/agimus_franka_semantic_component_interface.hpp"
+#include "geometry_msgs/msg/twist.hpp"
 
 namespace agimus_franka_semantic_components {
 /**
- * @brief Franka Cartesian Velocity interface abstraction on top of hardware_interface to set the
- * full cartesian velocity. The Command should have the form [linear_velocity, angular_velocity] =
- * [vx, vy, vz, wx, wy, wz]. Optionally, the elbow can be commanded. [joint_3_position,
- * joint_4_sign]
+ * @brief Franka Cartesian Velocity interface abstraction on top of
+ * hardware_interface to set the full cartesian velocity. The Command should
+ * have the form [linear_velocity, angular_velocity] = [vx, vy, vz, wx, wy, wz].
+ * Optionally, the elbow can be commanded. [joint_3_position, joint_4_sign]
  */
-class FrankaCartesianVelocityInterface : public FrankaSemanticComponentInterface {
+class FrankaCartesianVelocityInterface
+    : public FrankaSemanticComponentInterface {
  public:
   /**
-   * Initializes the agimus_franka cartesian velocity interface with access to the hardware
-   * interface command interfaces.
+   * Initializes the agimus_franka cartesian velocity interface with access to
+   * the hardware interface command interfaces.
    *
-   * @param[in] command_elbow_active if true to activates the elbow commanding together with the
-   * cartesian velocity input, else elbow commanding is not allowed.
+   * @param[in] command_elbow_active if true to activates the elbow commanding
+   * together with the cartesian velocity input, else elbow commanding is not
+   * allowed.
    *
    */
   explicit FrankaCartesianVelocityInterface(bool command_elbow_activate);
-  FrankaCartesianVelocityInterface(const FrankaCartesianVelocityInterface&) = delete;
-  FrankaCartesianVelocityInterface& operator=(FrankaCartesianVelocityInterface const&) = delete;
-  FrankaCartesianVelocityInterface(FrankaCartesianVelocityInterface&&) = default;
+  FrankaCartesianVelocityInterface(const FrankaCartesianVelocityInterface&) =
+      delete;
+  FrankaCartesianVelocityInterface& operator=(
+      FrankaCartesianVelocityInterface const&) = delete;
+  FrankaCartesianVelocityInterface(FrankaCartesianVelocityInterface&&) =
+      default;
 
   ~FrankaCartesianVelocityInterface() override = default;
 
@@ -88,15 +91,18 @@ class FrankaCartesianVelocityInterface : public FrankaSemanticComponentInterface
   std::array<double, 2> getCurrentElbowConfiguration();
 
  private:
-  const std::array<std::string, 6> hw_cartesian_velocities_names_{"vx", "vy", "vz",
-                                                                  "wx", "wy", "wz"};
-  const std::array<std::string, 2> hw_elbow_command_names_{"joint_3_position", "joint_4_sign"};
-  const std::array<std::string, 2> elbow_state_names_{"joint_3_position", "joint_4_sign"};
+  const std::array<std::string, 6> hw_cartesian_velocities_names_{
+      "vx", "vy", "vz", "wx", "wy", "wz"};
+  const std::array<std::string, 2> hw_elbow_command_names_{"joint_3_position",
+                                                           "joint_4_sign"};
+  const std::array<std::string, 2> elbow_state_names_{"joint_3_position",
+                                                      "joint_4_sign"};
 
   const size_t full_command_interface_size_{8};
   bool command_elbow_active_;
 
-  const std::string cartesian_velocity_command_interface_name_{"cartesian_velocity"};
+  const std::string cartesian_velocity_command_interface_name_{
+      "cartesian_velocity"};
   const std::string elbow_command_interface_name_{"elbow_command"};
   const std::string elbow_state_interface_name_{"elbow_state"};
 };

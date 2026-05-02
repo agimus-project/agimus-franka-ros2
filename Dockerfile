@@ -37,7 +37,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc \
     && echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> /home/$USERNAME/.bashrc \
     && chown $USERNAME:$USERNAME /ros2_ws
-    
+
 USER $USERNAME
 
 # Install some ROS 2 dependencies to create a cache layer

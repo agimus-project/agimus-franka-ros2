@@ -14,15 +14,14 @@
 
 #pragma once
 
-#include <array>
-#include <utility>
-
 #include <Eigen/Core>
+#include <array>
 #include <rclcpp/duration.hpp>
+#include <utility>
 /**
- * An example showing how to generate a joint pose motion to a goal position. Adapted from:
- * Wisama Khalil and Etienne Dombre. 2002. Modeling, Identification and Control of Robots
- * (Kogan Page Science Paper edition).
+ * An example showing how to generate a joint pose motion to a goal position.
+ * Adapted from: Wisama Khalil and Etienne Dombre. 2002. Modeling,
+ * Identification and Control of Robots (Kogan Page Science Paper edition).
  */
 class MotionGenerator {
  public:
@@ -34,18 +33,21 @@ class MotionGenerator {
    * @param[in] q_start Start joint positions.
    * @param[in] q_goal Target joint positions.
    */
-  MotionGenerator(double speed_factor, const Vector7d& q_start, const Vector7d& q_goal);
+  MotionGenerator(double speed_factor, const Vector7d& q_start,
+                  const Vector7d& q_goal);
 
   /**
    * Sends joint position calculations
    *
    * @param[in] robot_state Current state of the robot.
-   * @param[in] trajectory_time Amount of time, that has passed since the start of the trajectory.
+   * @param[in] trajectory_time Amount of time, that has passed since the start
+   * of the trajectory.
    *
-   * @return Joint positions to use inside a control loop and a boolean indicating whether the
-   * motion is finished.
+   * @return Joint positions to use inside a control loop and a boolean
+   * indicating whether the motion is finished.
    */
-  std::pair<Vector7d, bool> getDesiredJointPositions(const rclcpp::Duration& trajectory_time);
+  std::pair<Vector7d, bool> getDesiredJointPositions(
+      const rclcpp::Duration& trajectory_time);
 
  private:
   using Vector7i = Eigen::Matrix<int, 7, 1>;
@@ -67,7 +69,10 @@ class MotionGenerator {
 
   double time_ = 0.0;
 
-  Vector7d dq_max_ = (Vector7d() << 2.0, 2.0, 2.0, 2.0, 2.5, 2.5, 2.5).finished();  // in m/s
-  Vector7d ddq_max_start_ = (Vector7d() << 5, 5, 5, 5, 5, 5, 5).finished();         // in m/s^2
-  Vector7d ddq_max_goal_ = (Vector7d() << 5, 5, 5, 5, 5, 5, 5).finished();          // in m/s^2
+  Vector7d dq_max_ =
+      (Vector7d() << 2.0, 2.0, 2.0, 2.0, 2.5, 2.5, 2.5).finished();  // in m/s
+  Vector7d ddq_max_start_ =
+      (Vector7d() << 5, 5, 5, 5, 5, 5, 5).finished();  // in m/s^2
+  Vector7d ddq_max_goal_ =
+      (Vector7d() << 5, 5, 5, 5, 5, 5, 5).finished();  // in m/s^2
 };

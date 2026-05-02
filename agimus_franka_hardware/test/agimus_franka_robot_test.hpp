@@ -1,9 +1,10 @@
+#include <agimus_franka/active_control_base.h>
+#include <agimus_franka/robot.h>
 #include <gmock/gmock.h>
+
 #include <algorithm>
 #include <functional>
 
-#include <agimus_franka/active_control_base.h>
-#include <agimus_franka/robot.h>
 #include "agimus_franka_hardware/robot.hpp"
 #include "test_utils.hpp"
 
@@ -11,34 +12,40 @@
 
 class MockActiveControl : public agimus_franka::ActiveControlBase {
  public:
-  MOCK_METHOD((std::pair<agimus_franka::RobotState, agimus_franka::Duration>), readOnce, (), (override));
+  MOCK_METHOD((std::pair<agimus_franka::RobotState, agimus_franka::Duration>),
+              readOnce, (), (override));
   MOCK_METHOD(void, writeOnce, (const agimus_franka::Torques&), (override));
-  MOCK_METHOD(void,
-              writeOnce,
-              (const agimus_franka::JointPositions&, const std::optional<const agimus_franka::Torques>&),
+  MOCK_METHOD(void, writeOnce,
+              (const agimus_franka::JointPositions&,
+               const std::optional<const agimus_franka::Torques>&),
               (override));
-  MOCK_METHOD(void,
-              writeOnce,
-              (const agimus_franka::JointVelocities&, const std::optional<const agimus_franka::Torques>&),
+  MOCK_METHOD(void, writeOnce,
+              (const agimus_franka::JointVelocities&,
+               const std::optional<const agimus_franka::Torques>&),
               (override));
-  MOCK_METHOD(void,
-              writeOnce,
-              (const agimus_franka::CartesianPose&, const std::optional<const agimus_franka::Torques>&),
+  MOCK_METHOD(void, writeOnce,
+              (const agimus_franka::CartesianPose&,
+               const std::optional<const agimus_franka::Torques>&),
               (override));
-  MOCK_METHOD(void,
-              writeOnce,
-              (const agimus_franka::CartesianVelocities&, const std::optional<const agimus_franka::Torques>&),
+  MOCK_METHOD(void, writeOnce,
+              (const agimus_franka::CartesianVelocities&,
+               const std::optional<const agimus_franka::Torques>&),
               (override));
-  MOCK_METHOD(void, writeOnce, (const agimus_franka::JointPositions&), (override));
-  MOCK_METHOD(void, writeOnce, (const agimus_franka::JointVelocities&), (override));
-  MOCK_METHOD(void, writeOnce, (const agimus_franka::CartesianPose&), (override));
-  MOCK_METHOD(void, writeOnce, (const agimus_franka::CartesianVelocities&), (override));
+  MOCK_METHOD(void, writeOnce, (const agimus_franka::JointPositions&),
+              (override));
+  MOCK_METHOD(void, writeOnce, (const agimus_franka::JointVelocities&),
+              (override));
+  MOCK_METHOD(void, writeOnce, (const agimus_franka::CartesianPose&),
+              (override));
+  MOCK_METHOD(void, writeOnce, (const agimus_franka::CartesianVelocities&),
+              (override));
 };
 
 class MockAgimusFrankaRobot : public agimus_franka::Robot {
  public:
   MOCK_METHOD(agimus_franka::RobotState, readOnce, (), (override));
-  MOCK_METHOD(std::unique_ptr<agimus_franka::ActiveControlBase>, startTorqueControl, (), (override));
+  MOCK_METHOD(std::unique_ptr<agimus_franka::ActiveControlBase>,
+              startTorqueControl, (), (override));
   MOCK_METHOD(std::unique_ptr<agimus_franka::ActiveControlBase>,
               startJointVelocityControl,
               (const agimus_research_interface::robot::Move::ControllerMode&),
@@ -67,7 +74,8 @@ bool compareWithTolerance(const T& lhs, const T& rhs) {
                     });
 }
 
-bool operator==(const CartesianVelocities& lhs, const CartesianVelocities& rhs) {
+bool operator==(const CartesianVelocities& lhs,
+                const CartesianVelocities& rhs) {
   return compareWithTolerance(lhs.O_dP_EE, rhs.O_dP_EE);
 }
 
@@ -94,7 +102,8 @@ class AgimusFrankaRobotTests : public ::testing::Test {
   std::unique_ptr<MockModel> mock_model;
   std::unique_ptr<MockActiveControl> mock_active_control;
 
-  template <typename RobotInitFunction, typename ControlType, typename RawControlInputType>
+  template <typename RobotInitFunction, typename ControlType,
+            typename RawControlInputType>
   void testReadWriteOnce(RobotInitFunction initFunction,
                          std::function<void()> expectCallFunction,
                          const RawControlInputType& control_input,
@@ -102,7 +111,8 @@ class AgimusFrankaRobotTests : public ::testing::Test {
     EXPECT_CALL(*mock_active_control, writeOnce(expected_active_control_input));
     EXPECT_CALL(*mock_active_control, readOnce());
     expectCallFunction();
-    agimus_franka_hardware::Robot robot(std::move(mock_libfranka_robot), std::move(mock_model));
+    agimus_franka_hardware::Robot robot(std::move(mock_libfranka_robot),
+                                        std::move(mock_model));
     (robot.*initFunction)();
     robot.readOnce();
     robot.writeOnce(control_input);

@@ -14,29 +14,32 @@
 
 #pragma once
 
-#include <string>
-
 #include <controller_interface/controller_interface.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
 
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+using CallbackReturn =
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
 namespace agimus_franka_example_controllers {
 
 /**
  * The joint velocity example controller
  */
-class JointVelocityExampleController : public controller_interface::ControllerInterface {
+class JointVelocityExampleController
+    : public controller_interface::ControllerInterface {
  public:
-  [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
-      const override;
-  [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
-      const override;
-  controller_interface::return_type update(const rclcpp::Time& time,
-                                           const rclcpp::Duration& period) override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  command_interface_configuration() const override;
+  [[nodiscard]] controller_interface::InterfaceConfiguration
+  state_interface_configuration() const override;
+  controller_interface::return_type update(
+      const rclcpp::Time& time, const rclcpp::Duration& period) override;
   CallbackReturn on_init() override;
-  CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_configure(
+      const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_activate(
+      const rclcpp_lifecycle::State& previous_state) override;
 
  private:
   std::string arm_id_;
