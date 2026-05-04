@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 project(agimus_franka_ign_ros2_control)
+if(NOT "$ENV{ROS_DISTRO}" STREQUAL "humble")
+  message(WARNING "agimus_franka_ign_ros2_control only for ros humble. it is useless for jazzy and more.")
+  return()
+endif()
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
@@ -26,44 +30,8 @@ if("$ENV{IGNITION_VERSION}" STREQUAL "fortress")
   find_package(ignition-plugin1 REQUIRED)
   set(GZ_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
   add_compile_definitions(IGNITION_SUPPORT)
-
-elseif("$ENV{IGNITION_VERSION}" STREQUAL "garden")
-  set(IGNITION_SUPPORT ON)
-  find_package(ignition-gazebo7 REQUIRED)
-  set(GZ_SIM_VER ${ignition-gazebo7_VERSION_MAJOR})
-  message(STATUS "Compiling against Ignition garden")
-  find_package(ignition-plugin2 REQUIRED)
-  set(GZ_PLUGIN_VER ${ignition-plugin2_VERSION_MAJOR})
-  add_compile_definitions(IGNITION_SUPPORT)
-
-elseif("$ENV{GAZEBO_VERSION}" STREQUAL "harmonic")
-  find_package(gz-sim8 REQUIRED)
-  set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
-  message(STATUS "Compiling against Gazebo Harmonic")
-  find_package(gz-plugin2 REQUIRED)
-  set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
-  find_package(gz_ros2_control REQUIRED)
-
-elseif("$ENV{GAZEBO_VERSION}" STREQUAL "ionic")
-  find_package(gz-sim9 REQUIRED)
-  set(GZ_SIM_VER ${gz-sim9_VERSION_MAJOR})
-  message(STATUS "Compiling against Gazebo Ionic")
-  find_package(gz-plugin3 REQUIRED)
-  set(GZ_PLUGIN_VER ${gz-plugin3_VERSION_MAJOR})
-
-elseif("$ENV{GAZEBO_VERSION}" STREQUAL "jetty")
-  find_package(gz-sim10 REQUIRED)
-  set(GZ_SIM_VER ${gz-sim10_VERSION_MAJOR})
-  message(STATUS "Compiling against Gazebo Jetty")
-  find_package(gz-plugin4 REQUIRED)
-  set(GZ_PLUGIN_VER ${gz-plugin4_VERSION_MAJOR})
-
 else()
-  find_package(gz-sim8 REQUIRED)
-  set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
-  message(STATUS "Compiling against Gazebo Harmonic")
-  find_package(gz-plugin2 REQUIRED)
-  set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
+  message(FATAL_ERROR "agimus_franka_ign_ros2_control is only tested with ignition fortress")
 endif()
 
 
@@ -100,7 +68,6 @@ ament_target_dependencies(${PROJECT_NAME}-system
   kdl_parser
   tf2_geometry_msgs
   tf2_eigen
-  gz_ros2_control
 )
 
 #########

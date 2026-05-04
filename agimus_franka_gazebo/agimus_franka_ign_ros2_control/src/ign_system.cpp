@@ -567,7 +567,7 @@ void IgnitionSystem::registerSensors(const hardware_interface::HardwareInfo & ha
       this->dataPtr->ft_sensors_.push_back(ftData);
       return true;
     });
-    
+
 }
 
 CallbackReturn IgnitionSystem::on_init(const hardware_interface::HardwareInfo & system_info)
@@ -810,7 +810,7 @@ hardware_interface::return_type IgnitionSystem::write(
         *jointEffortCmd = gz::sim::components::JointForceCmd(
           {this->dataPtr->joints_[i].joint_effort_cmd});
         // Hand fingers are not gravity compensated,
-        // and iterating over q results in undefined behaviour 
+        // and iterating over q results in undefined behaviour
         if (i < q.size()) {
           jointEffortCmd->Data()[0] += joint_efforts[i];
         }
