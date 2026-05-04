@@ -35,6 +35,20 @@
             };
           };
 
+          agimus-franka-gazebo-bringup = {
+            src = lib.fileset.toSource {
+              root = ./.;
+              fileset = ./agimus_franka_gazebo/agimus_franka_gazebo_bringup;
+            };
+          };
+
+          agimus-franka-ign-ros2-control = {
+            src = lib.fileset.toSource {
+              root = ./.;
+              fileset = ./agimus_franka_gazebo/agimus_franka_ign_ros2_control;
+            };
+          };
+
           agimus-franka-gripper = {
             src = lib.fileset.toSource {
               root = ./.;

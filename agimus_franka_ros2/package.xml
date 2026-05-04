@@ -13,6 +13,8 @@
   <depend>agimus_franka_description</depend>
   <depend>agimus_franka_example_controllers</depend>
   <depend>agimus_franka_fr3_moveit_config</depend>
+  <depend condition="$ROS_DISTRO == humble">agimus_franka_gazebo_bringup</depend>
+  <depend condition="$ROS_DISTRO == humble">agimus_franka_ign_ros2_control</depend>
   <depend>agimus_franka_gripper</depend>
   <depend>agimus_franka_hardware</depend>
   <depend>agimus_franka_msgs</depend>
