@@ -22,7 +22,7 @@ find_package(tf2_eigen REQUIRED)
 
 set(IGNITION_SUPPORT OFF)
 
-if("$ENV{IGNITION_VERSION}" STREQUAL "fortress")
+if(NOT DEFINED ENV{IGNITION_VERSION} OR "$ENV{IGNITION_VERSION}" STREQUAL "fortress")
   set(IGNITION_SUPPORT ON)
   find_package(ignition-gazebo6 REQUIRED)
   set(GZ_SIM_VER ${ignition-gazebo6_VERSION_MAJOR})
