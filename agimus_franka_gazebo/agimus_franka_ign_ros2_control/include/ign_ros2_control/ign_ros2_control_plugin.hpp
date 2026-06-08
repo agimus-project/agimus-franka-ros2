@@ -15,23 +15,21 @@
 #ifndef IGN_ROS2_CONTROL__IGN_ROS2_CONTROL_PLUGIN_HPP_
 #define IGN_ROS2_CONTROL__IGN_ROS2_CONTROL_PLUGIN_HPP_
 
+#include <gz/sim/System.hh>
 #include <memory>
 #include <string>
 
-#include <gz/sim/System.hh>
 #include "ign_ros2_control/model_kdl.h"
 
-namespace ign_ros2_control
-{
+namespace ign_ros2_control {
 // Forward declarations.
 class IgnitionROS2ControlPluginPrivate;
 
 class IgnitionROS2ControlPlugin : public gz::sim::System,
-  public gz::sim::ISystemConfigure,
-  public gz::sim::ISystemPreUpdate,
-  public gz::sim::ISystemPostUpdate
-{
-public:
+                                  public gz::sim::ISystemConfigure,
+                                  public gz::sim::ISystemPreUpdate,
+                                  public gz::sim::ISystemPostUpdate {
+ public:
   /// \brief Constructor
   IgnitionROS2ControlPlugin();
 
@@ -39,31 +37,28 @@ public:
   ~IgnitionROS2ControlPlugin() override;
 
   // Documentation inherited
-  void Configure(
-    const gz::sim::Entity & _entity,
-    const std::shared_ptr<const sdf::Element> & _sdf,
-    gz::sim::EntityComponentManager & _ecm,
-    gz::sim::EventManager & _eventMgr) override;
+  void Configure(const gz::sim::Entity& _entity,
+                 const std::shared_ptr<const sdf::Element>& _sdf,
+                 gz::sim::EntityComponentManager& _ecm,
+                 gz::sim::EventManager& _eventMgr) override;
 
   // Documentation inherited
-  void PreUpdate(
-    const gz::sim::UpdateInfo & _info,
-    gz::sim::EntityComponentManager & _ecm) override;
+  void PreUpdate(const gz::sim::UpdateInfo& _info,
+                 gz::sim::EntityComponentManager& _ecm) override;
 
-  void PostUpdate(
-    const gz::sim::UpdateInfo & _info,
-    const gz::sim::EntityComponentManager & _ecm) override;
+  void PostUpdate(const gz::sim::UpdateInfo& _info,
+                  const gz::sim::EntityComponentManager& _ecm) override;
 
-private:
+ private:
   /// @brief gets the root link of the urdf model
   /// @param model urdf model of the robot
   /// @return root link of the robot
-  urdf::LinkConstSharedPtr getRootLink(const urdf::Model & model);
+  urdf::LinkConstSharedPtr getRootLink(const urdf::Model& model);
 
   /// @brief gets the tip link of the urdf model
   /// @param model urdf model of the robot
   /// @return tip link of the robot
-  std::string findTipLink(const urdf::Model & model);
+  std::string findTipLink(const urdf::Model& model);
 
   /// \brief Private data pointer.
   std::unique_ptr<IgnitionROS2ControlPluginPrivate> dataPtr;

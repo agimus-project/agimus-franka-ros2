@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 project(agimus_franka_ign_ros2_control)
 if(NOT "$ENV{ROS_DISTRO}" STREQUAL "humble")
-  message(WARNING "agimus_franka_ign_ros2_control only for ros humble. it is useless for jazzy and more.")
-  return()
+    message(
+        WARNING
+        "agimus_franka_ign_ros2_control only for ros humble. it is useless for jazzy and more."
+    )
+    return()
 endif()
 
 # Find dependencies
@@ -22,36 +25,45 @@ find_package(tf2_eigen REQUIRED)
 
 set(IGNITION_SUPPORT OFF)
 
-if(NOT DEFINED ENV{IGNITION_VERSION} OR "$ENV{IGNITION_VERSION}" STREQUAL "fortress")
-  set(IGNITION_SUPPORT ON)
-  find_package(ignition-gazebo6 REQUIRED)
-  set(GZ_SIM_VER ${ignition-gazebo6_VERSION_MAJOR})
-  message(STATUS "Compiling against Ignition fortress")
-  find_package(ignition-plugin1 REQUIRED)
-  set(GZ_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
-  add_compile_definitions(IGNITION_SUPPORT)
+if(
+    NOT DEFINED ENV{IGNITION_VERSION}
+    OR "$ENV{IGNITION_VERSION}" STREQUAL "fortress"
+)
+    set(IGNITION_SUPPORT ON)
+    find_package(ignition-gazebo6 REQUIRED)
+    set(GZ_SIM_VER ${ignition-gazebo6_VERSION_MAJOR})
+    message(STATUS "Compiling against Ignition fortress")
+    find_package(ignition-plugin1 REQUIRED)
+    set(GZ_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
+    add_compile_definitions(IGNITION_SUPPORT)
 else()
-  message(FATAL_ERROR "agimus_franka_ign_ros2_control is only tested with ignition fortress")
+    message(
+        FATAL_ERROR
+        "agimus_franka_ign_ros2_control is only tested with ignition fortress"
+    )
 endif()
-
 
 include_directories(include)
 
-add_library(${PROJECT_NAME}-system SHARED
-  src/ign_ros2_control_plugin.cpp
-  src/model_kdl.cpp
+add_library(
+    ${PROJECT_NAME}-system
+    SHARED
+    src/ign_ros2_control_plugin.cpp
+    src/model_kdl.cpp
 )
 
 if(IGNITION_SUPPORT)
-target_link_libraries(${PROJECT_NAME}-system
+    target_link_libraries(
+        ${PROJECT_NAME}-system
         ignition-gazebo${GZ_SIM_VER}::core
-  ignition-plugin${GZ_PLUGIN_VER}::register
-)
+        ignition-plugin${GZ_PLUGIN_VER}::register
+    )
 else()
-target_link_libraries(${PROJECT_NAME}-system
+    target_link_libraries(
+        ${PROJECT_NAME}-system
         gz-sim${GZ_SIM_VER}::core
-  gz-plugin${GZ_PLUGIN_VER}::register
-)
+        gz-plugin${GZ_PLUGIN_VER}::register
+    )
 endif()
 
 ament_target_dependencies(${PROJECT_NAME}-system
@@ -72,10 +84,7 @@ ament_target_dependencies(${PROJECT_NAME}-system
 
 #########
 
-add_library(ign_hardware_plugins SHARED
-  src/ign_system.cpp
-  src/model_kdl.cpp
-)
+add_library(ign_hardware_plugins SHARED src/ign_system.cpp src/model_kdl.cpp)
 ament_target_dependencies(ign_hardware_plugins
   rclcpp_lifecycle
   hardware_interface
@@ -88,35 +97,29 @@ ament_target_dependencies(ign_hardware_plugins
   tf2_eigen
 )
 if(IGNITION_SUPPORT)
-target_link_libraries(ign_hardware_plugins
+    target_link_libraries(
+        ign_hardware_plugins
         ignition-gazebo${GZ_SIM_VER}::core
-      )
+    )
 else()
-target_link_libraries(ign_hardware_plugins
-        gz-sim${GZ_SIM_VER}::core
-)
+    target_link_libraries(ign_hardware_plugins gz-sim${GZ_SIM_VER}::core)
 endif()
 
 ## Install
-install(TARGETS
-  ign_hardware_plugins
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
+install(
+    TARGETS ign_hardware_plugins
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
 )
 
-install(DIRECTORY
-  include/
-  DESTINATION include
-)
+install(DIRECTORY include/ DESTINATION include)
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME}-system ign_hardware_plugins)
 
 # Install directories
-install(TARGETS ${PROJECT_NAME}-system
-  DESTINATION lib
-)
+install(TARGETS ${PROJECT_NAME}-system DESTINATION lib)
 
 pluginlib_export_plugin_description_file(${PROJECT_NAME} ign_hardware_plugins.xml)
 

@@ -43,7 +43,7 @@ Now you can launch the velocity example with Gazebo simulator.
 ros2 launch agimus_franka_gazebo_bringup gazebo_joint_velocity_controller_example.launch.py load_gripper:=true agimus_franka_hand:='agimus_franka_hand'
 ```
 
-Keep in mind that the gripper joint has a bug with the joint velocity controller. 
+Keep in mind that the gripper joint has a bug with the joint velocity controller.
 If you are interested in controlling the gripper please use joint position interface.
 
 
