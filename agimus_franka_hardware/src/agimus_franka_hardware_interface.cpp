@@ -15,7 +15,7 @@
 #include "agimus_franka_hardware/agimus_franka_hardware_interface.hpp"
 
 #include <agimus_franka/exception.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <algorithm>
 #include <cmath>
