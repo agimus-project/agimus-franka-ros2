@@ -16,7 +16,6 @@
 
 #include <algorithm>
 #include <array>
-
 #include <kdl/chain.hpp>
 #include <kdl/frames.hpp>
 #include <kdl/solveri.hpp>
@@ -26,8 +25,7 @@
 
 // Implementation copied from <kdl/isolveri.hpp> because
 // KDL::ChainDynSolver inherits *privately* from SolverI ... -.-'
-std::string ModelKDL::strError(const int error)
-{
+std::string ModelKDL::strError(const int error) {
   // clang-format off
   switch (error) {
     case KDL::SolverI::E_NOERROR:                 return "No error"; break;
@@ -39,8 +37,8 @@ std::string ModelKDL::strError(const int error)
   // clang-format on
 }
 
-ModelKDL::ModelKDL(const urdf::Model & model, const std::string & root, const std::string & tip)
-{
+ModelKDL::ModelKDL(const urdf::Model& model, const std::string& root,
+                   const std::string& tip) {
   KDL::Tree tree;
   if (!kdl_parser::treeFromUrdfModel(model, tree)) {
     throw std::invalid_argument("Cannot construct KDL tree from URDF");
@@ -48,15 +46,14 @@ ModelKDL::ModelKDL(const urdf::Model & model, const std::string & root, const st
 
   if (!tree.getChain(root, tip, this->chain_)) {
     throw std::invalid_argument(
-            "Cannot find chain within URDF tree from root '" + root +
-            "' to tip '" + tip + "'. Do these links exist?");
+        "Cannot find chain within URDF tree from root '" + root + "' to tip '" +
+        tip + "'. Do these links exist?");
   }
 }
 
 std::array<double, 7> ModelKDL::gravity(
-  const std::array<double, 7> & q,
-  const std::array<double, 3> & gravity_earth) const
-{
+    const std::array<double, 7>& q,
+    const std::array<double, 3>& gravity_earth) const {
   KDL::JntArray joint_states, gravity_torques(7);
   KDL::Vector gravity(gravity_earth[0], gravity_earth[1], gravity_earth[2]);
   joint_states.data = Eigen::Matrix<double, 7, 1>(q.data());
@@ -67,11 +64,13 @@ std::array<double, 7> ModelKDL::gravity(
 
   int error = solver.JntToGravity(joint_states, gravity_torques);
   if (error != KDL::SolverI::E_NOERROR) {
-    throw std::logic_error("KDL gravity calculation failed with error: " + strError(error));
+    throw std::logic_error("KDL gravity calculation failed with error: " +
+                           strError(error));
   }
 
   std::array<double, 7> result;
-  Eigen::VectorXd::Map(&result[0], gravity_torques.data.size()) = gravity_torques.data;
+  Eigen::VectorXd::Map(&result[0], gravity_torques.data.size()) =
+      gravity_torques.data;
 
   return result;
 }
