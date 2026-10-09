@@ -39,7 +39,7 @@ Robot::Robot(const std::string& robot_ip, const rclcpp::Logger& logger) {
                 "kernel is strongly "
                 "recommended! Information about how to set up a real-time "
                 "kernel can be found here: "
-                "https://agimus_frankaemika.github.io/docs/"
+                "https://agimus-project.github.io/docs/"
                 "installation_linux.html#setting-up-the-real-time-kernel");
   }
   robot_ = std::make_unique<agimus_franka::Robot>(robot_ip, rt_config);

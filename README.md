@@ -1,6 +1,6 @@
 <h1 style="font-size: 3em;">ROS 2 Integration for Franka Robotics Research Robots</h1>
 
-[![CI](https://github.com/agimus_frankaemika/agimus_franka_ros2/actions/workflows/ci.yml/badge.svg)](https://github.com/agimus_frankaemika/agimus_franka_ros2/actions/workflows/ci.yml)
+[![CI](https://github.com/agimus-project/agimus_franka_ros2/actions/workflows/ci.yml/badge.svg)](https://github.com/agimus-project/agimus_franka_ros2/actions/workflows/ci.yml)
 
 > **Note:** _franka_ros2_ is not officially supported on Windows.
 
@@ -24,7 +24,7 @@ The **agimus_franka_ros2** repository provides a **ROS 2** integration of **libf
 For convenience, we provide Dockerfile and docker-compose.yml files. While it is possible to build **agimus_franka_ros2** directly on your local machine, this approach requires manual installation of certain dependencies, while many others will be automatically installed by the **ROS 2** build system (e.g., via **rosdep**). This can result in a large number of libraries being installed on your system, potentially causing conflicts. Using Docker encapsulates these dependencies within the container, minimizing such risks. Docker also ensures a consistent and reproducible build environment across systems. For these reasons, we recommend using Docker.
 
 # Caution
-This package is in rapid development. Users should expect breaking changes and are encouraged to report any bugs via [GitHub Issues page](https://github.com/agimus_frankaemika/agimus_franka_ros2/issues).
+This package is in rapid development. Users should expect breaking changes and are encouraged to report any bugs via [GitHub Issues page](https://github.com/agimus-project/agimus_franka_ros2/issues).
 
 
 
@@ -72,7 +72,7 @@ This package is in rapid development. Users should expect breaking changes and a
    ```
 3. **Clone the Repositories:**
    ```bash
-    git clone https://github.com/agimus_frankaemika/agimus_franka_ros2.git src
+    git clone https://github.com/agimus-project/agimus_franka_ros2.git src
     ```
 4. **Detect and install project dependencies**
    ```bash
@@ -96,7 +96,7 @@ For detailed instructions, on preparing VSCode to use the `.devcontainer` follow
 
 1. **Clone the Repositories:**
     ```bash
-    git clone https://github.com/agimus_frankaemika/agimus_franka_ros2.git
+    git clone https://github.com/agimus-project/agimus_franka_ros2.git
     cd agimus_franka_ros2
     ```
     We provide separate instructions for using Docker with Visual Studio Code or the command line. Choose one of the following options:
@@ -180,11 +180,11 @@ ros2 launch agimus_franka_fr3_moveit_config moveit.launch.py robot_ip:=dont-care
 
 If you encounter a UDP receive timeout error while communicating with the robot, avoid using Docker Desktop. It may not provide the necessary real-time capabilities required for reliable communication with the robot. Instead, using Docker Engine is sufficient for this purpose.
 
-A real-time kernel is essential to ensure proper communication and to prevent timeout issues. For guidance on setting up a real-time kernel, please refer to the [Franka installation documentation](https://agimus_frankaemika.github.io/docs/installation_linux.html#setting-up-the-real-time-kernel).
+A real-time kernel is essential to ensure proper communication and to prevent timeout issues. For guidance on setting up a real-time kernel, please refer to the [Franka installation documentation](https://agimus-project.github.io/docs/installation_linux.html#setting-up-the-real-time-kernel).
 
 # Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/agimus_frankaemika/agimus_franka_ros2/blob/humble/CONTRIBUTING.md) for more details on how to contribute to this project.
+Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/agimus-project/agimus_franka_ros2/blob/humble/CONTRIBUTING.md) for more details on how to contribute to this project.
 
 ## License
 
@@ -192,9 +192,9 @@ All packages of agimus_franka_ros2 are licensed under the Apache 2.0 license.
 
 ## Contact
 
-For questions or support, please open an issue on the [GitHub Issues](https://github.com/agimus_frankaemika/agimus_franka_ros2/issues) page.
+For questions or support, please open an issue on the [GitHub Issues](https://github.com/agimus-project/agimus_franka_ros2/issues) page.
 
-See the [Franka Control Interface (FCI) documentation](https://agimus_frankaemika.github.io/docs) for more information.
+See the [Franka Control Interface (FCI) documentation](https://agimus-project.github.io/docs) for more information.
 
 
 [def]: #docker-container-installation

@@ -3,7 +3,7 @@
 **==Important Note:==**
 
 Minimum necessary `franka_description` version is 0.3.0.
-You can clone agimus_franka_description package from https://github.com/agimus_frankaemika/agimus_franka_description.
+You can clone agimus_franka_description package from https://github.com/agimus-project/agimus_franka_description.
 
 A project integrating Franka ROS 2 with the Gazebo simulator.
 
