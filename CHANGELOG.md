@@ -23,7 +23,7 @@ Requires libfranka >= 0.13.2, and agimus_franka_description >= 0.2.0 requires RO
 * feature: Added error recovery action to ROS 2 node
 * removed: hard-coded panda robot references
 * removed: agimus_franka_description package
-* using the agimus_franka_description standalone package https://github.com/agimus_frankaemika/agimus_franka_description
+* using the agimus_franka_description standalone package https://github.com/agimus-project/agimus_franka_description
 * agimus_franka_hardware prefixes the robot_state and robot model state interfaces with the read robot name from the urdf.
 
 ## 0.1.13 - 2024-01-18

@@ -35,7 +35,7 @@ Requires libfranka >= 0.13.2 and agimus_franka_description >= 0.3.0 requires ROS
 Requires libfranka >= 0.13.2, and agimus_franka_description >= 0.2.0 requires ROS 2 Humble
 
 * BREAKING CHANGE: agimus_franka_description package
-* BREAKING CHANGE: using the agimus_franka_description standalone package https://github.com/agimus_frankaemika/agimus_franka_description
+* BREAKING CHANGE: using the agimus_franka_description standalone package https://github.com/agimus-project/agimus_franka_description
 * build:  install pinocchio dependency from ros-humble-pinocchio apt package
 * feat: Added error recovery action to ROS 2 node
 * fix: hard-coded panda robot references

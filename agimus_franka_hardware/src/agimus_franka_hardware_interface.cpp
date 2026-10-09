@@ -15,7 +15,7 @@
 #include "agimus_franka_hardware/agimus_franka_hardware_interface.hpp"
 
 #include <agimus_franka/exception.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <algorithm>
 #include <cmath>
@@ -321,7 +321,7 @@ CallbackReturn AgimusFrankaHardwareInterface::on_init(
           "the URDF. "
           "Using 'panda' as default 'arm_id' will not be supported."
           "Please use the latest agimus_franka_description package from: "
-          "https://github.com/agimus_frankaemika/agimus_franka_description");
+          "https://github.com/agimus-project/agimus_franka_description");
     }
     try {
       RCLCPP_INFO(getLogger(), "Connecting to robot at \"%s\" ...",
