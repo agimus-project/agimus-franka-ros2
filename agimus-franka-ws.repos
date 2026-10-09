@@ -1,0 +1,48 @@
+repositories:
+  src/agimus-libfranka-common:
+    type: git
+    url: https://github.com/agimus-project/agimus-libfranka-common.git
+    version: main
+  src/agimus-libfranka:
+    type: git
+    url: https://github.com/agimus-project/agimus-libfranka.git
+    version: main
+  src/agimus-franka-description:
+    type: git
+    url: https://github.com/agimus-project/agimus-franka-description.git
+    version: main
+  src/agimus-franka-ros2:
+    type: git
+    url: https://github.com/agimus-project/agimus-franka-ros2.git
+    version: main
+
+  # Following repositories are just for the tests
+
+  src/example-robot-data:
+    type: git
+    url: https://github.com/gepetto/example-robot-data.git
+    version: devel
+  src/mim_solvers:
+    type: git
+    url: https://github.com/machines-in-motion/mim_solvers.git
+    version: devel
+  src/ros2_net_ft_driver:
+    type: git
+    url: https://github.com/gbartyzel/ros2_net_ft_driver.git
+    version: rolling
+  src/colmpc:
+    type: git
+    url: https://github.com/agimus-project/colmpc.git
+    version: main
+  src/agimus-msgs:
+    type: git
+    url: https://github.com/agimus-project/agimus-msgs.git
+    version: main
+  src/agimus-controller:
+    type: git
+    url: https://github.com/agimus-project/agimus-controller.git
+    version: main
+  src/agimus-demos:
+    type: git
+    url: https://github.com/agimus-project/agimus-demos.git
+    version: main
